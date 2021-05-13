@@ -7,16 +7,19 @@ outdir = '/mnt/1.5_drive_0/kromsatel-dev/highlighter-outdir-test'
 
 import src.obtain_coverage as oc
 import src.parse_fasta_reference as pfr
+import src.highlight_features as hlft
 
 # seq_id = 'NC_045512.2'
-# cov_fpath = oc.count_cov_for_all_refs(ref_fasta_fpath, bam_fpath, outdir)
-# cov_array = oc.get_coverage_for_reference(seq_id, cov_fpath)
 
 
 fasta_records = pfr.parse_fasta_reference(ref_fasta_fpath)
 
-print(type(fasta_records[0]))
-
+cov_fpath = oc.count_cov_for_all_refs(ref_fasta_fpath, bam_fpath, outdir)
 for rec in fasta_records:
-    print(rec.seq)
+    cov_array = oc.get_coverage_for_reference(rec.id, cov_fpath)
+    feature_list = hlft.highlight_coverage_features(cov_array, lambda x: x < 10, 'sabaka')
+    for f in feature_list:
+        print(f)
+
+
 

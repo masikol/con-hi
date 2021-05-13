@@ -18,16 +18,23 @@ def highlight_coverage_features(
     i: int
     feature_start: int = None
     feature_end: int = None
+    prev_cov: int
+    curr_cov: int
+    next_cov: int
 
     for i in range(len(cov_array)):
 
-        if feature_condition(i) and not feature_condition(i-1):
-            feature_start = i
+        prev_cov = cov_array[i-1]
+        curr_cov = cov_array[ i ]
+        next_cov = cov_array[i+1]
+
+        if feature_condition(curr_cov) and not feature_condition(prev_cov):
+            feature_start = i + 1 # make it 1-based
         # end if
 
-        if feature_condition(i) and not feature_condition(i+1):
+        if feature_condition(curr_cov) and not feature_condition(next_cov):
 
-            feature_end = i
+            feature_end = i + 1 # make it 1-based
 
             feature_list.append(
                 SeqFeature(
