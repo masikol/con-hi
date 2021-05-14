@@ -29,7 +29,10 @@ def highlight_coverage_features(
         next_cov = cov_array[i+1]
 
         if feature_condition(curr_cov) and not feature_condition(prev_cov):
-            feature_start = i + 1 # make it 1-based
+            # Note that the start and end location numbering follow Python’s scheme,
+            #   thus a GenBank entry of 123..150 (one based counting)
+            #   becomes a location of [122:150] (zero based counting).
+            feature_start = i # do not make it 1-based
         # end if
 
         if feature_condition(curr_cov) and not feature_condition(next_cov):
