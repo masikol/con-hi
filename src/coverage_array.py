@@ -8,13 +8,12 @@ class CoverageArray:
 
     def __init__(self, initializer: Sequence[int]) -> None:
         self.coverages = array.array('I', initializer)
-        self.infinite_coverage = max(self.coverages) + 1
     # end def __init__
 
     def __getitem__(self, key: int) -> int:
 
         if key < 0 or key > len(self.coverages) - 1:
-            return self.infinite_coverage
+            return float('inf')
         else:
             return self.coverages[key]
         # end if

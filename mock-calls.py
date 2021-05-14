@@ -7,9 +7,9 @@ ref_fasta_fpath = '/mnt/1.5_drive_0/kromsatel-dev/reference/Wuhan-Hu-1-compele-g
 bam_fpath = '/mnt/1.5_drive_0/kromsatel-dev/sam/Wuhan-Hu-1_cleaned.sorted.bam'
 outdir = '/mnt/1.5_drive_0/kromsatel-dev/highlighter-outdir-test'
 
-import src.obtain_coverage as oc
 import src.parse_fasta_reference as pfr
 import src.highlight_features as hlft
+import src.obtain_coverage as oc
 import src.output as out
 
 
