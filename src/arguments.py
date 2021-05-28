@@ -74,6 +74,8 @@ class HighlighterParams:
 
 
 def parse_arguments(version: str, last_update_date: str) -> HighlighterParams:
+    # Function parses command line arguments and produces
+    #   container with program parameters in it.
 
     # Print help message and exit if required
     if '-h' in sys.argv[1:] or '--help' in sys.argv[1:]:
@@ -112,6 +114,7 @@ def parse_arguments(version: str, last_update_date: str) -> HighlighterParams:
         platf_depend_exit(2)
     # end try
 
+    # Check positional arguments: their existance is an error signal
     if len(args) != 0:
         print('Error: consensus-highlighter.py does not take any positional arguments.')
         print('You passed following positional argument(s):')
@@ -122,8 +125,10 @@ def parse_arguments(version: str, last_update_date: str) -> HighlighterParams:
         platf_depend_exit(2)
     # end if
 
+    # Parse options
     params: HighlighterParams = _parse_options(opts)
 
+    # Check mandatory options
     if params.target_fasta_fpath is None:
         print('Error: option `-f` (`--target-fasta`) is mandatory.')
         platf_depend_exit(2)
@@ -139,6 +144,7 @@ def parse_arguments(version: str, last_update_date: str) -> HighlighterParams:
 
 
 def _parse_options(opts: List[List[str]]) -> HighlighterParams:
+    # Function parses program options
 
     # Initialize run parameters with default values
     params: HighlighterParams = HighlighterParams(
@@ -157,6 +163,7 @@ def _parse_options(opts: List[List[str]]) -> HighlighterParams:
     arg: str
     for opt, arg in opts:
 
+        # Target fasta file
         if opt in ('-f', '--target-fasta'):
 
             if not os.path.isfile(arg):
@@ -173,7 +180,7 @@ def _parse_options(opts: List[List[str]]) -> HighlighterParams:
 
             params.target_fasta_fpath = arg
 
-
+        # BAM file
         elif opt in ('-b', '--bam'):
 
             if not os.path.isfile(arg):
@@ -189,11 +196,11 @@ def _parse_options(opts: List[List[str]]) -> HighlighterParams:
 
             params.bam_fpath = arg
 
-
+        # Output directory
         elif opt in ('-o', '--outdir'):
-            params.outdir_path = arg
+            params.outdir_path = os.path.abspath(arg)
 
-
+        # List of coverage thesholds
         elif opt in ('-c', '--coverage-thresholds'):
 
             cov_strings: Sequence[str] = arg.split(',')
@@ -217,19 +224,19 @@ def _parse_options(opts: List[List[str]]) -> HighlighterParams:
 
             params.set_coverage_thresholds(coverage_thresholds)
 
-
+        # Repress zero output
         elif opt in ('-n', '--no-zero-output'):
             params.suppress_zero_cov_output = True
 
-
+        # Molecule topology for annotation
         elif opt == '--circular':
             params.topology = 'circular'
 
-
+        # Organism name for annotation
         elif opt == '--organism':
             params.organism = arg
 
-
+        # Prefix for output files
         elif opt == '--prefix':
             params.outfile_prefix = arg
         # end if
@@ -257,6 +264,8 @@ def _is_bam(fpath: str) -> bool:
 
 
 def _add_zero_theshold(params: HighlighterParams) -> None:
+    # Function adds zero threshold to lost of coverage thresholds
+    # :param params: program parameters;
 
     curr_coverage_thresholds: Sequence[int] = tuple(
         map(
@@ -272,6 +281,8 @@ def _add_zero_theshold(params: HighlighterParams) -> None:
 
 
 def _coverage_not_parsable(string: str) -> bool:
+    # Function checks validity of coverage threshold strign representation
+    # :param string: string to validate;
 
     cov_is_not_parsable: bool = True
 

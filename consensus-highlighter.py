@@ -7,8 +7,10 @@ __version__: str  = '1.0.a'
 # Year, month, day
 __last_update_date__: str = '2021-XX-XX'
 __min_python_version__: float = 3.6
+__author__ = 'Maxim Sikolenko'
 
-# Check python interpreter version
+
+# === Check python interpreter version ===
 if sys.version_info.major + sys.version_info.minor*0.1 < __min_python_version__:
     print( 'Your python interpreter version is ' + '%d.%d' % (sys.version_info.major,
         sys.version_info.minor) )
@@ -24,6 +26,16 @@ if sys.version_info.major + sys.version_info.minor*0.1 < __min_python_version__:
     # end if
     sys.exit(1)
 # end if
+
+
+# === Check dependencies ===
+
+from src.dependencies import check_depencencies
+
+check_depencencies()
+
+
+# === Proceed ===
 
 from src.main import main
 

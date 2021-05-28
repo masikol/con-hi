@@ -1,16 +1,20 @@
 # -*- encoding: utf-8 -*-
 # Version 1.0.a
 
+import re
 import gzip
 import functools
-from typing import Sequence, Callable, TextIO
+from typing import Sequence, Callable, TextIO, List
 
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 
 
 def parse_fasta_reference(ref_fasta_fpath: str) -> Sequence[SeqRecord]:
+    # Function parses fasta file and returns collection of fasta records stored in this file.
+    # :param ref_fasta_fpath: path to target fasta file;
 
+    # Choose open function for the file
     open_func: Callable[[str], TextIO]
 
     if _is_plain_text(ref_fasta_fpath):
@@ -23,11 +27,15 @@ def parse_fasta_reference(ref_fasta_fpath: str) -> Sequence[SeqRecord]:
  Allowed extentions: `.fasta`, `.fa`, `.fasta.gz`, `.fa.gz`.')
     # end if
 
+    # Parse fasta data
     fasta_records: Sequence[SeqRecord]
 
     with open_func(ref_fasta_fpath) as infpath:
         fasta_records = tuple(SeqIO.parse(infpath, 'fasta'))
     # end with
+
+    # Validate parsed fasta data
+    _validate_fasta_records(fasta_records)
 
     return fasta_records
 # end def parse_fasta_reference
@@ -70,6 +78,36 @@ def _is_plain_text(fpath: str) -> bool:
         return True
     # end try
 # end def _is_plain_text
+
+
+def _validate_fasta_records(fasta_records: Sequence[SeqRecord]) -> None:
+    # Function validates input fasta file.
+    # :param fasta_records: list of fasta records to validate;
+
+    # Check if passed list is empty
+    if len(fasta_records) == 0:
+        raise ValueError("""
+  Error: your fasta file contain no sequences.""")
+    # end if
+
+    # Check if fasta records contain non-IUPAC characters
+    iupac_codes: str = 'AGCTRYSWKMBDHVN'
+    invalid_records: List = list()
+
+    for record in fasta_records:
+        if not re.search(r'[^{}]'.format(iupac_codes), str(record.seq)) is None:
+            invalid_records.append(record.id)
+        # end if
+    # end for
+
+    if len(invalid_records) != 0:
+        raise ValueError(f"""
+  Error: some fasta records contain invalid DNA characters.
+  Here are are ids of these sequences:
+  `{'`, `'.join(invalid_records)}`.
+  Invalid characters are not {iupac_codes}.""")
+    # end if
+# end def _validate_fasta_records
 
 
 class _InvalidFileError(OSError):
