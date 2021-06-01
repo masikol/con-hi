@@ -4,8 +4,10 @@
 import os
 import sys
 import glob
+from typing import Sequence, MutableSequence, List
 
 from Bio.SeqRecord import SeqRecord
+from Bio.SeqFeature import SeqFeature
 
 import src.output as out
 import src.obtain_coverage as oc

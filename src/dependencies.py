@@ -4,7 +4,7 @@
 import re
 import os
 import subprocess as sp
-from typing import List, Tuple
+from typing import List, Tuple, Sequence, Callable
 
 from src.platform import platf_depend_exit
 

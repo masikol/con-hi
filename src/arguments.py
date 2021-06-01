@@ -7,7 +7,6 @@ import sys
 import getopt
 from typing import List, Sequence, Iterable
 
-from src.print_help import print_help
 from src.platform import platf_depend_exit
 from src.coverage_threshold import CoverageTheshold
 
@@ -77,7 +76,7 @@ class HighlighterParams:
 # end class HighlighterParams
 
 
-def parse_arguments(version: str, last_update_date: str) -> HighlighterParams:
+def parse_arguments() -> HighlighterParams:
     # Function parses command line arguments and produces
     #   container with program parameters in it.
 

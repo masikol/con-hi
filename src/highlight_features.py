@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 # Version 1.0.a
 
-from typing import Callable, List, MutableSequence
+from typing import List, MutableSequence
 
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 
