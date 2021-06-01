@@ -22,7 +22,7 @@ from src.arguments import parse_arguments, HighlighterParams
 def main(version: str, last_update_date: str) -> None:
 
     # Parse arguments
-    params: HighlighterParams = parse_arguments(version, last_update_date)
+    params: HighlighterParams = parse_arguments()
 
     # This string will be used for annotation of result GenBank file
     base_feature_note: str = f'generated with consensus-highlighter v{version}'
