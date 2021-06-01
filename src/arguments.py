@@ -81,18 +81,6 @@ def parse_arguments(version: str, last_update_date: str) -> HighlighterParams:
     # Function parses command line arguments and produces
     #   container with program parameters in it.
 
-    # Print help message and exit if required
-    if '-h' in sys.argv[1:] or '--help' in sys.argv[1:]:
-        print_help(version, last_update_date)
-        platf_depend_exit()
-    # end if
-
-    # Print version and exit if required
-    if '-v' in sys.argv[1:] or '--version' in sys.argv[1:]:
-        print(version)
-        platf_depend_exit()
-    # end if
-
     # Parse arguments with getopt
     opts: List[List[str]]
     args: List[str]

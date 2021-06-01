@@ -27,7 +27,25 @@ if sys.version_info.major + sys.version_info.minor*0.1 < __min_python_version__:
     sys.exit(1)
 # end if
 
-# === Print ame of the program and version ===
+
+from src.print_help import print_help
+from src.platform import platf_depend_exit
+
+
+# Print help message and exit if required
+if '-h' in sys.argv[1:] or '--help' in sys.argv[1:]:
+    print_help(__version__, __last_update_date__)
+    platf_depend_exit()
+# end if
+
+# Print version and exit if required
+if '-v' in sys.argv[1:] or '--version' in sys.argv[1:]:
+    print(__version__)
+    platf_depend_exit()
+# end if
+
+
+# === Print name of the program and version ===
 
 print('\nconsensus-highlighter - Version {}'.format(__version__))
 
