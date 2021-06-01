@@ -6,7 +6,7 @@ from src.coverage_threshold import CoverageTheshold
 
 
 class TestCoverageTheshold:
-    # Class for testing class `src.CoverageTheshold`
+    # Class for testing class `src.coverage_threshold.CoverageTheshold`
 
     def test_invalid_coverage(self) -> None:
         # Test if proper exception is raised on invalid coverage value passed to constructor

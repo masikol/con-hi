@@ -14,6 +14,7 @@ def some_int_array() -> Sequence[int]:
 
 
 class TestCoverageArray:
+    # Class for testing class `src.coverage_array.CoverageArray`
 
     def test_lengths_equality(self, some_int_array) -> None:
         # Test that lengths of both arrays are equal
