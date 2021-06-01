@@ -1,7 +1,9 @@
 # -*- encoding: utf-8 -*-
 # Version 1.0.a
 
+
 class CoverageTheshold:
+    # Class represents coverage thresholds for annotating low-coverage regions.
 
     def __init__(self, cov_threshold_value: int) -> None:
 
@@ -12,6 +14,7 @@ class CoverageTheshold:
 
         self._value: int = cov_threshold_value
 
+        # Zero coverage requires different label
         self._label: str
         if self._value == 0:
             self._label = 'zero coverage'
@@ -22,6 +25,9 @@ class CoverageTheshold:
 
 
     def test_coverage(self, cov: int) -> bool:
+        # Function checks if current coverage `cov` is below our threshold
+
+        # Zero coverage requires different behaviour
         if self._value != 0:
             return cov < self._value
         else:
@@ -31,11 +37,13 @@ class CoverageTheshold:
 
 
     def get_label(self) -> str:
+        # Getter for label
         return self._label
     # end def get_label
 
 
     def get_coverage(self) -> int:
+        # Getter for coverage threshold
         return self._value
     # end def get_coverage
 

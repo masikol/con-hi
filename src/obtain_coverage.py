@@ -8,16 +8,28 @@ from typing import Tuple, Iterator
 from src.platform import platf_depend_exit
 from src.coverage_array import CoverageArray
 
-def count_cov_for_all_refs(ref_fasta_fpath: str, bam_fpath: str, outdir: str) -> str:
 
+def count_cov_for_all_refs(ref_fasta_fpath: str, bam_fpath: str, outdir: str) -> str:
+    # Function counts coverages for all sequences from input fasta file.
+    # :param ref_fasta_fpath: path to input fasta file;
+    # :param bam_fpath: path to bam file;
+    # :param outdir: path to output directory;
+    # Returns path to file that contains coverage:
+    #   first column -- sequence id, second column -- position, third column -- coverage.
+
+    # Obtain path to coverage file
     coverage_fpath: str = _conf_path_to_depth_file(outdir)
+
+    # Obtain command to run
     samtools_depth_cmd: str = _conf_samtools_depth_cmd(ref_fasta_fpath, bam_fpath, coverage_fpath)
 
+    # Run the command
     pipe: sp.Popen = sp.Popen(samtools_depth_cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE)
     stdout_stderr: Tuple[bytes, bytes] = pipe.communicate()
 
+    # Print error f it occures
     if pipe.returncode != 0:
-        print('\nError occured while running samtools depth')
+        print('\nError occured while running `samtools depth`')
         print(stdout_stderr[1].decode('utf-8'))
         platf_depend_exit(pipe.returncode)
     # end if
@@ -27,9 +39,13 @@ def count_cov_for_all_refs(ref_fasta_fpath: str, bam_fpath: str, outdir: str) ->
 
 
 def get_coverage_for_reference(sequence_id: str, coverage_fpath: str) -> CoverageArray:
+    # Function retrieves coverage array for a single sequence from input fasta file.
+    # :param sequence_id: id of sequence to retrieve coverages for;
+    # :param coverage_fpath: path to coverage file;
 
     coverages: Iterator[int]
 
+    # Read the coverage file
     with open(coverage_fpath, 'r') as cov_file:
 
         lines_of_curr_ref: Iterator[str]
@@ -39,13 +55,15 @@ def get_coverage_for_reference(sequence_id: str, coverage_fpath: str) -> Coverag
             lambda x: x.split('\t')[0] == sequence_id,
             cov_file.readlines()
         )
-
-        coverages = map(
-            lambda x: int(x.strip().split('\t')[2]),
-            lines_of_curr_ref
-        )
     # end with
 
+    # Parse coverage
+    coverages = map(
+        lambda x: int(x.strip().split('\t')[2]),
+        lines_of_curr_ref
+    )
+
+    # Convert `coverages` to CoverageArray
     cov_array: CoverageArray = CoverageArray(coverages)
 
     return cov_array
@@ -53,11 +71,17 @@ def get_coverage_for_reference(sequence_id: str, coverage_fpath: str) -> Coverag
 
 
 def _conf_samtools_depth_cmd(ref_fasta_fpath: str, bam_fpath: str, coverage_fpath: str) -> str:
+    # Function configures command to count coverages.
+    # :param ref_fasta_fpath: path to input fasta file;
+    # :param bam_fpath: path to bam file;
+    # :param coverage_fpath: path to coverage file;
     return 'samtools depth -a -J --reference {} -o {} {}'\
         .format(ref_fasta_fpath, coverage_fpath, bam_fpath)
 # end def _conf_samtools_depth_cmd
 
 
 def _conf_path_to_depth_file(outdir: str) -> str:
+    # Function configures path to coverage file.
+    # :param outdir: path to output directory;
     return os.path.join(outdir, 'coverages.tsv')
 # end def _conf_path_to_depth_file

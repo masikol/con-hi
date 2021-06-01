@@ -27,6 +27,10 @@ if sys.version_info.major + sys.version_info.minor*0.1 < __min_python_version__:
     sys.exit(1)
 # end if
 
+# === Print ame of the program and version ===
+
+print('\nconsensus-highlighter - Version {}'.format(__version__))
+
 
 # === Check dependencies ===
 

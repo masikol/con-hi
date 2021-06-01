@@ -44,13 +44,17 @@ class HighlighterParams:
 
 
     def set_coverage_thresholds(self, coverage_thresholds: Sequence[int]) -> None:
+        # Function sets coverage thresholds for the instance.
+        # :param coverage_thresholds: collection of coverage thresholds;
 
         self.coverage_thresholds: Sequence[CoverageTheshold]
 
+        # Filter out zero if zero-coverage output is supressed
         if self.suppress_zero_cov_output:
             coverage_thresholds = tuple(filter(lambda x: x != 0, coverage_thresholds))
         # end if
 
+        # Set the thresholds
         self.coverage_thresholds = tuple(
             (CoverageTheshold(cov) for cov in coverage_thresholds)
         )
