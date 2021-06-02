@@ -15,7 +15,7 @@ import src.highlight_features as hlft
 import src.parse_fasta_reference as pfr
 from src.platform import platf_depend_exit
 from src.coverage_array import CoverageArray
-from src.coverage_threshold import CoverageTheshold
+from src.coverage_threshold import CoverageThreshold
 from src.arguments import parse_arguments, HighlighterParams
 
 
@@ -55,7 +55,7 @@ def main(version: str, last_update_date: str) -> None:
         # Obtain coverages for current sequence
         cov_array: CoverageArray = oc.get_coverage_for_reference(rec.id, cov_fpath)
 
-        cov_threshold: CoverageTheshold
+        cov_threshold: CoverageThreshold
         coverage_features: MutableSequence[SeqFeature]
 
         # Detect all necessary coverage features

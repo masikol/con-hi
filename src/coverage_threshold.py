@@ -2,14 +2,14 @@
 # Version 1.0.a
 
 
-class CoverageTheshold:
+class CoverageThreshold:
     # Class represents coverage thresholds for annotating low-coverage regions.
 
     def __init__(self, cov_threshold_value: int) -> None:
 
         if cov_threshold_value < 0:
             raise ValueError(f'Negative value passed to constructor of class\
- CoverageTheshold: `{cov_threshold_value}`')
+ CoverageThreshold: `{cov_threshold_value}`')
         # end if
 
         self._value: int = cov_threshold_value
@@ -51,4 +51,4 @@ class CoverageTheshold:
     def __repr__(self):
         return f'<CoverageThreshold: {self._value}, label:`{self._label}`>'
     # end def __repr__
-# end class CoverageTheshold
+# end class CoverageThreshold

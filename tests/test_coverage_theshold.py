@@ -3,22 +3,22 @@
 
 import pytest
 
-from src.coverage_threshold import CoverageTheshold
+from src.coverage_threshold import CoverageThreshold
 
 
-class TestCoverageTheshold:
-    # Class for testing class `src.coverage_threshold.CoverageTheshold`
+class TestCoverageThreshold:
+    # Class for testing class `src.coverage_threshold.CoverageThreshold`
 
     def test_invalid_coverage(self) -> None:
         # Test if proper exception is raised on invalid coverage value passed to constructor
         with pytest.raises(ValueError):
-            CoverageTheshold(-9)
+            CoverageThreshold(-9)
         # end with
     # end def test_invalid_coverage
 
     def test_valid_coverage(self) -> None:
         thr_value: int = 7
-        cov_threshold: CoverageTheshold = CoverageTheshold(thr_value)
+        cov_threshold: CoverageThreshold = CoverageThreshold(thr_value)
 
         assert cov_threshold.get_coverage() == thr_value
         assert cov_threshold.get_label() == f'coverage < {thr_value}'
@@ -30,11 +30,11 @@ class TestCoverageTheshold:
 
     def test_zero_coverage(self) -> None:
         thr_value: int = 0
-        cov_threshold: CoverageTheshold = CoverageTheshold(thr_value)
+        cov_threshold: CoverageThreshold = CoverageThreshold(thr_value)
 
         assert cov_threshold.get_coverage() == thr_value
         assert cov_threshold.get_label() == 'zero coverage'
         assert cov_threshold.test_coverage(thr_value) == True
         assert cov_threshold.test_coverage(thr_value + 1) == False
     # end def test_valid_coverage
-# end class TestCoverageTheshold
+# end class TestCoverageThreshold

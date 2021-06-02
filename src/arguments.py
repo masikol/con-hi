@@ -8,7 +8,7 @@ import getopt
 from typing import List, Sequence, Iterable
 
 from src.platform import platf_depend_exit
-from src.coverage_threshold import CoverageTheshold
+from src.coverage_threshold import CoverageThreshold
 
 
 class HighlighterParams:
@@ -23,8 +23,7 @@ class HighlighterParams:
         suppress_zero_cov_output: bool,
         topology: str,
         organism: str,
-        outfile_prefix: str
-    ) -> None:
+        outfile_prefix: str) -> None:
 
         self.target_fasta_fpath: str = target_fasta_fpath
         self.bam_fpath: str = bam_fpath
@@ -45,7 +44,7 @@ class HighlighterParams:
         # Function sets coverage thresholds for the instance.
         # :param coverage_thresholds: collection of coverage thresholds;
 
-        self.coverage_thresholds: Sequence[CoverageTheshold]
+        self.coverage_thresholds: Sequence[CoverageThreshold]
 
         # Filter out zero if zero-coverage output is supressed
         if self.suppress_zero_cov_output:
@@ -54,7 +53,7 @@ class HighlighterParams:
 
         # Set the thresholds
         self.coverage_thresholds = tuple(
-            (CoverageTheshold(cov) for cov in coverage_thresholds)
+            (CoverageThreshold(cov) for cov in coverage_thresholds)
         )
     # end def set_coverage_thresholds
 

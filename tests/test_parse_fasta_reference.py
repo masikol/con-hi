@@ -147,8 +147,7 @@ class TestParseFastaReference:
         self,
         plain_fasta: str,
         first_test_seq_len: int,
-        second_test_seq_len: int
-        ) -> None:
+        second_test_seq_len: int) -> None:
 
         # Function tests how `parse_fasta_reference` parses plain text fasta file
         fasta_records: Sequence[SeqRecord] = pfr.parse_fasta_reference(plain_fasta)
@@ -169,8 +168,7 @@ class TestParseFastaReference:
         self,
         gzipped_fasta: str,
         first_test_seq_len: int,
-        second_test_seq_len: int
-        ) -> None:
+        second_test_seq_len: int) -> None:
 
         # Function tests how `parse_fasta_reference` parses gzipped fasta file
         fasta_records: Sequence[SeqRecord] = pfr.parse_fasta_reference(gzipped_fasta)
