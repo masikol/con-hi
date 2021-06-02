@@ -5,6 +5,7 @@ import os
 from typing import Sequence
 
 import pytest
+from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
 import src.parse_fasta_reference as pfr
@@ -37,20 +38,20 @@ def empty_seq_list() -> Sequence[SeqRecord]:
 @pytest.fixture
 def unambig_dna_seq_records() -> Sequence[SeqRecord]:
     return [
-        SeqRecord('ATTAAAGGTTTATACCTTCCCAGGTA'),
-        SeqRecord('CTTGTAGATCTGTTCTCTAAA'),
-        SeqRecord('CATTGTTGAGATCACATAATAATTGATCGAGTTAATCTGGAGGATCTGTTTACTTTGGTC'),
+        SeqRecord(Seq('ATTAAAGGTTTATACCTTCCCAGGTA')),
+        SeqRecord(Seq('CTTGTAGATCTGTTCTCTAAA')),
+        SeqRecord(Seq('CATTGTTGAGATCACATAATAATTGATCGAGTTAATCTGGAGGATCTGTTTACTTTGGTC')),
     ]
 # end def unambig_dna_seq_records
 
 @pytest.fixture
 def ambig_dna_seq_records() -> Sequence[SeqRecord]:
     return [
-        SeqRecord('ATTAAAGRYSWTACCTTCCCAGGTA'),
+        SeqRecord(Seq('ATTAAAGRYSWTACCTTCCCAGGTA')),
         #                 ~~~~
-        SeqRecord('CTTGKMBDATCTGTTCTCTAAA'),
+        SeqRecord(Seq('CTTGKMBDATCTGTTCTCTAAA')),
         #              ~~~~
-        SeqRecord('CATTGTTGAGATCACATAATAATTGATCGAGTTBDHVNGGAGGATCTGTTTACTTTGGTC'),
+        SeqRecord(Seq('CATTGTTGAGATCACATAATAATTGATCGAGTTBDHVNGGAGGATCTGTTTACTTTGGTC')),
         #                                           ~~~~~
     ]
 # end def ambig_dna_seq_records
@@ -58,11 +59,11 @@ def ambig_dna_seq_records() -> Sequence[SeqRecord]:
 @pytest.fixture
 def invalid_dna_seq_records() -> Sequence[SeqRecord]:
     return [
-        SeqRecord('ATTAAAGRYSWTACC45674CAGGTA'),
+        SeqRecord(Seq('ATTAAAGRYSWTACC45674CAGGTA')),
         #                         ~~~~~
-        SeqRecord('CTTGKMBDAT546456TCTCTAAA'),
+        SeqRecord(Seq('CTTGKMBDAT546456TCTCTAAA')),
         #                    ~~~~~~
-        SeqRecord('CATTGTTGAGATCACAT888GAGTTBDHVNGXXGGATCTGTTTACTTTGGTC'),
+        SeqRecord(Seq('CATTGTTGAGATCACAT888GAGTTBDHVNGXXGGATCTGTTTACTTTGGTC')),
         #                           ~~~           ~~
     ]
 # end def invalid_dna_seq_records
