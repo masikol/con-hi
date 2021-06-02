@@ -1,11 +1,17 @@
 # -*- encoding: utf-8 -*-
 
 import os
+from typing import Sequence
 
 import pytest
+from Bio.SeqRecord import SeqRecord
 
 import src.parse_fasta_reference as pfr
 
+
+# == Fixtures for testing fucntions `src.parse_fasta_reference._is_plain_text`
+#    and `src.parse_fasta_reference._is_gzipped`
+#    and `src.parse_fasta_reference.parse_fasta_reference` ==
 
 @pytest.fixture
 def plain_fasta() -> str:
@@ -18,15 +24,56 @@ def gzipped_fasta() -> str:
 # end def gzipped_fasta
 
 
+# == Fixtures for testing fucntion `src.parse_fasta_reference._validate_fasta_records` ==
+
+@pytest.fixture
+def empty_seq_list() -> Sequence[SeqRecord]:
+    return []
+# end def empty_seq_list
+
+@pytest.fixture
+def unambig_dna_seq_records() -> Sequence[SeqRecord]:
+    return [
+        SeqRecord('ATTAAAGGTTTATACCTTCCCAGGTA'),
+        SeqRecord('CTTGTAGATCTGTTCTCTAAA'),
+        SeqRecord('CATTGTTGAGATCACATAATAATTGATCGAGTTAATCTGGAGGATCTGTTTACTTTGGTC'),
+    ]
+# end def unambig_dna_seq_records
+
+@pytest.fixture
+def ambig_dna_seq_records() -> Sequence[SeqRecord]:
+    return [
+        SeqRecord('ATTAAAGRYSWTACCTTCCCAGGTA'),
+        #                 ~~~~
+        SeqRecord('CTTGKMBDATCTGTTCTCTAAA'),
+        #              ~~~~
+        SeqRecord('CATTGTTGAGATCACATAATAATTGATCGAGTTBDHVNGGAGGATCTGTTTACTTTGGTC'),
+        #                                           ~~~~~
+    ]
+# end def ambig_dna_seq_records
+
+@pytest.fixture
+def invalid_dna_seq_records() -> Sequence[SeqRecord]:
+    return [
+        SeqRecord('ATTAAAGRYSWTACC45674CAGGTA'),
+        #                         ~~~~~
+        SeqRecord('CTTGKMBDAT546456TCTCTAAA'),
+        #                    ~~~~~~
+        SeqRecord('CATTGTTGAGATCACAT888GAGTTBDHVNGXXGGATCTGTTTACTTTGGTC'),
+        #                           ~~~           ~~
+    ]
+# end def invalid_dna_seq_records
+
+
 class TestIsPlainText:
     # Class for testing function `src.parse_fasta_reference._is_plain_text`
 
-    def test_true_plain_fasta(self, plain_fasta):
+    def test_true_plain_fasta(self, plain_fasta) -> None:
         # Function testes how `_is_plain_text` recognizes plain files
         assert pfr._is_plain_text(plain_fasta) == True
     # end def test_true_plain_fasta
 
-    def test_gzipped_fasta(self, gzipped_fasta):
+    def test_gzipped_fasta(self, gzipped_fasta) -> None:
         # Function testes how `_is_plain_text` recognizes gzipped files
         with pytest.raises(pfr._InvalidFileError):
             pfr._is_plain_text(gzipped_fasta)
@@ -34,16 +81,94 @@ class TestIsPlainText:
     # end def test_gzipped_fasta
 # end class TestIsPlainText
 
+
 class TestIsGzipped:
     # Class for testing function `src.parse_fasta_reference._is_gzipped`
 
-    def test_gzipped_fasta(self, gzipped_fasta):
+    def test_gzipped_fasta(self, gzipped_fasta) -> None:
         # Function testes how `_is_gzipped` recognizes gzipped files
         assert pfr._is_gzipped(gzipped_fasta) == True
     # end def test_gzipped_fasta
 
-    def test_true_plain_fasta(self, plain_fasta):
+    def test_true_plain_fasta(self, plain_fasta) -> None:
         # Function testes how `_is_gzipped` recognizes plain files
         assert pfr._is_gzipped(plain_fasta) == False
     # end def test_true_plain_fasta
 # end class TestIsPlainText
+
+
+class TestValidateFastaRecords:
+    # Class for testing function `src.parse_fasta_reference._validate_fasta_records`
+
+    def test_empty_seq_set(self, empty_seq_list) -> None:
+        # Function tests how `_validate_fasta_records` handles empty sequence set
+
+        # Should raise a ValueError
+        with pytest.raises(ValueError):
+            pfr._validate_fasta_records(empty_seq_list)
+        # end with
+    # end def test_empty_seq_set
+
+    def test_unambig_seq_records(self, unambig_dna_seq_records) -> None:
+        # Function tests how `_validate_fasta_records` handles set
+        #    of unambiguous DNA records
+
+        # Should not raise any exception
+        assert pfr._validate_fasta_records(unambig_dna_seq_records) == None
+    # end def test_unambig_seq_records
+
+    def test_ambig_seq_records(self, ambig_dna_seq_records) -> None:
+        # Function tests how `_validate_fasta_records` handles set
+        #    of ambiguous DNA records
+
+        # Should not raise any exception
+        assert pfr._validate_fasta_records(ambig_dna_seq_records) == None
+    # end def test_ambig_seq_records
+
+    def test_invalid_dna_records(self, invalid_dna_seq_records) -> None:
+        # Function tests how `_validate_fasta_records` handles set
+        #    of invalid DNA records
+
+        # Should raise a ValueError
+        with pytest.raises(ValueError):
+            pfr._validate_fasta_records(invalid_dna_seq_records)
+        # end with
+    # end def test_invalid_dna_records
+# end class TestValidateFastaRecords
+
+
+class TestParseFastaReference:
+    # Class for testing function `src.parse_fasta_reference.parse_fasta_reference`
+
+    def test_parse_plain_text_fasta(self, plain_fasta) -> None:
+        # Function tests how `parse_fasta_reference` parses plain text fasta file
+        fasta_records: Sequence[SeqRecord] = pfr.parse_fasta_reference(plain_fasta)
+
+        expected_num_seqs: int = 2
+        assert len(fasta_records) == expected_num_seqs
+
+        expected_seq_len: int
+
+        expected_seq_len = 70
+        assert len(fasta_records[0]) == expected_seq_len
+
+        expected_seq_len = 70
+        assert len(fasta_records[1]) == expected_seq_len
+    # end def test_parse_plain_text_fasta
+
+    def test_parse_gzipped_fasta(self, gzipped_fasta) -> None:
+        # Function tests how `parse_fasta_reference` parses gzipped fasta file
+        fasta_records: Sequence[SeqRecord] = pfr.parse_fasta_reference(gzipped_fasta)
+
+        expected_num_seqs: int = 2
+        assert len(fasta_records) == expected_num_seqs
+
+        expected_seq_len: int
+
+        expected_seq_len = 70
+        assert len(fasta_records[0]) == expected_seq_len
+
+        expected_seq_len = 70
+        assert len(fasta_records[1]) == expected_seq_len
+    # end def test_parse_gzipped_fasta
+# end class TestParseFastaReference

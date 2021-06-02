@@ -17,10 +17,10 @@ def parse_fasta_reference(ref_fasta_fpath: str) -> Sequence[SeqRecord]:
     # Choose open function for the file
     open_func: Callable[[str], TextIO]
 
-    if _is_plain_text(ref_fasta_fpath):
-        open_func = functools.partial(open, mode='rt')
-    elif _is_gzipped(ref_fasta_fpath):
+    if _is_gzipped(ref_fasta_fpath):
         open_func = functools.partial(gzip.open, mode='rt')
+    elif _is_plain_text(ref_fasta_fpath):
+        open_func = functools.partial(open, mode='rt')
     else:
         raise _InvalidFileError(f'Format of file `{ref_fasta_fpath}` is not supported.\
  Only plain fasta or gzipped fasta are supported.\
