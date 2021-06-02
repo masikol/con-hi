@@ -38,7 +38,6 @@ class HighlighterParams:
         self.organism: str = organism
 
         self.outfile_prefix = outfile_prefix
-
     # end def __init__
 
 

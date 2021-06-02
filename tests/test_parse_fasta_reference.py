@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+# Version 1.0.a
 
 import os
 from typing import Sequence
@@ -7,6 +8,8 @@ import pytest
 from Bio.SeqRecord import SeqRecord
 
 import src.parse_fasta_reference as pfr
+
+from tests.fixtures import first_test_seq_len, second_test_seq_len
 
 
 # == Fixtures for testing fucntions `src.parse_fasta_reference._is_plain_text`
@@ -94,7 +97,7 @@ class TestIsGzipped:
         # Function testes how `_is_gzipped` recognizes plain files
         assert pfr._is_gzipped(plain_fasta) == False
     # end def test_true_plain_fasta
-# end class TestIsPlainText
+# end class TestIsGzipped
 
 
 class TestValidateFastaRecords:
@@ -140,7 +143,13 @@ class TestValidateFastaRecords:
 class TestParseFastaReference:
     # Class for testing function `src.parse_fasta_reference.parse_fasta_reference`
 
-    def test_parse_plain_text_fasta(self, plain_fasta) -> None:
+    def test_parse_plain_text_fasta(
+        self,
+        plain_fasta: str,
+        first_test_seq_len: int,
+        second_test_seq_len: int
+        ) -> None:
+
         # Function tests how `parse_fasta_reference` parses plain text fasta file
         fasta_records: Sequence[SeqRecord] = pfr.parse_fasta_reference(plain_fasta)
 
@@ -149,14 +158,20 @@ class TestParseFastaReference:
 
         expected_seq_len: int
 
-        expected_seq_len = 70
+        expected_seq_len = first_test_seq_len
         assert len(fasta_records[0]) == expected_seq_len
 
-        expected_seq_len = 70
+        expected_seq_len = second_test_seq_len
         assert len(fasta_records[1]) == expected_seq_len
     # end def test_parse_plain_text_fasta
 
-    def test_parse_gzipped_fasta(self, gzipped_fasta) -> None:
+    def test_parse_gzipped_fasta(
+        self,
+        gzipped_fasta: str,
+        first_test_seq_len: int,
+        second_test_seq_len: int
+        ) -> None:
+
         # Function tests how `parse_fasta_reference` parses gzipped fasta file
         fasta_records: Sequence[SeqRecord] = pfr.parse_fasta_reference(gzipped_fasta)
 
@@ -165,10 +180,10 @@ class TestParseFastaReference:
 
         expected_seq_len: int
 
-        expected_seq_len = 70
+        expected_seq_len = first_test_seq_len
         assert len(fasta_records[0]) == expected_seq_len
 
-        expected_seq_len = 70
+        expected_seq_len = second_test_seq_len
         assert len(fasta_records[1]) == expected_seq_len
     # end def test_parse_gzipped_fasta
 # end class TestParseFastaReference

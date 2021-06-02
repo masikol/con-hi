@@ -29,8 +29,8 @@ def parse_fasta_reference(ref_fasta_fpath: str) -> Sequence[SeqRecord]:
 
     # Parse fasta data
     fasta_records: Sequence[SeqRecord]
-    with open_func(ref_fasta_fpath) as infpath:
-        fasta_records = tuple(SeqIO.parse(infpath, 'fasta'))
+    with open_func(ref_fasta_fpath) as infile:
+        fasta_records = tuple(SeqIO.parse(infile, 'fasta'))
     # end with
 
     # Validate parsed fasta data

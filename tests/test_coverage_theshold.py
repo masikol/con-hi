@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+# Version 1.0.a
 
 import pytest
 
@@ -36,5 +37,4 @@ class TestCoverageTheshold:
         assert cov_threshold.test_coverage(thr_value) == True
         assert cov_threshold.test_coverage(thr_value + 1) == False
     # end def test_valid_coverage
-
 # end class TestCoverageTheshold

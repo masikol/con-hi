@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+# Version 1.0.a
 
 from typing import Sequence
 

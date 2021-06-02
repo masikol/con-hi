@@ -75,7 +75,7 @@ def _conf_samtools_depth_cmd(ref_fasta_fpath: str, bam_fpath: str, coverage_fpat
     # :param ref_fasta_fpath: path to input fasta file;
     # :param bam_fpath: path to bam file;
     # :param coverage_fpath: path to coverage file;
-    return 'samtools depth -a -J --reference {} -o {} {}'\
+    return 'samtools depth -aa -J --reference {} -o {} {}'\
         .format(ref_fasta_fpath, coverage_fpath, bam_fpath)
 # end def _conf_samtools_depth_cmd
 

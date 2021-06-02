@@ -61,7 +61,7 @@ def main(version: str, last_update_date: str) -> None:
         # Detect all necessary coverage features
         for cov_threshold in params.coverage_thresholds:
 
-            print(f'Screening the sequence for segments with {cov_threshold.get_label()}...', end=' ')
+            print(f'Screening the sequence for regions with {cov_threshold.get_label()}...', end=' ')
             sys.stdout.flush()
 
             # Get coverage features
