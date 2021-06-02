@@ -19,7 +19,7 @@ class HighlighterParams:
         target_fasta_fpath: str,
         bam_fpath: str,
         outdir_path: str,
-        coverage_thresholds: Sequence[int],
+        coverage_thresholds: Sequence[CoverageThreshold],
         suppress_zero_cov_output: bool,
         topology: str,
         organism: str,
