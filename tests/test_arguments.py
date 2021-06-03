@@ -2,7 +2,8 @@
 # Version 1.0.a
 
 import os
-from typing import List
+import sys
+from typing import List, Sequence
 
 import pytest
 
@@ -26,6 +27,8 @@ def some_params() -> args.HighlighterParams:
     )
 # end def some_params
 
+
+# === Fixtures for function `src.arguments._parse_options` ===
 
 @pytest.fixture
 def opts_all_is_ok_short_options(test_fasta_fpath, test_bam_fpath, test_outdir_path) -> List[List[str]]:
@@ -51,6 +54,146 @@ def opts_all_is_ok_long_options(test_fasta_fpath, test_bam_fpath, test_outdir_pa
         ['--prefix', 'some_prefix'],
     ]
 # end def opts_all_is_ok_long_options
+
+@pytest.fixture
+def opts_invalid_fasta(test_fasta_fpath, test_bam_fpath) -> List[List[str]]:
+    return [
+        ['-f', 'TRASH' + test_fasta_fpath], # <- non-extant file
+        ['-b', test_bam_fpath],
+        ['-c', '10,20'],
+    ]
+# end def opts_invalid_fasta
+
+@pytest.fixture
+def opts_fasta_not_fasta(test_bam_fpath) -> List[List[str]]:
+    return [
+        ['-f', test_bam_fpath], # <- path to bam, not fasta
+        ['-b', test_bam_fpath],
+        ['-c', '10,20'],
+    ]
+# end def opts_fasta_not_fasta
+
+@pytest.fixture
+def opts_invalid_bam(test_fasta_fpath, test_bam_fpath) -> List[List[str]]:
+    return [
+        ['-f', test_fasta_fpath],
+        ['-b', 'TRASH' + test_bam_fpath], # <- non-extant file
+        ['-c', '10,20'],
+    ]
+# end def opts_invalid_bam
+
+@pytest.fixture
+def opts_bam_not_bam(test_fasta_fpath) -> List[List[str]]:
+    return [
+        ['-f', test_fasta_fpath], # <- path to fasta, not bam
+        ['-b', test_fasta_fpath],
+        ['-c', '10,20'],
+    ]
+# end def opts_bam_not_bam
+
+@pytest.fixture
+def opts_NAN_threshold(test_fasta_fpath, test_bam_fpath) -> List[List[str]]:
+    return [
+        ['-f', test_fasta_fpath],
+        ['-b', test_bam_fpath],
+        ['-c', '10,2X'], # <- non-numeric threshold
+    ]
+# end def opts_NAN_threshold
+
+@pytest.fixture
+def opts_zero_threshold(test_fasta_fpath, test_bam_fpath) -> List[List[str]]:
+    return [
+        ['-f', test_fasta_fpath],
+        ['-b', test_bam_fpath],
+        ['-c', '0,20'], # <- zero threshold
+    ]
+# end def opts_zero_threshold
+
+@pytest.fixture
+def opts_negative_threshold(test_fasta_fpath, test_bam_fpath) -> List[List[str]]:
+    return [
+        ['-f', test_fasta_fpath],
+        ['-b', test_bam_fpath],
+        ['-c', '-1,20'], # <- negative threshold
+    ]
+# end def opts_negative_threshold
+
+@pytest.fixture
+def opts_keep_zero_thresahold(test_fasta_fpath, test_bam_fpath) -> List[List[str]]:
+    return [
+        ['-f', test_fasta_fpath],
+        ['-b', test_bam_fpath],
+        ['-c', '10,20'],
+    ]
+# end def opts_keep_zero_thresahold
+
+@pytest.fixture
+def opts_suppress_zero_thresahold(test_fasta_fpath, test_bam_fpath) -> List[List[str]]:
+    return [
+        ['-f', test_fasta_fpath],
+        ['-b', test_bam_fpath],
+        ['-c', '10,20'],
+        ['-n', '']
+    ]
+# end def opts_suppress_zero_thresahold
+
+
+# === Fixtures for function `src.arguments.parse_arguments` ===
+
+@pytest.fixture
+def cmd_all_ok_short_options(test_fasta_fpath, test_bam_fpath, test_outdir_path) -> Sequence[str]:
+    return [
+        'consensus-highlighter',
+        '-f', test_fasta_fpath,
+        '-b', test_bam_fpath,
+        '-o', test_outdir_path,
+        '-c', '10,20',
+        '-n',
+    ]
+# end def cmd_all_ok_short_options
+
+@pytest.fixture
+def cmd_all_ok_long_options(test_fasta_fpath, test_bam_fpath, test_outdir_path) -> Sequence[str]:
+    return [
+        'consensus-highlighter',
+        '--target-fasta', test_fasta_fpath,
+        '--bam', test_bam_fpath,
+        '--outdir', test_outdir_path,
+        '--coverage-thresholds', '10,20',
+        '--no-zero-output',
+        '--circular',
+        '--organism', 'Czort lysy',
+        '--prefix', 'some_prefix',
+    ]
+# end def cmd_all_ok_long_options
+
+@pytest.fixture
+def cmd_positional_args(test_fasta_fpath, test_bam_fpath) -> Sequence[str]:
+    return [
+        'consensus-highlighter',
+        '-f', test_fasta_fpath,
+        '-b', test_bam_fpath,
+        '-c', '10,', '20',
+        #          ~~~
+        #          imitates space between threshold values
+    ]
+# end def cmd_positional_args
+
+@pytest.fixture
+def cmd_fasta_missing(test_bam_fpath) -> Sequence[str]:
+    return [
+        'consensus-highlighter',
+        '-b', test_bam_fpath,
+    ]
+# end def cmd_fasta_missing
+
+@pytest.fixture
+def cmd_bam_missing(test_fasta_fpath) -> Sequence[str]:
+    return [
+        'consensus-highlighter',
+        '-f', test_fasta_fpath,
+    ]
+# end def cmd_bam_missing
 
 
 def test_is_fasta(test_fasta_fpath, test_bam_fpath, test_coverage_fpath) -> None:
@@ -90,9 +233,7 @@ def test_add_zero_theshold(some_params) -> None:
 class TestParseOptions:
     # Class for testing function `src.arguments._parse_options`
 
-    def test_opts_all_is_ok_short_options(
-        self,
-        opts_all_is_ok_short_options) -> None:
+    def test_opts_all_is_ok_short_options(self, opts_all_is_ok_short_options) -> None:
         # Function tests how `_parse_options` parses correct short options
 
         params: args.HighlighterParams = args._parse_options(opts_all_is_ok_short_options)
@@ -105,19 +246,18 @@ class TestParseOptions:
         assert params.organism == '.'
         assert params.outfile_prefix == ''
 
-        expected_threshold_repr: str = ','.join(
+        obtained_threshold_repr: str = ','.join(
             map(
                 lambda covthr: str(covthr.get_coverage()),
                 params.coverage_thresholds
             )
         )
-        assert expected_threshold_repr == opts_all_is_ok_short_options[3][1]
+        expected_threshold_repr: str = opts_all_is_ok_short_options[3][1]
+        assert obtained_threshold_repr == expected_threshold_repr
     # end def test_opts_all_is_ok_short_options
 
 
-    def test_opts_all_is_ok_long_options(
-        self,
-        opts_all_is_ok_long_options) -> None:
+    def test_opts_all_is_ok_long_options(self, opts_all_is_ok_long_options) -> None:
         # Function tests how `_parse_options` parses correct long options
 
         params: args.HighlighterParams = args._parse_options(opts_all_is_ok_long_options)
@@ -130,12 +270,231 @@ class TestParseOptions:
         assert params.organism == opts_all_is_ok_long_options[6][1]
         assert params.outfile_prefix == opts_all_is_ok_long_options[7][1]
 
-        expected_threshold_repr: str = ','.join(
+        obtained_threshold_repr: str = ','.join(
             map(
                 lambda covthr: str(covthr.get_coverage()),
                 params.coverage_thresholds
             )
         )
-        assert expected_threshold_repr == opts_all_is_ok_long_options[3][1]
+        expected_threshold_repr: str = opts_all_is_ok_long_options[3][1]
+        assert obtained_threshold_repr == expected_threshold_repr
     # end def opts_all_is_ok_long_options
+
+    def test_opts_invalid_fasta(self, opts_invalid_fasta) -> None:
+        # Function tests how `_parse_options` parses options
+        #   where target fasta file does not exist
+
+        with pytest.raises(SystemExit):
+            params: args.HighlighterParams = args._parse_options(opts_invalid_fasta)
+        # end with
+    # end def test_opts_all_is_ok_short_options
+
+    def test_opts_fasta_not_fasta(self, opts_fasta_not_fasta) -> None:
+        # Function tests how `_parse_options` parses options
+        #   where non-fasta file is specified as target fasta file
+
+        with pytest.raises(SystemExit):
+            params: args.HighlighterParams = args._parse_options(opts_fasta_not_fasta)
+        # end with
+    # end def test_opts_all_is_ok_short_options
+
+    def test_opts_invalid_bam(self, opts_invalid_bam) -> None:
+        # Function tests how `_parse_options` parses options
+        #   where bam file does not exist
+
+        with pytest.raises(SystemExit):
+            params: args.HighlighterParams = args._parse_options(opts_invalid_bam)
+        # end with
+    # end def test_opts_invalid_bam
+
+    def test_opts_bam_not_bam(self, opts_bam_not_bam) -> None:
+        # Function tests how `_parse_options` parses options
+        #   where non-bam file is specified as bam file
+
+        with pytest.raises(SystemExit):
+            params: args.HighlighterParams = args._parse_options(opts_bam_not_bam)
+        # end with
+    # end def test_opts_all_is_ok_short_options
+
+    def test_opts_NAN_threshold(self, opts_NAN_threshold) -> None:
+        # Function tests how `_parse_options` parses options
+        #   where non-numeric threshold is specified
+
+        with pytest.raises(SystemExit):
+            params: args.HighlighterParams = args._parse_options(opts_NAN_threshold)
+        # end with
+    # end def test_opts_NAN_threshold
+
+    def test_opts_zero_threshold(self, opts_zero_threshold) -> None:
+        # Function tests how `_parse_options` parses options
+        #   where zero threshold is specified
+
+        with pytest.raises(SystemExit):
+            params: args.HighlighterParams = args._parse_options(opts_zero_threshold)
+        # end with
+    # end def test_opts_zero_threshold
+
+    def test_opts_negative_threshold(self, opts_negative_threshold) -> None:
+        # Function tests how `_parse_options` parses options
+        #   where negative threshold is specified
+
+        with pytest.raises(SystemExit):
+            params: args.HighlighterParams = args._parse_options(opts_negative_threshold)
+        # end with
+    # end def test_opts_negative_threshold
+
+    def test_opts_keep_zero_thresahold(self, opts_keep_zero_thresahold) -> None:
+        # Function tests how `_parse_options` adds zero threshold
+
+        params: args.HighlighterParams = args._parse_options(opts_keep_zero_thresahold)
+
+        assert params.suppress_zero_cov_output == False
+
+        zero_coverage: int = 0
+        # Zero threshold should be first
+        first_coverage_value: int = params.coverage_thresholds[0].get_coverage()
+
+        assert zero_coverage == first_coverage_value
+    # end def test_opts_keep_zero_thresahold
+
+    def test_opts_suppress_zero_thresahold(self, opts_suppress_zero_thresahold) -> None:
+        # Function tests how `_parse_options` suppresses zero threshold
+
+        params: args.HighlighterParams = args._parse_options(opts_suppress_zero_thresahold)
+
+        assert params.suppress_zero_cov_output == True
+
+        zero_coverage: int = 0
+        coverage_values: List[int] = list(
+            map(
+                lambda x: x.get_coverage(),
+                params.coverage_thresholds
+            )
+        )
+
+        assert not zero_coverage in coverage_values
+    # end def test_opts_keep_zero_thresahold
 # end class TestParseOptions
+
+
+class TestParseArguments:
+    # Class for testing function `src.arguments.parse_arguments`
+
+    def test_cmd_all_ok_short_options(self, cmd_all_ok_short_options) -> None:
+        # Function tests how `parse_arguments` parses correct short options
+
+        # Backup argv
+        buff_argv: List[str] = sys.argv
+        # Set test argv
+        sys.argv = cmd_all_ok_short_options
+
+        # Parse arguments
+        params: args.HighlighterParams = args.parse_arguments()
+
+        # Restore argv
+        argv = buff_argv
+
+        assert params.target_fasta_fpath == cmd_all_ok_short_options[2]
+        assert params.bam_fpath == cmd_all_ok_short_options[4]
+        assert params.outdir_path == cmd_all_ok_short_options[6]
+        assert params.suppress_zero_cov_output == True
+        assert params.topology == 'linear'
+        assert params.organism == '.'
+        assert params.outfile_prefix == ''
+
+        obtained_threshold_repr: str = ','.join(
+            map(
+                lambda covthr: str(covthr.get_coverage()),
+                params.coverage_thresholds
+            )
+        )
+        expected_threshold_repr: str = cmd_all_ok_short_options[8]
+        assert obtained_threshold_repr == expected_threshold_repr
+    # end def test_cmd_all_ok_short_options
+
+    def test_cmd_all_ok_long_options(self, cmd_all_ok_long_options) -> None:
+        # Function tests how `parse_arguments` parses correct long options
+
+        # Backup argv
+        buff_argv: List[str] = sys.argv
+        # Set test argv
+        sys.argv = cmd_all_ok_long_options
+
+        # Parse arguments
+        params: args.HighlighterParams = args.parse_arguments()
+
+        # Restore argv
+        argv = buff_argv
+
+        assert params.target_fasta_fpath == cmd_all_ok_long_options[2]
+        assert params.bam_fpath == cmd_all_ok_long_options[4]
+        assert params.outdir_path == cmd_all_ok_long_options[6]
+        assert params.suppress_zero_cov_output == True
+        assert params.topology == 'circular'
+        assert params.organism == cmd_all_ok_long_options[12]
+        assert params.outfile_prefix == cmd_all_ok_long_options[14]
+
+        obtained_threshold_repr: str = ','.join(
+            map(
+                lambda covthr: str(covthr.get_coverage()),
+                params.coverage_thresholds
+            )
+        )
+        expected_threshold_repr: str = cmd_all_ok_long_options[8]
+        assert obtained_threshold_repr == expected_threshold_repr
+    # end def test_cmd_all_ok_long_options
+
+    def test_cmd_positional_args(self, cmd_positional_args) -> None:
+        # Function tests how `parse_arguments` parses command line
+        #    with positional arguments
+
+        # Backup argv
+        buff_argv: List[str] = sys.argv
+        # Set test argv
+        sys.argv = cmd_positional_args
+
+        # Parse arguments
+        with pytest.raises(SystemExit):
+            params: args.HighlighterParams = args.parse_arguments()
+        # end with
+
+        # Restore argv
+        argv = buff_argv
+    # end def test_cmd_positional_args
+
+    def test_cmd_fasta_missing(self, cmd_fasta_missing) -> None:
+        # Function tests how `parse_arguments` parses command line
+        #    with positional arguments
+
+        # Backup argv
+        buff_argv: List[str] = sys.argv
+        # Set test argv
+        sys.argv = cmd_fasta_missing
+
+        # Parse arguments
+        with pytest.raises(SystemExit):
+            params: args.HighlighterParams = args.parse_arguments()
+        # end with
+
+        # Restore argv
+        argv = buff_argv
+    # end def test_cmd_fasta_missing
+
+    def test_cmd_bam_missing(self, cmd_bam_missing) -> None:
+        # Function tests how `parse_arguments` parses command line
+        #    with positional arguments
+
+        # Backup argv
+        buff_argv: List[str] = sys.argv
+        # Set test argv
+        sys.argv = cmd_bam_missing
+
+        # Parse arguments
+        with pytest.raises(SystemExit):
+            params: args.HighlighterParams = args.parse_arguments()
+        # end with
+
+        # Restore argv
+        argv = buff_argv
+    # end def test_cmd_bam_missing
+# end class TestParseArgumsents

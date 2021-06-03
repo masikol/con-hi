@@ -46,11 +46,6 @@ class HighlighterParams:
 
         self.coverage_thresholds: Sequence[CoverageThreshold]
 
-        # Filter out zero if zero-coverage output is supressed
-        if self.suppress_zero_cov_output:
-            coverage_thresholds = tuple(filter(lambda x: x != 0, coverage_thresholds))
-        # end if
-
         # Set the thresholds
         self.coverage_thresholds = tuple(
             (CoverageThreshold(cov) for cov in coverage_thresholds)
