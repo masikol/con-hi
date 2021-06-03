@@ -1,5 +1,7 @@
 # consensus-highlighter
 
+Latest version is `1.0.a` (2021-06-03 edition).
+
 ## Description
 
 This program annotates low-coverage regions of sequences in fasta format.

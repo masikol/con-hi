@@ -5,7 +5,7 @@ import sys
 
 __version__: str  = '1.0.a'
 # Year, month, day
-__last_update_date__: str = '2021-XX-XX'
+__last_update_date__: str = '2021-06-03'
 __min_python_version__: float = 3.6
 __author__ = 'Maxim Sikolenko'
 
