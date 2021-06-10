@@ -3,7 +3,7 @@
 
 import sys
 
-__version__: str  = '1.0.b'
+__version__: str  = '1.0.c'
 # Year, month, day
 __last_update_date__: str = '2021-06-10'
 __min_python_version__: float = 3.6

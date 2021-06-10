@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-# Version 1.0.a
+# Version 1.0.c
 
 import re
 import gzip
@@ -30,8 +30,16 @@ def parse_fasta_reference(ref_fasta_fpath: str) -> Sequence[SeqRecord]:
     # Parse fasta data
     fasta_records: Sequence[SeqRecord]
     with open_func(ref_fasta_fpath) as infile:
-        fasta_records = tuple(SeqIO.parse(infile, 'fasta'))
+        fasta_records = tuple(
+                SeqIO.parse(infile, 'fasta')
+        )
     # end with
+
+    # Make all sequences uppercase
+    record: SeqRecord
+    for record in fasta_records:
+        record.seq = record.seq.upper()
+    # end for
 
     # Validate parsed fasta data
     _validate_fasta_records(fasta_records)
