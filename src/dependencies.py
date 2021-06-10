@@ -85,9 +85,11 @@ def _check_samtools() -> Tuple[str, str]:
 
     path_dir: str
     for path_dir in os.environ['PATH'].split(os.pathsep):
-        if prog_name in os.listdir(path_dir):
-            prog_found = True
-            break
+        if os.path.isdir(path_dir):
+            if prog_name in os.listdir(path_dir):
+                prog_found = True
+                break
+            # end if
         # end if
     # end for
 
