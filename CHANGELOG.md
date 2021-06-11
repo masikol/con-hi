@@ -1,5 +1,14 @@
 # consensus-highlighter changelog
 
+## 2021-06-11 edition
+
+Version `1.0.d`
+
+Added warning messages for following cases:
+
+1. If the program cannot find ids of sequence(s) from `-f` fasta file in the coverage file.
+2. If length of sequence in `-f` fasta file is not equal to number of coverage positions reported by `samtools depth` and stored in the coverage file.
+
 ## 2021-06-10 edition
 
 Version `1.0.b`

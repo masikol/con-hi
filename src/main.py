@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-# Version 1.0.a
+# Version 1.0.d
 
 import os
 import sys
@@ -26,6 +26,9 @@ def main(version: str, last_update_date: str) -> None:
 
     # This string will be used for annotation of result GenBank file
     base_feature_note: str = f'generated with consensus-highlighter v{version}'
+
+    # String for storing info about warnings
+    with_warnings: str = ''
 
     # Read fasta records from input file
     print('Importing fasta from `{}`...'.format(params.target_fasta_fpath), end=' ')
@@ -54,6 +57,28 @@ def main(version: str, last_update_date: str) -> None:
 
         # Obtain coverages for current sequence
         cov_array: CoverageArray = oc.get_coverage_for_reference(rec.id, cov_fpath)
+
+        # Check length of the coverage array
+        if len(cov_array) == 0:
+            print(f'!  Warning: no coverage information found for sequence `{rec.id}`.')
+            print(f"""!  Please, make sure that field `RNAME` (3-rd column) in your BAM file contains
+!    id of this sequence specified in fasta header (i.e. `{rec.id}`).""")
+            print('! Omitting this sequence.')
+            print('=' * 10)
+            with_warnings = ' with warnings'
+            continue
+        # end if
+
+        if len(cov_array) != len(rec.seq):
+            print(f"""!  Warning: length of sequence `{rec.id}` ({len(rec.seq)} bp)
+!    is not equal to number of coverage positions ({len(cov_array)}) reported by `samtools depth`
+!    and stored in coverage file `{cov_fpath}`.""")
+            print('!  Re-creating the bam file might be the solution of this issue.')
+            print('!  Omitting this sequence.')
+            print('=' * 10)
+            with_warnings = ' with warnings'
+            continue
+        # end if
 
         cov_threshold: CoverageThreshold
         coverage_features: MutableSequence[SeqFeature]
@@ -93,7 +118,7 @@ def main(version: str, last_update_date: str) -> None:
         print('=' * 10)
     # end for
 
-    print('Completed!')
+    print(f'Completed{with_warnings}!')
 # end def main
 
 
