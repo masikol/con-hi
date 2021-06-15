@@ -1,5 +1,11 @@
 # consensus-highlighter changelog
 
+## 2021-06-15 edition
+
+Version `1.1.a`
+
+`consensus-highlighter` no more piles up coverage features with identical locations. It means that you will not see both "zero coverage" and "coverage < 10" features starting at the same positions and ending at the samt positions.
+
 ## 2021-06-11 edition
 
 Version `1.0.d`

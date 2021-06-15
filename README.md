@@ -1,6 +1,6 @@
 # consensus-highlighter
 
-Latest version is `1.0.d` (2021-06-11 edition).
+Latest version is `1.1.a` (2021-06-15 edition).
 
 ## Description
 
