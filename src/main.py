@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-# Version 1.0.d
+# Version 1.1.a
 
 import os
 import sys
@@ -11,6 +11,7 @@ from Bio.SeqFeature import SeqFeature
 
 import src.output as out
 import src.obtain_coverage as oc
+import src.dedupl_features as ddf
 import src.highlight_features as hlft
 import src.parse_fasta_reference as pfr
 from src.platform import platf_depend_exit
@@ -95,6 +96,8 @@ def main(version: str, last_update_date: str) -> None:
                 cov_threshold,
                 base_feature_note
             )
+
+            coverage_features = ddf.dedupl_features(coverage_features, rec.features)
 
             # Append features to list
             rec.features.extend(coverage_features)

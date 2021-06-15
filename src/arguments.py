@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-# Version 1.0.a
+# Version 1.1.a
 
 import os
 import re
@@ -201,9 +201,9 @@ def _parse_options(opts: List[List[str]]) -> HighlighterParams:
                 platf_depend_exit(2)
             # end if
 
-            # Now cast coverages to int
+            # Now cast coverages to int and sort them in ascending order
             coverage_thresholds: Sequence[int] = tuple(
-                (int(cov_str) for cov_str in cov_strings)
+                (int(cov_str) for cov_str in sorted(cov_strings, key=int))
             )
 
             params.set_coverage_thresholds(coverage_thresholds)
