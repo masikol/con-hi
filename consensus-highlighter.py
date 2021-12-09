@@ -3,11 +3,11 @@
 
 import sys
 
-__version__: str  = '1.1.a'
+__version__: str  = '2.0.a'
 # Year, month, day
-__last_update_date__: str = '2021-06-15'
+__last_update_date__: str = '2021-12-09'
 __min_python_version__: float = 3.6
-__author__ = 'Maxim Sikolenko'
+# __author__ = 'Maxim Sikolenko'
 
 
 # === Check python interpreter version ===

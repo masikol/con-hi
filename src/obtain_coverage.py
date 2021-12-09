@@ -9,16 +9,13 @@ from src.platform import platf_depend_exit
 from src.coverage_array import CoverageArray
 
 
-def count_cov_for_all_refs(ref_fasta_fpath: str, bam_fpath: str, outdir: str) -> str:
+def count_cov_for_all_refs(ref_fasta_fpath: str, bam_fpath: str, coverage_fpath: str) -> str:
     # Function counts coverages for all sequences from input fasta file.
     # :param ref_fasta_fpath: path to input fasta file;
     # :param bam_fpath: path to bam file;
-    # :param outdir: path to output directory;
+    # :param coverage_fpath: path to coverage file;
     # Returns path to file that contains coverage:
     #   first column -- sequence id, second column -- position, third column -- coverage.
-
-    # Obtain path to coverage file
-    coverage_fpath: str = _conf_path_to_depth_file(outdir)
 
     # Obtain command to run
     samtools_depth_cmd: str = _conf_samtools_depth_cmd(ref_fasta_fpath, bam_fpath, coverage_fpath)
@@ -79,9 +76,3 @@ def _conf_samtools_depth_cmd(ref_fasta_fpath: str, bam_fpath: str, coverage_fpat
         .format(ref_fasta_fpath, coverage_fpath, bam_fpath)
 # end def _conf_samtools_depth_cmd
 
-
-def _conf_path_to_depth_file(outdir: str) -> str:
-    # Function configures path to coverage file.
-    # :param outdir: path to output directory;
-    return os.path.join(outdir, 'coverages.tsv')
-# end def _conf_path_to_depth_file

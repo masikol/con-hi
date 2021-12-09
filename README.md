@@ -8,13 +8,13 @@ This program annotates low-coverage regions of sequences in fasta format.
 
 ### Input
 
-1. Target sequence(s) in fasta format.
-2. Mapping in **sorted** BAM file.
+1. The target sequence(s) in fasta format.
+2. The mapping in **sorted** BAM file.
 3. Coverage threshold(s) for searching low-coverage regions.
 
 ### Output
 
-- GenBank file with annotated low-coverage regions.
+- A GenBank file with annotated low-coverage regions.
 
 ## Dependencies
 
@@ -49,9 +49,9 @@ You can specify custom coverage theshold(s) by passing comma-separated list of t
     File of target sequence(s) in fasta format.
 -b or --bam: *
     Sorted BAM file which contains mapping on target sequence(s).
--o or --outdir:
-    Output directory.
-    Deault value: 'consensus-highlighter-output'.
+-o or --outfile:
+    Output file.
+    Deault value: 'highlighted_sequence.gbk'.
 -c or --coverage-thresholds:
     Comma-separated list of coverage threshold(s).
     Default: 10.
@@ -64,9 +64,6 @@ You can specify custom coverage theshold(s) by passing comma-separated list of t
 --organism:
     Organism name. Affects only corresponding GenBank field.
     If it contains spaces, surround it with quotes (see Example 4).
-    Empty by default.
---prefix:
-    Prefix for output files.
     Empty by default.
 ```
 \* - mandatory option
@@ -100,9 +97,9 @@ Annotate low-coverage regions in sequence `my_sequence.fasta` according to mappi
 
 ### Example 4
 
-Annotate low-coverage regions in sequence `my_sequence.fasta` with default parameters according to mapping from file `my_mapping.sorted.bam`. Specify name of organism and prefix for output file(s). The sequence is circular:
+Annotate low-coverage regions in sequence `my_sequence.fasta` with default parameters according to mapping from file `my_mapping.sorted.bam`. Specify the name of the organism for output file. The sequence is circular:
 
 ```
 ./consensus-highlighter.py -f my_sequence.fasta -b my_mapping.sorted.bam \
-    --circular --organism "Serratia marcescens" --prefix my_coverage_annotation
+    --circular --organism "Serratia marcescens"
 ```

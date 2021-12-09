@@ -1,11 +1,27 @@
-# -*- encoding: utf-8 -*-
-# Version 1.0.a
+# Version 2.0.a
 
 import os
+import sys
 import datetime
 
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
+
+from src.platform import platf_depend_exit
+
+
+def create_or_emply_file(file_path):
+    try:
+        with open(file_path, 'wt') as _:
+            pass
+        # end with
+    except OSError as err:
+        print(f'\nError: cannot create file {file_path}')
+        print(str(err))
+        platf_depend_exit(1)
+    # end try
+# end def create_or_emply_file
+
 
 def write_genbank_output(seq_record: SeqRecord, topology: str, organism: str, outfpath: str) -> None:
     # Function writes annotated sequence to output GenBank file.
@@ -29,29 +45,10 @@ def write_genbank_output(seq_record: SeqRecord, topology: str, organism: str, ou
     )
 
     # Write output file
-    with open(outfpath, 'w') as outfile:
+    with open(outfpath, 'a') as outfile:
         SeqIO.write(seq_record, outfile, 'genbank')
     # end with
 # end def write_genbank_output
-
-
-def configure_outfile_path(outdir_path: str, prefix: str, seq_id: str) -> str:
-    # Function configures path to output GenBank file
-    # :param outdir_path: path to output directory;
-    # :param prefix: prefix for output files;
-    # :param seq_id: id of sequence;
-
-    outfpath: str
-
-    # The difference between these two branches is in the underscrore `_`
-    if prefix == '':
-        outfpath = os.path.join(outdir_path, f'{seq_id}.gbk')
-    else:
-        outfpath = os.path.join(outdir_path, f'{prefix}_{seq_id}.gbk')
-    # end if
-
-    return outfpath
-# end def configure_outfile_path
 
 
 def _get_date() -> str:
@@ -59,3 +56,13 @@ def _get_date() -> str:
     now: datetime.datetime = datetime.datetime.now()
     return now.strftime('%d-%b-%Y').upper()
 # end def _get_date
+
+
+def conf_path_to_depth_file(outfpath: str) -> str:
+    # Function configures path to coverage file.
+    # :param outdir: path to output directory;
+    return os.path.join(
+        os.path.dirname(outfpath),
+        'coverages.tsv'
+    )
+# end def conf_path_to_depth_file

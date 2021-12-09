@@ -10,7 +10,8 @@ import pytest
 import src.arguments as args
 from src.coverage_threshold import CoverageThreshold
 
-from tests.fixtures import test_fasta_fpath, test_bam_fpath, test_coverage_fpath, test_outdir_path
+from tests.fixtures import test_outdir_path
+from tests.fixtures import test_fasta_fpath, test_bam_fpath, test_coverage_fpath, test_outfpath
 
 
 @pytest.fixture
@@ -18,12 +19,11 @@ def some_params() -> args.HighlighterParams:
     return args.HighlighterParams(
         target_fasta_fpath=None,
         bam_fpath=None,
-        outdir_path=os.path.join(os.getcwd(), 'consensus-highlighter-output'),
+        outfpath=os.path.join(os.getcwd(), 'highlighted_sequence.gbk'),
         coverage_thresholds=(10, 15, 20),
         suppress_zero_cov_output=False,
         topology='linear',
-        organism='.',
-        outfile_prefix=''
+        organism='.'
     )
 # end def some_params
 
@@ -31,27 +31,26 @@ def some_params() -> args.HighlighterParams:
 # === Fixtures for function `src.arguments._parse_options` ===
 
 @pytest.fixture
-def opts_all_is_ok_short_options(test_fasta_fpath, test_bam_fpath, test_outdir_path) -> List[List[str]]:
+def opts_all_is_ok_short_options(test_fasta_fpath, test_bam_fpath, test_outfpath) -> List[List[str]]:
     return [
         ['-f', test_fasta_fpath],
         ['-b', test_bam_fpath],
-        ['-o', test_outdir_path],
+        ['-o', test_outfpath],
         ['-c', '10,20'],
         ['-n', ''],
     ]
 # end def opts_all_is_ok_short_options
 
 @pytest.fixture
-def opts_all_is_ok_long_options(test_fasta_fpath, test_bam_fpath, test_outdir_path) -> List[List[str]]:
+def opts_all_is_ok_long_options(test_fasta_fpath, test_bam_fpath, test_outfpath) -> List[List[str]]:
     return [
         ['--target-fasta', test_fasta_fpath],
         ['--bam', test_bam_fpath],
-        ['--outdir', test_outdir_path],
+        ['--outfile', test_outfpath],
         ['--coverage-thresholds', '10,20'],
         ['--no-zero-output', ''],
         ['--circular', ''],
-        ['--organism', 'Czort lysy'],
-        ['--prefix', 'some_prefix'],
+        ['--organism', 'Czort lysy']
     ]
 # end def opts_all_is_ok_long_options
 
@@ -141,29 +140,28 @@ def opts_suppress_zero_thresahold(test_fasta_fpath, test_bam_fpath) -> List[List
 # === Fixtures for function `src.arguments.parse_arguments` ===
 
 @pytest.fixture
-def cmd_all_ok_short_options(test_fasta_fpath, test_bam_fpath, test_outdir_path) -> Sequence[str]:
+def cmd_all_ok_short_options(test_fasta_fpath, test_bam_fpath, test_outfpath) -> Sequence[str]:
     return [
         'consensus-highlighter',
         '-f', test_fasta_fpath,
         '-b', test_bam_fpath,
-        '-o', test_outdir_path,
+        '-o', test_outfpath,
         '-c', '10,20',
         '-n',
     ]
 # end def cmd_all_ok_short_options
 
 @pytest.fixture
-def cmd_all_ok_long_options(test_fasta_fpath, test_bam_fpath, test_outdir_path) -> Sequence[str]:
+def cmd_all_ok_long_options(test_fasta_fpath, test_bam_fpath, test_outfpath) -> Sequence[str]:
     return [
         'consensus-highlighter',
         '--target-fasta', test_fasta_fpath,
         '--bam', test_bam_fpath,
-        '--outdir', test_outdir_path,
+        '--outfile', test_outfpath,
         '--coverage-thresholds', '10,20',
         '--no-zero-output',
         '--circular',
-        '--organism', 'Czort lysy',
-        '--prefix', 'some_prefix',
+        '--organism', 'Czort lysy'
     ]
 # end def cmd_all_ok_long_options
 
@@ -209,7 +207,7 @@ def test_is_bam(test_fasta_fpath, test_bam_fpath, test_coverage_fpath) -> None:
     assert args._is_bam(test_bam_fpath)
     assert not args._is_bam(test_fasta_fpath)
     assert not args._is_bam(test_coverage_fpath)
-# end def test_is_fasta
+# end def test_is_bam
 
 
 def test_coverage_not_parsable() -> None:
@@ -240,11 +238,10 @@ class TestParseOptions:
 
         assert params.target_fasta_fpath == opts_all_is_ok_short_options[0][1]
         assert params.bam_fpath == opts_all_is_ok_short_options[1][1]
-        assert params.outdir_path == opts_all_is_ok_short_options[2][1]
+        assert params.outfpath == opts_all_is_ok_short_options[2][1]
         assert params.suppress_zero_cov_output == True
         assert params.topology == 'linear'
         assert params.organism == '.'
-        assert params.outfile_prefix == ''
 
         obtained_threshold_repr: str = ','.join(
             map(
@@ -264,11 +261,10 @@ class TestParseOptions:
 
         assert params.target_fasta_fpath == opts_all_is_ok_long_options[0][1]
         assert params.bam_fpath == opts_all_is_ok_long_options[1][1]
-        assert params.outdir_path == opts_all_is_ok_long_options[2][1]
+        assert params.outfpath == opts_all_is_ok_long_options[2][1]
         assert params.suppress_zero_cov_output == True
         assert params.topology == 'circular'
         assert params.organism == opts_all_is_ok_long_options[6][1]
-        assert params.outfile_prefix == opts_all_is_ok_long_options[7][1]
 
         obtained_threshold_repr: str = ','.join(
             map(
@@ -396,11 +392,10 @@ class TestParseArguments:
 
         assert params.target_fasta_fpath == cmd_all_ok_short_options[2]
         assert params.bam_fpath == cmd_all_ok_short_options[4]
-        assert params.outdir_path == cmd_all_ok_short_options[6]
+        assert params.outfpath == cmd_all_ok_short_options[6]
         assert params.suppress_zero_cov_output == True
         assert params.topology == 'linear'
         assert params.organism == '.'
-        assert params.outfile_prefix == ''
 
         obtained_threshold_repr: str = ','.join(
             map(
@@ -428,11 +423,10 @@ class TestParseArguments:
 
         assert params.target_fasta_fpath == cmd_all_ok_long_options[2]
         assert params.bam_fpath == cmd_all_ok_long_options[4]
-        assert params.outdir_path == cmd_all_ok_long_options[6]
+        assert params.outfpath == cmd_all_ok_long_options[6]
         assert params.suppress_zero_cov_output == True
         assert params.topology == 'circular'
         assert params.organism == cmd_all_ok_long_options[12]
-        assert params.outfile_prefix == cmd_all_ok_long_options[14]
 
         obtained_threshold_repr: str = ','.join(
             map(

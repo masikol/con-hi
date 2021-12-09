@@ -11,18 +11,7 @@ from Bio.SeqFeature import SeqFeature, FeatureLocation
 
 import src.output as out
 
-from tests.fixtures import test_outdir_path
-
-
-@pytest.fixture
-def test_seq_id() -> str:
-    return 'CP000000.1'
-# end def test_seq_id
-
-@pytest.fixture
-def test_prefix() -> str:
-    return 'some_prefix'
-# end def test_prefix
+from tests.fixtures import test_outfpath, test_outdir_path
 
 
 @pytest.fixture
@@ -50,48 +39,15 @@ def some_seq_record() -> str:
 # end def some_seq_record
 
 
-class TestConfigureOutfilePath:
-    # Class for testing function `src.output.configure_outfile_path`
-
-    def test_conf_outfpath_with_prefix(self, test_outdir_path, test_prefix, test_seq_id) -> None:
-        # Function for testing how `configure_outfile_path` configures prefix
-        #   with specified prefix
-
-        curr_outfpath: str = out.configure_outfile_path(
-            test_outdir_path,
-            test_prefix,
-            test_seq_id
-        )
-
-        expeced_fpath: str = os.path.join(test_outdir_path, f'{test_prefix}_{test_seq_id}.gbk')
-        assert curr_outfpath == expeced_fpath
-    # end def test_conf_outfpath_with_prefix
-
-    def test_conf_outfpath_no_prefix(self, test_outdir_path, test_seq_id) -> None:
-        # Function for testing how `configure_outfile_path` configures prefix
-        #   without specified prefix
-
-        curr_outfpath: str = out.configure_outfile_path(
-            test_outdir_path,
-            '',
-            test_seq_id
-        )
-
-        expeced_fpath: str = os.path.join(test_outdir_path, f'{test_seq_id}.gbk')
-        assert curr_outfpath == expeced_fpath
-    # end def test_conf_outfpath_no_prefix
-# end class TestConfigureOutfilePath
-
-
 class TestWriteGenbankOutput:
     # Class for testing function `src.output.write_genbank_output`
 
-    def test_some_seq_record(self, some_seq_record, test_outdir_path, test_seq_id) -> None:
+    def test_some_seq_record(self, some_seq_record, test_outfpath) -> None:
         # Function tests how `write_genbank_output` writes correct GenBank file
 
         topology: str = 'linear'
         organism: str = 'Czort lysy'
-        outfpath: str = out.configure_outfile_path(test_outdir_path, '', test_seq_id)
+        outfpath: str = test_outfpath
 
         record_seq_len: int = len(some_seq_record)
 

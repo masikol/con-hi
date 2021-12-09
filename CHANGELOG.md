@@ -1,5 +1,13 @@
 # consensus-highlighter changelog
 
+## 2021-12-09 edition
+
+Version `2.0.a`
+
+Removed options `-o/--outdir` and `--prefix`.
+
+Added option `-o/--outfile`. And now consensus-highlighter.py writes all GenBank output records to this single output GenBank file.
+
 ## 2021-06-15 edition
 
 Version `1.1.a`

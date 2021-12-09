@@ -1,5 +1,4 @@
-# -*- encoding: utf-8 -*-
-# Version 1.1.a
+# Version 2.0.a
 
 import os
 import re
@@ -18,16 +17,15 @@ class HighlighterParams:
         self,
         target_fasta_fpath: str,
         bam_fpath: str,
-        outdir_path: str,
+        outfpath: str,
         coverage_thresholds: Sequence[CoverageThreshold],
         suppress_zero_cov_output: bool,
         topology: str,
-        organism: str,
-        outfile_prefix: str) -> None:
+        organism: str) -> None:
 
         self.target_fasta_fpath: str = target_fasta_fpath
         self.bam_fpath: str = bam_fpath
-        self.outdir_path: str = outdir_path
+        self.outfpath: str = outfpath
 
         self.suppress_zero_cov_output = suppress_zero_cov_output
 
@@ -35,8 +33,6 @@ class HighlighterParams:
 
         self.topology = topology
         self.organism: str = organism
-
-        self.outfile_prefix = outfile_prefix
     # end def __init__
 
 
@@ -57,12 +53,11 @@ class HighlighterParams:
         return f"""HighlighterParams(
   target_fasta_fpath: `{self.target_fasta_fpath}`
   bam_fpath: `{self.bam_fpath}`
-  outdir_path: `{self.outdir_path}`
+  outfpath: `{self.outfpath}`
   coverage_thresholds: {self.coverage_thresholds}
   suppress_zero_cov_output: {self.suppress_zero_cov_output}
   topology: {self.topology}
   organism: `{self.organism}`
-  outfile_prefix: `{self.outfile_prefix}`
 )"""
     # end def __repr__
 
@@ -85,12 +80,11 @@ def parse_arguments() -> HighlighterParams:
                 'version',
                 'target-fasta=',
                 'bam=',
-                'outdir=',
+                'outfile=',
                 'coverage-thresholds=',
                 'no-zero-output',
                 'circular',
-                'organism=',
-                'prefix='
+                'organism='
             ]
         )
     except getopt.GetoptError as err:
@@ -134,12 +128,11 @@ def _parse_options(opts: List[List[str]]) -> HighlighterParams:
     params: HighlighterParams = HighlighterParams(
         target_fasta_fpath=None,
         bam_fpath=None,
-        outdir_path=os.path.join(os.getcwd(), 'consensus-highlighter-output'),
+        outfpath=os.path.join(os.getcwd(), 'highlighted_sequence.gbk'),
         coverage_thresholds=(10,),
         suppress_zero_cov_output=False,
         topology='linear',
-        organism='.',
-        outfile_prefix=''
+        organism='.'
     )
 
     # Parse command line options
@@ -181,8 +174,8 @@ def _parse_options(opts: List[List[str]]) -> HighlighterParams:
             params.bam_fpath = arg
 
         # Output directory
-        elif opt in ('-o', '--outdir'):
-            params.outdir_path = os.path.abspath(arg)
+        elif opt in ('-o', '--outfile'):
+            params.outfpath = os.path.abspath(arg)
 
         # List of coverage thesholds
         elif opt in ('-c', '--coverage-thresholds'):
@@ -219,11 +212,6 @@ def _parse_options(opts: List[List[str]]) -> HighlighterParams:
         # Organism name for annotation
         elif opt == '--organism':
             params.organism = arg
-
-        # Prefix for output files
-        elif opt == '--prefix':
-            params.outfile_prefix = arg
-        # end if
     # end for
 
     # Add zero coverage threshold, if no suppression is specified

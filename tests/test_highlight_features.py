@@ -11,7 +11,8 @@ import src.highlight_features as hlft
 from src.coverage_array import CoverageArray
 from src.coverage_threshold import CoverageThreshold
 
-from tests.fixtures import test_outdir_path, test_coverage_fpath, test_fasta_fpath, test_bam_fpath
+from tests.fixtures import test_outdir_path
+from tests.fixtures import test_fasta_fpath, test_bam_fpath, test_coverage_fpath, test_outfpath
 from tests.fixtures import first_test_seq_id, second_test_seq_id
 
 
@@ -29,10 +30,10 @@ def test_zero_cov_threshold() -> CoverageThreshold:
 def test_coverage_array_inner(
     test_fasta_fpath,
     test_bam_fpath,
-    test_outdir_path,
+    test_outfpath,
     first_test_seq_id) -> CoverageArray:
 
-    cov_fpath: str = oc.count_cov_for_all_refs(test_fasta_fpath, test_bam_fpath, test_outdir_path)
+    cov_fpath: str = oc.count_cov_for_all_refs(test_fasta_fpath, test_bam_fpath, test_outfpath)
     return oc.get_coverage_for_reference(first_test_seq_id, cov_fpath)
 # end def test_coverage_array_inner
 
@@ -40,10 +41,10 @@ def test_coverage_array_inner(
 def test_coverage_array_edge(
     test_fasta_fpath,
     test_bam_fpath,
-    test_outdir_path,
+    test_outfpath,
     second_test_seq_id) -> CoverageArray:
 
-    cov_fpath: str = oc.count_cov_for_all_refs(test_fasta_fpath, test_bam_fpath, test_outdir_path)
+    cov_fpath: str = oc.count_cov_for_all_refs(test_fasta_fpath, test_bam_fpath, test_outfpath)
     return oc.get_coverage_for_reference(second_test_seq_id, cov_fpath)
 # end def test_coverage_array_edge
 

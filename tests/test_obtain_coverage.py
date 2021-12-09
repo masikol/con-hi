@@ -8,28 +8,16 @@ from typing import Sequence
 import src.obtain_coverage as oc
 from src.coverage_array import CoverageArray
 
-from tests.fixtures import test_outdir_path, test_fasta_fpath, test_bam_fpath, test_coverage_fpath
+from tests.fixtures import test_outdir_path
+from tests.fixtures import test_fasta_fpath, test_bam_fpath, test_coverage_fpath, test_outfpath
 from tests.fixtures import first_test_seq_id, first_test_seq_len, second_test_seq_id, second_test_seq_len
 
 
-class TestConfPathToDepthFile:
-    # Class for testing function `src.obtain_coverage._conf_path_to_depth_file`
-
-    def test_path_to_depth_file(self) -> None:
-        # Function tests that function `_conf_path_to_depth_file` returns correct path
-        outdir: str = os.path.join(os.getcwd(), 'test-outdir')
-        expected = os.path.join(outdir, 'coverages.tsv')
-
-        assert oc._conf_path_to_depth_file(outdir) == expected
-    # end def test_path_to_depth_file
-# end class TestConfPathToDepthFile
-
-
 class TestConfSamtoolsDepthCmd:
-    # Class for testing function `src.obtain_coverage._conf_path_to_depth_file`
+    # Class for testing function `src.obtain_coverage._conf_samtools_depth_cmd`
 
     def test_samtools_depth_cmd(self, test_coverage_fpath) -> None:
-        # Function tests that function `_conf_path_to_depth_file` returns correct command
+        # Function tests that function `_conf_samtools_depth_cmd` returns correct command
         ref_fasta_fpath: str = 'some_file.fasta'
         bam_fpath: str = 'mapping.sorted.bam'
 
@@ -47,7 +35,7 @@ class TestCountCovForAllRefs:
         self,
         test_fasta_fpath,
         test_bam_fpath,
-        test_outdir_path,
+        test_coverage_fpath,
         first_test_seq_id,
         first_test_seq_len,
         second_test_seq_id,
@@ -57,7 +45,7 @@ class TestCountCovForAllRefs:
         cov_fpath: str = oc.count_cov_for_all_refs(
             test_fasta_fpath,
             test_bam_fpath,
-            test_outdir_path
+            test_coverage_fpath
         )
 
         # Check if file exists

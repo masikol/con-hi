@@ -44,7 +44,6 @@ def test_bam_fpath() -> str:
 # end def test_bam_fpath
 
 
-
 @pytest.fixture(scope='session')
 def test_fasta_records() -> Sequence[SeqRecord]:
     return pfr.parse_fasta_reference(
@@ -58,6 +57,13 @@ def test_outdir_path(tmpdir_factory) -> str:
     outdir_path: str = tmpdir_factory.mktemp('test_outdir')
     return outdir_path
 # end def test_outdir_path
+
+
+@pytest.fixture(scope='session')
+def test_outfpath(test_outdir_path) -> str:
+    return os.path.join(test_outdir_path, 'test_annotated_seq.gbk')
+# end def test_outfpath
+
 
 @pytest.fixture(scope='session')
 def test_coverage_fpath(test_outdir_path) -> str:
