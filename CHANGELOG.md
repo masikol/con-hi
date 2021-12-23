@@ -1,5 +1,11 @@
 # consensus-highlighter changelog
 
+## 2021-12-23 edition
+
+Version `2.0.b`
+
+Now consensus-highlighter calculates and prints average coverage.
+
 ## 2021-12-09 edition
 
 Version `2.0.a`

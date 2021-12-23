@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-# -*- encoding: utf-8 -*-
 
 import sys
 
-__version__: str  = '2.0.a'
+__version__: str  = '2.0.b'
 # Year, month, day
-__last_update_date__: str = '2021-12-09'
+__last_update_date__: str = '2021-12-23'
 __min_python_version__: float = 3.6
 # __author__ = 'Maxim Sikolenko'
 

@@ -1,8 +1,9 @@
-# Version 2.0.a
+# Version 2.0.b
 
 import os
 import sys
 import glob
+import statistics as sts
 from typing import Sequence, MutableSequence, List
 
 from Bio.SeqRecord import SeqRecord
@@ -83,6 +84,9 @@ def main(version: str, last_update_date: str) -> None:
             with_warnings = ' with warnings'
             continue
         # end if
+
+        mean_coverage = round(sts.mean(cov_array.coverages), 2)
+        print(f'Average coverage: {mean_coverage}')
 
         cov_threshold: CoverageThreshold
         coverage_features: MutableSequence[SeqFeature]
