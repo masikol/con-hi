@@ -8,6 +8,7 @@ from typing import Sequence, MutableSequence, List
 from Bio.SeqRecord import SeqRecord
 from Bio.SeqFeature import SeqFeature
 
+from src.printing import print_err
 import src.output as out
 import src.obtain_coverage as oc
 import src.dedupl_features as ddf
@@ -63,22 +64,22 @@ def main(version: str, last_update_date: str) -> None:
 
         # Check length of the coverage array
         if len(cov_array) == 0:
-            print(f'!  Warning: no coverage information found for sequence `{rec.id}`.')
-            print(f"""!  Please, make sure that field `RNAME` (3-rd column) in your BAM file contains
+            print_err(f'!  Warning: no coverage information found for sequence `{rec.id}`.')
+            print_err(f"""!  Please, make sure that field `RNAME` (3-rd column) in your BAM file contains
 !    id of this sequence specified in fasta header (i.e. `{rec.id}`).""")
-            print('! Omitting this sequence.')
-            print('=' * 10)
+            print_err('! Omitting this sequence.')
+            print_err('=' * 10)
             with_warnings = ' with warnings'
             continue
         # end if
 
         if len(cov_array) != len(rec.seq):
-            print(f"""!  Warning: length of sequence `{rec.id}` ({len(rec.seq)} bp)
+            print_err(f"""!  Warning: length of sequence `{rec.id}` ({len(rec.seq)} bp)
 !    is not equal to number of coverage positions ({len(cov_array)}) reported by `samtools depth`
 !    and stored in coverage file `{cov_fpath}`.""")
-            print('!  Re-creating the bam file might be the solution of this issue.')
-            print('!  Omitting this sequence.')
-            print('=' * 10)
+            print_err('!  Re-creating the bam file might be the solution of this issue.')
+            print_err('!  Omitting this sequence.')
+            print_err('=' * 10)
             with_warnings = ' with warnings'
             continue
         # end if
@@ -133,8 +134,8 @@ def _create_outdir_from_outfile(outfpath: str) -> None:
         try:
             os.makedirs(outdpath)
         except OSError as err:
-            print(f'Error! Cannot create output directory `{outdpath}`.')
-            print(str(err))
+            print_err(f'Error! Cannot create output directory `{outdpath}`.')
+            print_err(str(err))
             platf_depend_exit(1)
         # end try
     # end if

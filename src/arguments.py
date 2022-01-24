@@ -1,4 +1,4 @@
-# Version 2.0.a
+# Version 2.1.a
 
 import os
 import re
@@ -6,6 +6,7 @@ import sys
 import getopt
 from typing import List, Sequence, Iterable
 
+from src.printing import print_err
 from src.platform import platf_depend_exit
 from src.coverage_threshold import CoverageThreshold
 
@@ -88,17 +89,17 @@ def parse_arguments() -> HighlighterParams:
             ]
         )
     except getopt.GetoptError as err:
-        print(str(err))
+        print_err(str(err))
         platf_depend_exit(2)
     # end try
 
     # Check positional arguments: their existance is an error signal
     if len(args) != 0:
-        print('Error: consensus-highlighter.py does not take any positional arguments.')
-        print('You passed following positional argument(s):')
+        print_err('Error: consensus-highlighter.py does not take any positional arguments.')
+        print_err('You passed following positional argument(s):')
         arg: str
         for arg in args:
-            print(f'  `{arg}`')
+            print_err(f'  `{arg}`')
         # end for
         platf_depend_exit(2)
     # end if
@@ -108,12 +109,12 @@ def parse_arguments() -> HighlighterParams:
 
     # Check mandatory options
     if params.target_fasta_fpath is None:
-        print('Error: option `-f` (`--target-fasta`) is mandatory.')
+        print_err('Error: option `-f` (`--target-fasta`) is mandatory.')
         platf_depend_exit(2)
     # end if
 
     if params.bam_fpath is None:
-        print('Error: option `-b` (`--bam`) is mandatory.')
+        print_err('Error: option `-b` (`--bam`) is mandatory.')
         platf_depend_exit(2)
     # end if
 
@@ -144,14 +145,14 @@ def _parse_options(opts: List[List[str]]) -> HighlighterParams:
         if opt in ('-f', '--target-fasta'):
 
             if not os.path.isfile(arg):
-                print(f'\aError: file {arg}` does not exist.')
+                print_err(f'\aError: file {arg}` does not exist.')
                 platf_depend_exit(2)
             # end if
 
             if not _is_fasta(arg):
-                print('\aError: only plain fasta or gzipped fasta are supported.')
-                print(f'Erroneous file: `{arg}`.')
-                print('Allowed extentions: `.fasta`, `.fa`, `.fasta.gz`, `.fa.gz`.')
+                print_err('\aError: only plain fasta or gzipped fasta are supported.')
+                print_err(f'Erroneous file: `{arg}`.')
+                print_err('Allowed extentions: `.fasta`, `.fa`, `.fasta.gz`, `.fa.gz`.')
                 platf_depend_exit(2)
             # end if
 
@@ -161,13 +162,13 @@ def _parse_options(opts: List[List[str]]) -> HighlighterParams:
         elif opt in ('-b', '--bam'):
 
             if not os.path.isfile(arg):
-                print(f'\aError: file {arg}` does not exist.')
+                print_err(f'\aError: file {arg}` does not exist.')
                 platf_depend_exit(2)
             # end if
 
             if not _is_bam(arg):
-                print(f'\aError: file `{arg}` does not seem like a BAM file.')
-                print('The program only accepts BAM files having `.bam` extentions')
+                print_err(f'\aError: file `{arg}` does not seem like a BAM file.')
+                print_err('The program only accepts BAM files having `.bam` extentions')
                 platf_depend_exit(2)
             # end if
 
@@ -186,11 +187,11 @@ def _parse_options(opts: List[List[str]]) -> HighlighterParams:
 
                 invalid_strings: Iterable[str] = filter(_coverage_not_parsable, cov_strings)
 
-                print(f'\aError: invalid coverage thresholds in `{arg}`:')
+                print_err(f'\aError: invalid coverage thresholds in `{arg}`:')
                 for s in invalid_strings:
-                    print(f'  `{s}`')
+                    print_err(f'  `{s}`')
                 # end for
-                print('Coverage thesholds must be positive integer numbers.')
+                print_err('Coverage thesholds must be positive integer numbers.')
                 platf_depend_exit(2)
             # end if
 

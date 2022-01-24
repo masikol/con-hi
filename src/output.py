@@ -1,4 +1,4 @@
-# Version 2.0.a
+# Version 2.1.a
 
 import os
 import sys
@@ -7,6 +7,7 @@ import datetime
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 
+from src.printing import print_err
 from src.platform import platf_depend_exit
 
 
@@ -16,8 +17,8 @@ def create_or_emply_file(file_path):
             pass
         # end with
     except OSError as err:
-        print(f'\nError: cannot create file {file_path}')
-        print(str(err))
+        print_err(f'\nError: cannot create file {file_path}')
+        print_err(str(err))
         platf_depend_exit(1)
     # end try
 # end def create_or_emply_file

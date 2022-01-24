@@ -1,5 +1,4 @@
-# -*- encoding: utf-8 -*-
-# Version 1.0.c
+# Version 2.1.a
 
 import re
 import gzip

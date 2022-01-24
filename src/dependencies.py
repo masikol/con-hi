@@ -1,5 +1,4 @@
-# -*- encoding: utf-8 -*-
-# Version 1.0.b
+# Version 2.1.a
 
 import re
 import os

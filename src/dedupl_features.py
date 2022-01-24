@@ -1,5 +1,4 @@
-# -*- encoding: utf-8 -*-
-# Version 1.1.a
+# Version 2.1.a
 
 from typing import Sequence, MutableSequence, Tuple
 

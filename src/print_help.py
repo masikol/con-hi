@@ -1,5 +1,4 @@
-# -*- encoding: utf-8 -*-
-# Version 1.0.a
+# Version 2.1.a
 
 def print_help(version: str, last_update_date: str) -> None:
     print('=== consensus-highlighter ===')

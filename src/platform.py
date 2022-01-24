@@ -1,5 +1,4 @@
-# -*- encoding: utf-8 -*-
-# Version 1.0.a
+# Version 2.1.a
 
 import sys
 

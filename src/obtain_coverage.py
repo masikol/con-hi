@@ -4,6 +4,7 @@ import os
 import subprocess as sp
 from typing import Tuple, Iterator
 
+from src.printing import print_err
 from src.platform import platf_depend_exit
 from src.coverage_array import CoverageArray
 
@@ -22,10 +23,10 @@ def count_cov_for_all_refs(bam_fpath: str, coverage_fpath: str) -> str:
     pipe: sp.Popen = sp.Popen(samtools_depth_cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE)
     stdout_stderr: Tuple[bytes, bytes] = pipe.communicate()
 
-    # Print error f it occures
+    # Print error if it occures
     if pipe.returncode != 0:
-        print('\nError occured while running `samtools depth`')
-        print(stdout_stderr[1].decode('utf-8'))
+        print_err('\nError occured while running `samtools depth`')
+        print_err(stdout_stderr[1].decode('utf-8'))
         platf_depend_exit(pipe.returncode)
     # end if
 

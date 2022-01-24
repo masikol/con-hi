@@ -1,5 +1,11 @@
 # consensus-highlighter changelog
 
+## 2022-01-24 edition
+
+Version `2.1.a`
+
+Now consensus-highlighter is compatible with samtools 1.13+.
+
 ## 2021-12-23 edition
 
 Version `2.0.b`
