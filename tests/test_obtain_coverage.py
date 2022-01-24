@@ -21,9 +21,9 @@ class TestConfSamtoolsDepthCmd:
         ref_fasta_fpath: str = 'some_file.fasta'
         bam_fpath: str = 'mapping.sorted.bam'
 
-        expected: str = f'samtools depth -aa -J --reference {ref_fasta_fpath} -o {test_coverage_fpath} {bam_fpath}'
+        expected: str = f'samtools depth -aa -J -o {test_coverage_fpath} {bam_fpath}'
 
-        assert oc._conf_samtools_depth_cmd(ref_fasta_fpath, bam_fpath, test_coverage_fpath) == expected
+        assert oc._conf_samtools_depth_cmd(bam_fpath, test_coverage_fpath) == expected
     # end def test_samtools_depth_cmd
 # end class TestConfSamtoolsDepthCmd
 
@@ -43,7 +43,6 @@ class TestCountCovForAllRefs:
 
         # Function tests that `count_cov_for_all_refs` counts coverage in a plausable way
         cov_fpath: str = oc.count_cov_for_all_refs(
-            test_fasta_fpath,
             test_bam_fpath,
             test_coverage_fpath
         )

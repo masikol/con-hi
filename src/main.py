@@ -1,4 +1,4 @@
-# Version 2.0.b
+# Version 2.1.a
 
 import os
 import sys
@@ -47,7 +47,6 @@ def main(version: str, last_update_date: str) -> None:
     print('Silently counting coverages with `samtools depth`...', end=' ')
     sys.stdout.flush()
     cov_fpath: str = oc.count_cov_for_all_refs(
-        params.target_fasta_fpath,
         params.bam_fpath,
         coverage_fpath
     )

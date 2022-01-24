@@ -1,5 +1,4 @@
-# -*- encoding: utf-8 -*-
-# Version 1.0.a
+# Version 2.1.a
 
 import os
 import subprocess as sp
@@ -9,16 +8,15 @@ from src.platform import platf_depend_exit
 from src.coverage_array import CoverageArray
 
 
-def count_cov_for_all_refs(ref_fasta_fpath: str, bam_fpath: str, coverage_fpath: str) -> str:
+def count_cov_for_all_refs(bam_fpath: str, coverage_fpath: str) -> str:
     # Function counts coverages for all sequences from input fasta file.
-    # :param ref_fasta_fpath: path to input fasta file;
     # :param bam_fpath: path to bam file;
     # :param coverage_fpath: path to coverage file;
     # Returns path to file that contains coverage:
     #   first column -- sequence id, second column -- position, third column -- coverage.
 
     # Obtain command to run
-    samtools_depth_cmd: str = _conf_samtools_depth_cmd(ref_fasta_fpath, bam_fpath, coverage_fpath)
+    samtools_depth_cmd: str = _conf_samtools_depth_cmd(bam_fpath, coverage_fpath)
 
     # Run the command
     pipe: sp.Popen = sp.Popen(samtools_depth_cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE)
@@ -67,12 +65,11 @@ def get_coverage_for_reference(sequence_id: str, coverage_fpath: str) -> Coverag
 # end def get_coverage_for_reference
 
 
-def _conf_samtools_depth_cmd(ref_fasta_fpath: str, bam_fpath: str, coverage_fpath: str) -> str:
+def _conf_samtools_depth_cmd(bam_fpath: str, coverage_fpath: str) -> str:
     # Function configures command to count coverages.
-    # :param ref_fasta_fpath: path to input fasta file;
     # :param bam_fpath: path to bam file;
     # :param coverage_fpath: path to coverage file;
-    return 'samtools depth -aa -J --reference {} -o {} {}'\
-        .format(ref_fasta_fpath, coverage_fpath, bam_fpath)
+    return 'samtools depth -aa -J -o {} {}'\
+        .format(coverage_fpath, bam_fpath)
 # end def _conf_samtools_depth_cmd
 
