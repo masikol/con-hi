@@ -2,6 +2,7 @@
 # Version 1.0.a
 
 import array
+import statistics as sts
 from typing import Sequence
 
 
@@ -26,4 +27,8 @@ class CoverageArray:
     def __len__(self) -> int:
         return len(self.coverages)
     # end def __len__
+
+    def calc_mean_coverage(self):
+        return round(sts.mean(self.coverages), 2)
+    # end def
 # end class CoverageArray
