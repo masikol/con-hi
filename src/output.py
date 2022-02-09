@@ -9,6 +9,7 @@ from Bio.SeqRecord import SeqRecord
 
 from src.printing import print_err
 from src.platform import platf_depend_exit
+from src.coverage_array import CoverageArray
 
 
 def create_or_emply_file(file_path):
@@ -24,20 +25,24 @@ def create_or_emply_file(file_path):
 # end def create_or_emply_file
 
 
-def write_genbank_output(seq_record: SeqRecord, topology: str, organism: str, outfpath: str) -> None:
+def write_genbank_output(seq_record: SeqRecord,
+                         topology: str,
+                         organism: str,
+                         cov_array: CoverageArray,
+                         outfpath: str) -> None:
     # Function writes annotated sequence to output GenBank file.
     # :param seq_record: sequence record to output;
     # :param topology: string for `topology` annotation;
     # :param organism: string for `organism` annotation;
     # :param outfpath: path to output file;
 
-    # Set annotations
-    seq_record.annotations = {
-        'molecule_type': 'DNA',
-        'organism': organism,
-        'date': _get_date(),
-        'topology': topology
-    }
+    annotations = _create_annotations(
+        seq_record,
+        organism,
+        topology,
+        cov_array
+    )
+    seq_record.annotations = annotations
 
     # Sort features by their location if ascending order
     seq_record.features = sorted(
@@ -50,6 +55,33 @@ def write_genbank_output(seq_record: SeqRecord, topology: str, organism: str, ou
         SeqIO.write(seq_record, outfile, 'genbank')
     # end with
 # end def write_genbank_output
+
+
+def _create_annotations(seq_record: SeqRecord,
+                        organism: str,
+                        topology: str,
+                        cov_array: CoverageArray) -> dict:
+
+    zero_coverage_bases = cov_array.count(0)
+
+    annotations = {
+        'molecule_type': 'DNA',
+        'organism': organism,
+        'date': _get_date(),
+        'topology': topology,
+        'structured_comment': {
+            'Coverage-Data': {
+                'Minimum Coverage': cov_array.calc_min_coverage(),
+                'Average Coverage': cov_array.calc_avg_coverage(),
+                'Median Coverage' : cov_array.calc_median_coverage(),
+                'Maximum Coverage': cov_array.calc_max_coverage(),
+                'Zero-coverage bases': '{} bp'.format(zero_coverage_bases),
+            }
+        }
+    }
+
+    return annotations
+# end def
 
 
 def _get_date() -> str:

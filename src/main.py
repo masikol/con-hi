@@ -84,8 +84,6 @@ def main(version: str, last_update_date: str) -> None:
             continue
         # end if
 
-        print(f'Average coverage: {cov_array.calc_mean_coverage()}')
-
         cov_threshold: CoverageThreshold
         coverage_features: MutableSequence[SeqFeature]
 
@@ -113,7 +111,13 @@ def main(version: str, last_update_date: str) -> None:
         sys.stdout.flush()
 
         # Write result GanBank record
-        out.write_genbank_output(rec, params.topology, params.organism, params.outfpath)
+        out.write_genbank_output(
+            rec,
+            params.topology,
+            params.organism,
+            cov_array,
+            params.outfpath
+        )
         print('done')
 
         print('=' * 10)

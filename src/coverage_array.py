@@ -27,7 +27,23 @@ class CoverageArray:
         return len(self.coverages)
     # end def __len__
 
-    def calc_mean_coverage(self):
+    def count(self, cov_value: int) -> int:
+        return self.coverages.count(cov_value)
+    # end def
+
+    def calc_min_coverage(self):
+        return round(min(self.coverages), 2)
+    # end def
+
+    def calc_max_coverage(self):
+        return round(max(self.coverages), 2)
+    # end def
+
+    def calc_avg_coverage(self):
         return round(sts.mean(self.coverages), 2)
+    # end def
+
+    def calc_median_coverage(self):
+        return round(sts.median(self.coverages), 2)
     # end def
 # end class CoverageArray

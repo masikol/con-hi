@@ -11,56 +11,28 @@ import src.highlight_features as hlft
 from src.coverage_array import CoverageArray
 from src.coverage_threshold import CoverageThreshold
 
-from tests.fixtures import test_outdir_path
-from tests.fixtures import test_fasta_fpath, test_bam_fpath, test_coverage_fpath, test_outfpath
-from tests.fixtures import first_test_seq_id, second_test_seq_id
+from tests.fixtures import coverage_array_inner, coverage_array_edge, \
+                           nonzero_cov_threshold
 
 
 @pytest.fixture
-def test_nonzero_cov_threshold() -> CoverageThreshold:
-    return CoverageThreshold(2)
-# end def test_nonzero_cov_threshold
-
-@pytest.fixture
-def test_zero_cov_threshold() -> CoverageThreshold:
+def zero_cov_threshold() -> CoverageThreshold:
     return CoverageThreshold(0)
-# end def test_zero_cov_threshold
-
-@pytest.fixture
-def test_coverage_array_inner(
-    test_fasta_fpath,
-    test_bam_fpath,
-    test_outfpath,
-    first_test_seq_id) -> CoverageArray:
-
-    cov_fpath: str = oc.count_cov_for_all_refs(test_bam_fpath, test_outfpath)
-    return oc.get_coverage_for_reference(first_test_seq_id, cov_fpath)
-# end def test_coverage_array_inner
-
-@pytest.fixture
-def test_coverage_array_edge(
-    test_fasta_fpath,
-    test_bam_fpath,
-    test_outfpath,
-    second_test_seq_id) -> CoverageArray:
-
-    cov_fpath: str = oc.count_cov_for_all_refs(test_bam_fpath, test_outfpath)
-    return oc.get_coverage_for_reference(second_test_seq_id, cov_fpath)
-# end def test_coverage_array_edge
+# end def zero_cov_threshold
 
 
 class TestHighlightCoverageFeatures:
     # Class for testing fuction `src.highlight_features.highlight_coverage_features`
 
-    def test_highlight_inner_region(self, test_coverage_array_inner, test_nonzero_cov_threshold) -> None:
+    def test_highlight_inner_region(self, coverage_array_inner, nonzero_cov_threshold) -> None:
         # Function tests how `highlight_coverage_features` deals
         #   with single inner low-coverage region
 
         note: str = 'some note whatever'
 
         feature_list: List[SeqFeature] = hlft.highlight_coverage_features(
-            test_coverage_array_inner,
-            test_nonzero_cov_threshold,
+            coverage_array_inner,
+            nonzero_cov_threshold,
             note
         )
 
@@ -81,7 +53,7 @@ class TestHighlightCoverageFeatures:
         assert ftr.type == expected_feature_type
 
         # Test feature label
-        expected_label: str = test_nonzero_cov_threshold.get_label()
+        expected_label: str = nonzero_cov_threshold.get_label()
         assert ftr.qualifiers['label'] == expected_label
 
         # Test feature note
@@ -90,15 +62,15 @@ class TestHighlightCoverageFeatures:
     # end def test_highlight_inner_region
 
 
-    def test_highlight_inner_zerocov_region(self, test_coverage_array_inner, test_zero_cov_threshold) -> None:
+    def test_highlight_inner_zerocov_region(self, coverage_array_inner, zero_cov_threshold) -> None:
         # Function tests how `highlight_coverage_features` deals
         #   with single inner zero-coverage region
 
         note: str = 'some note whatever'
 
         feature_list: List[SeqFeature] = hlft.highlight_coverage_features(
-            test_coverage_array_inner,
-            test_zero_cov_threshold,
+            coverage_array_inner,
+            zero_cov_threshold,
             note
         )
 
@@ -119,7 +91,7 @@ class TestHighlightCoverageFeatures:
         assert ftr.type == expected_feature_type
 
         # Test feature label
-        expected_label: str = test_zero_cov_threshold.get_label()
+        expected_label: str = zero_cov_threshold.get_label()
         assert ftr.qualifiers['label'] == expected_label
 
         # Test feature note
@@ -128,15 +100,15 @@ class TestHighlightCoverageFeatures:
     # end def test_highlight_inner_zerocov_region
 
 
-    def test_highlight_edge_region(self, test_coverage_array_edge, test_nonzero_cov_threshold) -> None:
+    def test_highlight_edge_region(self, coverage_array_edge, nonzero_cov_threshold) -> None:
         # Function tests how `highlight_coverage_features` deals
         #   with single edge low-coverage region
 
         note: str = 'some note whatever'
 
         feature_list: List[SeqFeature] = hlft.highlight_coverage_features(
-            test_coverage_array_edge,
-            test_nonzero_cov_threshold,
+            coverage_array_edge,
+            nonzero_cov_threshold,
             note
         )
 
@@ -157,7 +129,7 @@ class TestHighlightCoverageFeatures:
         assert ftr.type == expected_feature_type
 
         # Test feature label
-        expected_label: str = test_nonzero_cov_threshold.get_label()
+        expected_label: str = nonzero_cov_threshold.get_label()
         assert ftr.qualifiers['label'] == expected_label
 
         # Test feature note

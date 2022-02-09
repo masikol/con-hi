@@ -7,7 +7,10 @@ from typing import Sequence
 import pytest
 from Bio.SeqRecord import SeqRecord
 
+import src.obtain_coverage as oc
 import src.parse_fasta_reference as pfr
+from src.coverage_array import CoverageArray
+from src.coverage_threshold import CoverageThreshold
 
 
 @pytest.fixture(scope='session')
@@ -69,3 +72,25 @@ def test_outfpath(test_outdir_path) -> str:
 def test_coverage_fpath(test_outdir_path) -> str:
     return os.path.join(test_outdir_path, 'coverages.tsv')
 # end def test_coverage_fpath
+
+
+@pytest.fixture(scope='session')
+def nonzero_cov_threshold() -> CoverageThreshold:
+    return CoverageThreshold(2)
+# end def nonzero_cov_threshold
+
+
+@pytest.fixture(scope='session')
+def coverage_array_inner(test_coverage_fpath: str,
+                         first_test_seq_id: str) -> CoverageArray:
+
+    return oc.get_coverage_for_reference(first_test_seq_id, test_coverage_fpath)
+# end def coverage_array_inner
+
+
+@pytest.fixture(scope='session')
+def coverage_array_edge(test_coverage_fpath,
+                        second_test_seq_id) -> CoverageArray:
+
+    return oc.get_coverage_for_reference(second_test_seq_id, test_coverage_fpath)
+# end def coverage_array_edge
