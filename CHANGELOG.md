@@ -1,5 +1,21 @@
 # consensus-highlighter changelog
 
+## 2022-02-10 edition
+
+Version `2.2.a`
+
+Now consensus-highlighter adds a comment to output GenBank files. Here is the example of such a comment:
+
+```
+COMMENT     ##Coverage-Data-START##
+            Minimum Coverage    :: 0
+            Average Coverage    :: 147.54
+            Median Coverage     :: 70
+            Maximum Coverage    :: 2009
+            Zero-coverage bases :: 278 bp
+            ##Coverage-Data-END##
+```
+
 ## 2022-01-24 edition
 
 Version `2.1.a`

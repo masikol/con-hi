@@ -1,4 +1,4 @@
-# Version 2.1.a
+# Version 2.2.a
 
 import array
 import statistics as sts

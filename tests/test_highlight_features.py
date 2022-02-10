@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-# Version 1.0.a
+# Version 2.2.a
 
 from typing import List
 
@@ -11,7 +11,10 @@ import src.highlight_features as hlft
 from src.coverage_array import CoverageArray
 from src.coverage_threshold import CoverageThreshold
 
-from tests.fixtures import coverage_array_inner, coverage_array_edge, \
+from tests.fixtures import test_bam_fpath, test_outfpath, \
+                           test_outdir_path, test_coverage_fpath, \
+                           first_test_seq_id, second_test_seq_id, \
+                           coverage_array_inner,coverage_array_edge, \
                            nonzero_cov_threshold
 
 

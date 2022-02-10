@@ -1,6 +1,6 @@
 # consensus-highlighter
 
-Latest version is `2.1.a` (2022-01-24 edition).
+Latest version is `2.2.a` (2022-02-10 edition).
 
 ## Description
 

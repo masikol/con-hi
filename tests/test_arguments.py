@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-# Version 1.0.a
+# Version 2.2.a
 
 import os
 import sys
@@ -8,7 +8,6 @@ from typing import List, Sequence
 import pytest
 
 import src.arguments as args
-from src.coverage_threshold import CoverageThreshold
 
 from tests.fixtures import test_outdir_path
 from tests.fixtures import test_fasta_fpath, test_bam_fpath, test_coverage_fpath, test_outfpath

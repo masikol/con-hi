@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-# Version 1.0.a
+# Version 2.2.a
 
 from typing import Sequence
 
@@ -9,36 +9,59 @@ from src.coverage_array import CoverageArray
 
 
 @pytest.fixture
-def some_int_array() -> Sequence[int]:
-    return [1, 2, 3, 4, 5, 6, 7, 8]
-# end def some_int_array
+def some_array() -> Sequence[int]:
+    init_list = [1, 2, 3, 4, 5, 6, 7, 8]
+    return CoverageArray(init_list)
+# end def some_array
 
 
 class TestCoverageArray:
     # Class for testing class `src.coverage_array.CoverageArray`
 
-    def test_lengths_equality(self, some_int_array) -> None:
-        # Test that lengths of both arrays are equal
-        cov_aray: CoverageArray = CoverageArray(some_int_array)
+    def test_lengths_equality(self, some_array) -> None:
+        # Test that lengths of both arrays are equalsome_array
 
-        expected: int = len(some_int_array)
-        assert expected == len(cov_aray)
+        expected: int = len(some_array)
+        assert expected == len(some_array)
     # end def test_lengths_equality
 
-    def test_getitem(self, some_int_array) -> None:
+    def test_getitem(self, some_array) -> None:
         # Test method __getitem__
-        cov_aray: CoverageArray = CoverageArray(some_int_array)
         expected: int
 
         expected = float('inf')
-        assert expected == cov_aray[-1]
+        assert expected == some_array[-1]
         expected = 1
-        assert expected == cov_aray[0]
+        assert expected == some_array[0]
         expected = 5
-        assert expected == cov_aray[4]
+        assert expected == some_array[4]
         expected = 8
-        assert expected == cov_aray[len(cov_aray)-1]
+        assert expected == some_array[len(some_array)-1]
         expected = float('inf')
-        assert expected == cov_aray[len(cov_aray)]
+        assert expected == some_array[len(some_array)]
     # end def test_lengths_equality
+
+    def test_min(self, some_array) -> None:
+        expected = 1
+        obtained = some_array.calc_min_coverage()
+        assert expected == obtained
+    # end def
+
+    def test_avg(self, some_array) -> None:
+        expected = 4.5
+        obtained = some_array.calc_avg_coverage()
+        assert abs(expected - obtained) < 1e-6
+    # end def
+
+    def test_median(self, some_array) -> None:
+        expected = 4.5
+        obtained = some_array.calc_median_coverage()
+        assert abs(expected - obtained) < 1e-6
+    # end def
+
+    def test_max(self, some_array) -> None:
+        expected = 8
+        obtained = some_array.calc_max_coverage()
+        assert expected == obtained
+    # end def
 # end class TestCoverageArray
