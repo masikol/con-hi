@@ -1,5 +1,13 @@
 # consensus-highlighter changelog
 
+## 2022-02-23 edition
+
+Version `2.2.b`
+
+Changes:
+1. Now consensus-highlighter removes its temporary file `coverages.tsv`, where coverage value of each base is stored.
+2. A bug was fixed that would cause the program to write error message about an unmet dependency to stout instead of stderr.
+
 ## 2022-02-10 edition
 
 Version `2.2.a`

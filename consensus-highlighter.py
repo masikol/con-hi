@@ -2,9 +2,9 @@
 
 import sys
 
-__version__: str  = '2.2.a'
+__version__: str  = '2.2.b'
 # Year, month, day
-__last_update_date__: str = '2022-02-10'
+__last_update_date__: str = '2022-02-23'
 __min_python_version__: float = 3.6
 # __author__ = 'Maxim Sikolenko'
 
@@ -32,7 +32,10 @@ from src.platform import platf_depend_exit
 
 
 # Print help message and exit if required
-if '-h' in sys.argv[1:] or '--help' in sys.argv[1:]:
+if len(sys.argv) == 1 \
+   or '-h' in sys.argv[1:] \
+   or '-help' in sys.argv[1:] \
+   or '--help' in sys.argv[1:]:
     print_help(__version__, __last_update_date__)
     platf_depend_exit()
 # end if

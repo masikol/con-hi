@@ -1,4 +1,4 @@
-# Version 2.2.a
+# Version 2.2.b
 
 import os
 import sys
@@ -123,6 +123,7 @@ def main(version: str, last_update_date: str) -> None:
         print('=' * 10)
     # end for
 
+    _try_rm_temp_file(coverage_fpath)
     print(f'Completed{with_warnings}!')
 # end def main
 
@@ -144,3 +145,13 @@ def _create_outdir_from_outfile(outfpath: str) -> None:
         # end try
     # end if
 # end def _create_outdir_from_outfile
+
+
+def _try_rm_temp_file(file_path):
+    try:
+        os.unlink(file_path)
+    except OSError as err:
+        print_err('Warning: cannot remove temporary file `{}`'.format(file_path))
+        print_err(str(err))
+    # end try
+# end def

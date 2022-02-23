@@ -6,6 +6,7 @@ import subprocess as sp
 from typing import List, Tuple, Sequence, Callable
 
 from src.platform import platf_depend_exit
+from src.printing import print_err
 
 
 def check_depencencies() -> None:
@@ -36,9 +37,9 @@ def check_depencencies() -> None:
 
     # Print errors, if they occured
     if len(err_msg_list) != 0:
-        print('Dependencies errors:')
+        print_err('Dependencies errors:')
         for err_msg in err_msg_list:
-            print(f'  - {err_msg}')
+            print_err(f'  - {err_msg}')
         # end for
         platf_depend_exit(1)
     # end if
