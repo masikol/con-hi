@@ -20,7 +20,7 @@ This program annotates low-coverage regions of sequences in fasta format.
 
 - [Python](https://www.python.org/downloads/) 3.6 or later.
 - [Biopython](https://biopython.org/) package.
-- [samtools](https://github.com/samtools/samtools) 1.13 or later is recommended. Versions from 1.11 to 1.13 are acceptable, but might calculate coverage inaccurately.
+- [samtools](https://github.com/samtools/samtools) 1.13 or later is recommended. Versions from 1.11 to 1.12 are acceptable, but might calculate coverage inaccurately.
 
 You can install Biopython wi following command:
 ```
