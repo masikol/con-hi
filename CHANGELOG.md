@@ -1,5 +1,13 @@
 # consensus-highlighter changelog
 
+## 2022-04-26 edition
+
+Version `2.3.a`
+
+1. Add recommendation "samtools `1.13` or later is recommended". This is the version, in which `samtools depth` [had beed](https://github.com/samtools/samtools/releases/tag/1.13) completely rewritten. Since 1.13, `samtools depth` calculates coverage more accurately.
+
+2. Now consensus-highlighter does not crash if samtools version is of the following format: `1.15.1` (three dot-separated numbers). Previously, only two dot-separated numbers were permitted.
+
 ## 2022-02-23 edition
 
 Version `2.2.b`

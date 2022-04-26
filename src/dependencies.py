@@ -1,7 +1,8 @@
-# Version 2.1.a
+# Version 2.3.a
 
 import re
 import os
+import sys
 import subprocess as sp
 from typing import List, Tuple, Sequence, Callable
 
@@ -107,17 +108,42 @@ def _check_samtools() -> Tuple[str, str]:
         err_msg = f'Cannot check samtools version: {stdout_stderr[1].decode("utf-8")}'
     else:
         # Error in parsing version from `samtools vresion` output
-        version_reojb: re.Match = re.search(r'samtools ([0-9\.]+)', stdout_stderr[0].decode('utf-8'))
+        version_reojb: re.Match = re.search(
+            r'samtools (([0-9]+\.[0-9]+)(\.[0-9]+)?)',
+            stdout_stderr[0].decode('utf-8')
+        )
         if version_reojb is None:
             err_msg = f'Cannot check samtools version: {stdout_stderr[1].decode("utf-8")}'
         else:
-            version = version_reojb.group(1)
+            full_version    = version_reojb.group(1)
+            numeric_version = version_reojb.group(2)
+
             # Actually check version
-            if float(version) < min_version:
-                err_msg = f'Your samtools version is {version}, although it must be {min_version} or newer.'
+            if float(numeric_version) < min_version:
+                err_msg = f'Your samtools version is {full_version}, although it must be {min_version} or newer.'
             # end if
+            _check_recommended_samtools_version(full_version, numeric_version)
+            version = full_version
         # end if
     # end if
 
     return version, err_msg
 # end def _check_samtools
+
+
+def _check_recommended_samtools_version(full_version, numeric_version_str):
+    recommended_version = 1.13
+    if float(numeric_version_str)    < recommended_version:
+        print_err(
+            '\n - WARNING: your samtools version is {}, '
+            'although version {} is recommended.\n'.format(
+                full_version, recommended_version
+            )
+        )
+        print_err(
+            '   Versions older than {} may calculate coverage inaccurately.\n\n' \
+                .format(recommended_version)
+        )
+        sys.stdout.flush()
+    # end if
+# end def
