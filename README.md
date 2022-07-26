@@ -27,7 +27,7 @@ You can install Biopython with following command:
 pip3 install biopython
 ```
 
-I recommend to install samtools by downloading latest release from [samtools page](https://github.com/samtools/samtools) on github. Then follow instrunctions in downloaded INSTALL file.
+You can install samtools by downloading latest release from [samtools page](https://github.com/samtools/samtools) on github. Then follow instrunctions in downloaded INSTALL file.
 
 ## Usage
 
@@ -53,28 +53,38 @@ You can specify custom coverage theshold(s) by passing comma-separated list of t
 ```
 -f or --target-fasta: *
     File of target sequence(s) in fasta format.
+
 -b or --bam: *
     Sorted BAM file which contains mapping on target sequence(s).
+
 -o or --outfile:
     Output file.
     Deault value: 'highlighted_sequence.gbk'.
+
 -c or --lower-coverage-thresholds:
     Comma-separated list of lower coverage threshold(s).
     Default: 10.
+    To disable it, specify "-c off", and low-coverage regions won't be annotated.
+
+-n or --no-zero-output:
+    Suppress annotation of zero-coverage regions.
+    Disabled by default.
+
 -C or --upper-coverage-coefficients:
     Comma-separated list of coverage coefficient(s).
     To annotate regions with coverage > 1.7×M,
       where M is median coverage, specify "-C 1.7".
     Default: 2.0.
--n or --no-zero-output:
-    Suppress annotation of zero-coverage regions.
-    Disabled by default.
+    To disable it, specify "-C off", and high-coverage regions won't be annotated.
+
 -l or --min-feature-len:
     Minimum length of a feature to output. Must be int >= 0.
     Default: 5 bp.
+
 --circular:
     Target sequence in curcular. Affects only corresponding GenBank field.
     Disabled by default.
+    
 --organism:
     Organism name. Affects only corresponding GenBank field.
     If it contains spaces, surround it with quotes (see Example 4).
@@ -116,4 +126,13 @@ Annotate file `my_sequence.fasta` with default parameters according to mapping f
 ```
 ./consensus-highlighter.py -f my_sequence.fasta -b my_mapping.sorted.bam \
     --circular --organism "Serratia marcescens"
+```
+
+### Example 5
+
+Annotate file `my_sequence.fasta` according to mapping from file `my_mapping.sorted.bam`. Disable annotation of low-coverage regions (`-c off`). Annotate high-coverage regions with coverage above 1.7×*M* and above 2.4×*M*, where *M* is median coverage:
+
+```
+./consensus-highlighter.py -f my_sequence.fasta -b my_mapping.sorted.bam \
+    -c off -C 1.7,2.4
 ```

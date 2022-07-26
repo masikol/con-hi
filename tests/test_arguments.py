@@ -119,7 +119,7 @@ def opts_negative_threshold(test_fasta_fpath, test_bam_fpath) -> List[List[str]]
 # end def
 
 @pytest.fixture
-def opts_keep_zero_thresahold(test_fasta_fpath, test_bam_fpath) -> List[List[str]]:
+def opts_keep_zero_threshold(test_fasta_fpath, test_bam_fpath) -> List[List[str]]:
     return [
         ['-f', test_fasta_fpath],
         ['-b', test_bam_fpath],
@@ -128,12 +128,30 @@ def opts_keep_zero_thresahold(test_fasta_fpath, test_bam_fpath) -> List[List[str
 # end def
 
 @pytest.fixture
-def opts_suppress_zero_thresahold(test_fasta_fpath, test_bam_fpath) -> List[List[str]]:
+def opts_suppress_zero_threshold(test_fasta_fpath, test_bam_fpath) -> List[List[str]]:
     return [
         ['-f', test_fasta_fpath],
         ['-b', test_bam_fpath],
         ['-c', '10,20'],
         ['-n', '']
+    ]
+# end def
+
+@pytest.fixture
+def opts_thresholds_off(test_fasta_fpath, test_bam_fpath) -> List[List[str]]:
+    return [
+        ['-f', test_fasta_fpath],
+        ['-b', test_bam_fpath],
+        ['-c', 'off']
+    ]
+# end def
+
+@pytest.fixture
+def opts_coefficients_off(test_fasta_fpath, test_bam_fpath) -> List[List[str]]:
+    return [
+        ['-f', test_fasta_fpath],
+        ['-b', test_bam_fpath],
+        ['-C', 'off']
     ]
 # end def
 
@@ -217,8 +235,20 @@ def test_coverage_not_parsable() -> None:
     # Function for testing function `src.arguments._coverage_not_parsable`
     assert args._coverage_not_parsable('-1')
     assert args._coverage_not_parsable('0')
+    assert args._coverage_not_parsable('0.8')
+    assert args._coverage_not_parsable('ass')
     assert not args._coverage_not_parsable('1')
     assert not args._coverage_not_parsable('12')
+# end def
+
+
+def test_coefficient_not_parsable() -> None:
+    # Function for testing function `src.arguments._coefficient_not_parsable`
+    assert args._coefficient_not_parsable('-1.2')
+    assert args._coefficient_not_parsable('0')
+    assert args._coefficient_not_parsable('ass')
+    assert not args._coefficient_not_parsable('1.8')
+    assert not args._coefficient_not_parsable('12.5')
 # end def
 
 
@@ -348,10 +378,10 @@ class TestParseOptions:
         # end with
     # end def
 
-    def test_opts_keep_zero_thresahold(self, opts_keep_zero_thresahold) -> None:
+    def test_opts_keep_zero_threshold(self, opts_keep_zero_threshold) -> None:
         # Function tests how `_parse_options` adds zero threshold
 
-        params: args.HighlighterParams = args._parse_options(opts_keep_zero_thresahold)
+        params: args.HighlighterParams = args._parse_options(opts_keep_zero_threshold)
 
         assert params.suppress_zero_cov_output == False
 
@@ -362,15 +392,27 @@ class TestParseOptions:
         assert zero_coverage == first_coverage_value
     # end def
 
-    def test_opts_suppress_zero_thresahold(self, opts_suppress_zero_thresahold) -> None:
+    def test_opts_suppress_zero_threshold(self, opts_suppress_zero_threshold) -> None:
         # Function tests how `_parse_options` suppresses zero threshold
 
-        params: args.HighlighterParams = args._parse_options(opts_suppress_zero_thresahold)
+        params: args.HighlighterParams = args._parse_options(opts_suppress_zero_threshold)
 
         assert params.suppress_zero_cov_output == True
 
         zero_coverage: int = 0
         assert not zero_coverage in params.lower_coverage_thresholds
+    # end def
+
+    def test_opts_thresholds_off(self, opts_thresholds_off):
+        # Function tests how `_parse_options` turns lower_coverage_thresholds off
+        params: args.HighlighterParams = args._parse_options(opts_thresholds_off)
+        assert len(params.lower_coverage_thresholds) == 0
+    # end def
+
+    def test_opts_coefficients_off(self, opts_coefficients_off):
+        # Function tests how `_parse_options` turns upper_coverage_coefficients off
+        params: args.HighlighterParams = args._parse_options(opts_coefficients_off)
+        assert len(params.upper_coverage_coefficients) == 0
     # end def
 # end class
 

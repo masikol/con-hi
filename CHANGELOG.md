@@ -10,6 +10,8 @@ Version `3.0.a`
 
 3. Change long option name: `-c/coverage-thresholds` -> `-c/lower-coverage-thresholds`.
 
+4. Options `-c` and `-C` can be disabled now: specify `-c off`, `-C off`, and low-coverage or high-coverage regions won't be annotated, respectively.
+
 ## 2022-04-26 edition
 
 Version `2.3.a`

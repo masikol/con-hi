@@ -174,13 +174,15 @@ def _parse_options(opts: List[List[str]]) -> HighlighterParams:
 
         # List of lower coverage thesholds
         elif opt in ('-c', '--lower-coverage-thresholds'):
+            if arg == 'off':
+                params.lower_coverage_thresholds = list()
+                continue
+            # end if
 
             cov_strings: Sequence[str] = arg.split(',')
 
             if any(map(_coverage_not_parsable, cov_strings)):
-
                 invalid_strings: Iterable[str] = filter(_coverage_not_parsable, cov_strings)
-
                 print_err(f'\aError: invalid coverage thresholds in `{arg}`:')
                 for s in invalid_strings:
                     print_err(f'  `{s}`')
@@ -198,18 +200,20 @@ def _parse_options(opts: List[List[str]]) -> HighlighterParams:
 
         # List of upper coverage coefficients
         elif opt in ('-C', '--upper-coverage-coefficients'):
+            if arg == 'off':
+                params.upper_coverage_coefficients = list()
+                continue
+            # end if
 
             coef_strings: Sequence[str] = arg.split(',')
 
             if any(map(_coefficient_not_parsable, coef_strings)):
-
                 invalid_strings: Iterable[str] = filter(_coefficient_not_parsable, coef_strings)
-
-                print_err(f'\aError: invalid coverage coefficient in `{arg}`:')
+                print_err(f'\aError: invalid coverage coefficient in `{arg}`:\n')
                 for s in invalid_strings:
-                    print_err(f'  `{s}`')
+                    print_err(f'  `{s}`\n')
                 # end for
-                print_err('Coverage coefficients must be positive numbers.')
+                print_err('Coverage coefficients must be positive numbers.\n')
                 platf_depend_exit(2)
             # end if
 
@@ -248,7 +252,7 @@ def _parse_options(opts: List[List[str]]) -> HighlighterParams:
     # end for
 
     # Add zero coverage threshold, if no suppression is specified
-    if not params.suppress_zero_cov_output:
+    if not params.suppress_zero_cov_output and len(params.lower_coverage_thresholds) != 0:
         _add_zero_theshold(params)
     # end if
 
