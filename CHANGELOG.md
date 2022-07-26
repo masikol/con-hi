@@ -1,5 +1,11 @@
 # consensus-highlighter changelog
 
+## 2022-07-26 edition
+
+Version `2.4.a`
+
+1. Add option `-l/min-feature-len`. It sets minimum length of an output feature.
+
 ## 2022-04-26 edition
 
 Version `2.3.a`

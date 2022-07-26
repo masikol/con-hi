@@ -11,8 +11,10 @@ __min_python_version__: float = 3.6
 
 # === Check python interpreter version ===
 if sys.version_info.major + sys.version_info.minor*0.1 < __min_python_version__:
-    print( 'Your python interpreter version is ' + '%d.%d' % (sys.version_info.major,
-        sys.version_info.minor) )
+    print(
+        'Your python interpreter version is ' + '%d.%d' %
+        (sys.version_info.major, sys.version_info.minor)
+    )
     print('  Please, use Python %.1f+.\a' % __min_python_version__)
     # In python 2 'raw_input' does the same thing as 'input' in python 3.
     # Neither does 'input' in python2.

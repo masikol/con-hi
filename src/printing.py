@@ -1,4 +1,3 @@
-# Version 2.1.a
 
 import sys
 

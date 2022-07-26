@@ -1,4 +1,3 @@
-# Version 2.1.a
 
 from typing import Sequence, MutableSequence, Tuple
 

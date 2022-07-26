@@ -1,4 +1,3 @@
-# Version 2.2.b
 
 import os
 import sys
@@ -16,6 +15,7 @@ import src.highlight_features as hlft
 import src.parse_fasta_reference as pfr
 from src.platform import platf_depend_exit
 from src.coverage_array import CoverageArray
+from src.filter_features import filter_features
 from src.coverage_threshold import CoverageThreshold
 from src.arguments import parse_arguments, HighlighterParams
 
@@ -90,7 +90,7 @@ def main(version: str, last_update_date: str) -> None:
         # Detect all necessary coverage features
         for cov_threshold in params.coverage_thresholds:
 
-            print(f'Screening the sequence for regions with {cov_threshold.get_label()}...', end=' ')
+            sys.stdout.write(f'Screening the sequence for regions with {cov_threshold.get_label()}...')
             sys.stdout.flush()
 
             # Get coverage features
@@ -100,6 +100,7 @@ def main(version: str, last_update_date: str) -> None:
                 base_feature_note
             )
 
+            coverage_features = filter_features(coverage_features, params.min_feature_len)
             coverage_features = ddf.dedupl_features(coverage_features, rec.features)
 
             # Append features to list
@@ -107,7 +108,7 @@ def main(version: str, last_update_date: str) -> None:
             print('done')
         # end for
 
-        print(f'Writing annotated sequence to `{params.outfpath}`...', end=' ')
+        sys.stdout.write(f'Writing annotated sequence to `{params.outfpath}`...')
         sys.stdout.flush()
 
         # Write result GanBank record

@@ -1,4 +1,3 @@
-# Version 2.1.a
 
 import os
 import subprocess as sp

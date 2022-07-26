@@ -1,4 +1,3 @@
-# Version 2.1.a
 
 import os
 import re
@@ -21,6 +20,7 @@ class HighlighterParams:
         outfpath: str,
         coverage_thresholds: Sequence[CoverageThreshold],
         suppress_zero_cov_output: bool,
+        min_feature_len: int,
         topology: str,
         organism: str) -> None:
 
@@ -29,6 +29,7 @@ class HighlighterParams:
         self.outfpath: str = outfpath
 
         self.suppress_zero_cov_output = suppress_zero_cov_output
+        self.min_feature_len = min_feature_len
 
         self.set_coverage_thresholds(coverage_thresholds)
 
@@ -75,7 +76,7 @@ def parse_arguments() -> HighlighterParams:
     try:
         opts, args = getopt.gnu_getopt(
             sys.argv[1:],
-            'hvf:b:o:c:n',
+            'hvf:b:o:c:l:n',
             [
                 'help',
                 'version',
@@ -83,6 +84,7 @@ def parse_arguments() -> HighlighterParams:
                 'bam=',
                 'outfile=',
                 'coverage-thresholds=',
+                'min-feature-len=',
                 'no-zero-output',
                 'circular',
                 'organism='
@@ -132,6 +134,7 @@ def _parse_options(opts: List[List[str]]) -> HighlighterParams:
         outfpath=os.path.join(os.getcwd(), 'highlighted_sequence.gbk'),
         coverage_thresholds=(10,),
         suppress_zero_cov_output=False,
+        min_feature_len=5,
         topology='linear',
         organism='.'
     )
@@ -205,6 +208,19 @@ def _parse_options(opts: List[List[str]]) -> HighlighterParams:
         # Repress zero output
         elif opt in ('-n', '--no-zero-output'):
             params.suppress_zero_cov_output = True
+
+        elif opt in ('-l', '--min-feature-len'):
+            try:
+                min_feature_len = int(arg)
+                if min_feature_len < 0:
+                    raise ValueError
+                # end if
+            except ValueError:
+                print_err(f'\aError: invalid minimum feature length: `{arg}`')
+                print_err('It must be non-negative negative number.')
+                platf_depend_exit(2)
+            # end try
+            params.min_feature_len = min_feature_len
 
         # Molecule topology for annotation
         elif opt == '--circular':

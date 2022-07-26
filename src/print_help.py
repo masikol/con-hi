@@ -1,4 +1,3 @@
-# Version 2.1.a
 
 def print_help(version: str, last_update_date: str) -> None:
     print('=== consensus-highlighter ===')
@@ -32,6 +31,9 @@ def print_help(version: str, last_update_date: str) -> None:
     print('-n or --no-zero-output:')
     print('    Suppress annotation of zero-coverage regions.')
     print('    Disabled by default.')
+    print('-l or --min-feature-len:')
+    print('    Minimum length of a feature to output. Must be int >= 0.')
+    print('    Default: 5 bp.')
     print('--circular:')
     print('    Target sequence in curcular. Affects only corresponding GenBank field.')
     print('    Disabled by default.')

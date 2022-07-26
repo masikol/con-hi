@@ -1,5 +1,3 @@
-# Version 2.1.a
-
 
 from typing import List, MutableSequence
 
@@ -62,7 +60,7 @@ def highlight_coverage_features(
                     qualifiers={
                         'label': coverage_label,
                         'note': base_feature_note
-                        }
+                    }
                 )
             )
 

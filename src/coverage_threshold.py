@@ -1,5 +1,3 @@
-# Version 2.1.a
-
 
 class CoverageThreshold:
     # Class represents coverage thresholds for annotating low-coverage regions.

@@ -58,6 +58,9 @@ You can specify custom coverage theshold(s) by passing comma-separated list of t
 -n or --no-zero-output:
     Suppress annotation of zero-coverage regions.
     Disabled by default.
+-l or --min-feature-len:
+    Minimum length of a feature to output. Must be int >= 0.
+    Default: 5 bp.
 --circular:
     Target sequence in curcular. Affects only corresponding GenBank field.
     Disabled by default.
