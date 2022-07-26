@@ -30,7 +30,7 @@ def print_help(version: str, last_update_date: str) -> None:
     print('    Default: 10.')
     print('    To disable it, specify `-c off`.')
     print('-n or --no-zero-output:')
-    print('    Suppress annotation of zero-coverage regions.')
+    print('    Disable annotation of zero-coverage regions.')
     print('    Disabled by default.')
     print('-C or --upper-coverage-coefficients:')
     print('    Comma-separated list of coverage coefficient(s).')
@@ -48,5 +48,9 @@ def print_help(version: str, last_update_date: str) -> None:
     print('    Organism name. Affects only corresponding GenBank field.')
     print('    If it contains spaces, surround it with quotes.')
     print('    Empty by default.')
+    print('-k or --keep-temp-cov-file:')
+    print("    Don't delete temporary TSV file `coverages.tsv` after work of the program.")
+    print('    The program creates this file in the same directory where the "-o" file is located.')
+    print('    Default behaviour is to delete this file afterwards.')
     print()
 # end def

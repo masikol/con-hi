@@ -12,6 +12,8 @@ Version `3.0.a`
 
 4. Options `-c` and `-C` can be disabled now: specify `-c off`, `-C off`, and low-coverage or high-coverage regions won't be annotated, respectively.
 
+5. Add option `-k/--keep-temp-cov-file`. If it is specified, temporary file `coverages.tsv` won't be deleted after work of the program.
+
 ## 2022-04-26 edition
 
 Version `2.3.a`

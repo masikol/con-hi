@@ -12,17 +12,18 @@ from tests.fixtures import test_fasta_fpath, test_bam_fpath, test_coverage_fpath
 
 
 @pytest.fixture
-def some_params() -> args.HighlighterParams:
-    return args.HighlighterParams(
+def some_args() -> args.HighlighterArgs:
+    return args.HighlighterArgs(
         target_fasta_fpath=None,
         bam_fpath=None,
         outfpath=os.path.join(os.getcwd(), 'highlighted_sequence.gbk'),
         lower_coverage_thresholds=(10, 15, 20),
         upper_coverage_coefficients=(1.5, 2.0),
-        suppress_zero_cov_output=False,
+        disable_zero_cov_output=False,
         min_feature_len=5,
         topology='linear',
-        organism='.'
+        organism='.',
+        keep_tmp_cov_file=False
     )
 # end def
 
@@ -128,7 +129,7 @@ def opts_keep_zero_threshold(test_fasta_fpath, test_bam_fpath) -> List[List[str]
 # end def
 
 @pytest.fixture
-def opts_suppress_zero_threshold(test_fasta_fpath, test_bam_fpath) -> List[List[str]]:
+def opts_disable_zero_threshold(test_fasta_fpath, test_bam_fpath) -> List[List[str]]:
     return [
         ['-f', test_fasta_fpath],
         ['-b', test_bam_fpath],
@@ -252,12 +253,12 @@ def test_coefficient_not_parsable() -> None:
 # end def
 
 
-def test_add_zero_theshold(some_params) -> None:
+def test_add_zero_theshold(some_args) -> None:
     # Function for testing function `src.arguments._add_zero_theshold`
-    args._add_zero_theshold(some_params)
+    args._add_zero_theshold(some_args)
 
     expected_zero_coverage: int = 0
-    assert some_params.lower_coverage_thresholds[0] == expected_zero_coverage
+    assert some_args.lower_coverage_thresholds[0] == expected_zero_coverage
 # end def
 
 
@@ -267,23 +268,23 @@ class TestParseOptions:
     def test_opts_all_is_ok_short_options(self, opts_all_is_ok_short_options) -> None:
         # Function tests how `_parse_options` parses correct short options
 
-        params: args.HighlighterParams = args._parse_options(opts_all_is_ok_short_options)
+        test_args: args.HighlighterArgs = args._parse_options(opts_all_is_ok_short_options)
 
-        assert params.target_fasta_fpath == opts_all_is_ok_short_options[0][1]
-        assert params.bam_fpath == opts_all_is_ok_short_options[1][1]
-        assert params.outfpath == opts_all_is_ok_short_options[2][1]
-        assert params.suppress_zero_cov_output == True
-        assert params.topology == 'linear'
-        assert params.organism == '.'
+        assert test_args.target_fasta_fpath == opts_all_is_ok_short_options[0][1]
+        assert test_args.bam_fpath == opts_all_is_ok_short_options[1][1]
+        assert test_args.outfpath == opts_all_is_ok_short_options[2][1]
+        assert test_args.disable_zero_cov_output == True
+        assert test_args.topology == 'linear'
+        assert test_args.organism == '.'
 
         obtained_threshold_repr: str = ','.join(
-            map(str, params.lower_coverage_thresholds)
+            map(str, test_args.lower_coverage_thresholds)
         )
         expected_threshold_repr: str = opts_all_is_ok_short_options[3][1]
         assert obtained_threshold_repr == expected_threshold_repr
 
         obtained_coef_repr: str = ','.join(
-            map(str, params.upper_coverage_coefficients)
+            map(str, test_args.upper_coverage_coefficients)
         )
         expected_coef_repr: str = opts_all_is_ok_short_options[4][1]
         assert obtained_coef_repr == expected_coef_repr
@@ -293,23 +294,23 @@ class TestParseOptions:
     def test_opts_all_is_ok_long_options(self, opts_all_is_ok_long_options) -> None:
         # Function tests how `_parse_options` parses correct long options
 
-        params: args.HighlighterParams = args._parse_options(opts_all_is_ok_long_options)
+        test_args: args.HighlighterArgs = args._parse_options(opts_all_is_ok_long_options)
 
-        assert params.target_fasta_fpath == opts_all_is_ok_long_options[0][1]
-        assert params.bam_fpath == opts_all_is_ok_long_options[1][1]
-        assert params.outfpath == opts_all_is_ok_long_options[2][1]
-        assert params.suppress_zero_cov_output == True
-        assert params.topology == 'circular'
-        assert params.organism == opts_all_is_ok_long_options[7][1]
+        assert test_args.target_fasta_fpath == opts_all_is_ok_long_options[0][1]
+        assert test_args.bam_fpath == opts_all_is_ok_long_options[1][1]
+        assert test_args.outfpath == opts_all_is_ok_long_options[2][1]
+        assert test_args.disable_zero_cov_output == True
+        assert test_args.topology == 'circular'
+        assert test_args.organism == opts_all_is_ok_long_options[7][1]
 
         obtained_threshold_repr: str = ','.join(
-            map(str, params.lower_coverage_thresholds)
+            map(str, test_args.lower_coverage_thresholds)
         )
         expected_threshold_repr: str = opts_all_is_ok_long_options[3][1]
         assert obtained_threshold_repr == expected_threshold_repr
 
         obtained_coef_repr: str = ','.join(
-            map(str, params.upper_coverage_coefficients)
+            map(str, test_args.upper_coverage_coefficients)
         )
         expected_coef_repr: str = opts_all_is_ok_long_options[4][1]
         assert obtained_coef_repr == expected_coef_repr
@@ -320,7 +321,7 @@ class TestParseOptions:
         #   where target fasta file does not exist
 
         with pytest.raises(SystemExit):
-            params: args.HighlighterParams = args._parse_options(opts_invalid_fasta)
+            test_args: args.HighlighterArgs = args._parse_options(opts_invalid_fasta)
         # end with
     # end def
 
@@ -329,7 +330,7 @@ class TestParseOptions:
         #   where non-fasta file is specified as target fasta file
 
         with pytest.raises(SystemExit):
-            params: args.HighlighterParams = args._parse_options(opts_fasta_not_fasta)
+            test_args: args.HighlighterArgs = args._parse_options(opts_fasta_not_fasta)
         # end with
     # end def
 
@@ -338,7 +339,7 @@ class TestParseOptions:
         #   where bam file does not exist
 
         with pytest.raises(SystemExit):
-            params: args.HighlighterParams = args._parse_options(opts_invalid_bam)
+            test_args: args.HighlighterArgs = args._parse_options(opts_invalid_bam)
         # end with
     # end def
 
@@ -347,7 +348,7 @@ class TestParseOptions:
         #   where non-bam file is specified as bam file
 
         with pytest.raises(SystemExit):
-            params: args.HighlighterParams = args._parse_options(opts_bam_not_bam)
+            test_args: args.HighlighterArgs = args._parse_options(opts_bam_not_bam)
         # end with
     # end def
 
@@ -356,7 +357,7 @@ class TestParseOptions:
         #   where non-numeric threshold is specified
 
         with pytest.raises(SystemExit):
-            params: args.HighlighterParams = args._parse_options(opts_NAN_threshold)
+            test_args: args.HighlighterArgs = args._parse_options(opts_NAN_threshold)
         # end with
     # end def
 
@@ -365,7 +366,7 @@ class TestParseOptions:
         #   where zero threshold is specified
 
         with pytest.raises(SystemExit):
-            params: args.HighlighterParams = args._parse_options(opts_zero_threshold)
+            test_args: args.HighlighterArgs = args._parse_options(opts_zero_threshold)
         # end with
     # end def
 
@@ -374,45 +375,45 @@ class TestParseOptions:
         #   where negative threshold is specified
 
         with pytest.raises(SystemExit):
-            params: args.HighlighterParams = args._parse_options(opts_negative_threshold)
+            test_args: args.HighlighterArgs = args._parse_options(opts_negative_threshold)
         # end with
     # end def
 
     def test_opts_keep_zero_threshold(self, opts_keep_zero_threshold) -> None:
         # Function tests how `_parse_options` adds zero threshold
 
-        params: args.HighlighterParams = args._parse_options(opts_keep_zero_threshold)
+        test_args: args.HighlighterArgs = args._parse_options(opts_keep_zero_threshold)
 
-        assert params.suppress_zero_cov_output == False
+        assert test_args.disable_zero_cov_output == False
 
         zero_coverage: int = 0
         # Zero threshold should be first
-        first_coverage_value: int = params.lower_coverage_thresholds[0]
+        first_coverage_value: int = test_args.lower_coverage_thresholds[0]
 
         assert zero_coverage == first_coverage_value
     # end def
 
-    def test_opts_suppress_zero_threshold(self, opts_suppress_zero_threshold) -> None:
-        # Function tests how `_parse_options` suppresses zero threshold
+    def test_opts_disable_zero_threshold(self, opts_disable_zero_threshold) -> None:
+        # Function tests how `_parse_options` disables zero threshold
 
-        params: args.HighlighterParams = args._parse_options(opts_suppress_zero_threshold)
+        test_args: args.HighlighterArgs = args._parse_options(opts_disable_zero_threshold)
 
-        assert params.suppress_zero_cov_output == True
+        assert test_args.disable_zero_cov_output == True
 
         zero_coverage: int = 0
-        assert not zero_coverage in params.lower_coverage_thresholds
+        assert not zero_coverage in test_args.lower_coverage_thresholds
     # end def
 
     def test_opts_thresholds_off(self, opts_thresholds_off):
         # Function tests how `_parse_options` turns lower_coverage_thresholds off
-        params: args.HighlighterParams = args._parse_options(opts_thresholds_off)
-        assert len(params.lower_coverage_thresholds) == 0
+        test_args: args.HighlighterArgs = args._parse_options(opts_thresholds_off)
+        assert len(test_args.lower_coverage_thresholds) == 0
     # end def
 
     def test_opts_coefficients_off(self, opts_coefficients_off):
         # Function tests how `_parse_options` turns upper_coverage_coefficients off
-        params: args.HighlighterParams = args._parse_options(opts_coefficients_off)
-        assert len(params.upper_coverage_coefficients) == 0
+        test_args: args.HighlighterArgs = args._parse_options(opts_coefficients_off)
+        assert len(test_args.upper_coverage_coefficients) == 0
     # end def
 # end class
 
@@ -429,26 +430,26 @@ class TestParseArguments:
         sys.argv = cmd_all_ok_short_options
 
         # Parse arguments
-        params: args.HighlighterParams = args.parse_arguments()
+        test_args: args.HighlighterArgs = args.parse_arguments()
 
         # Restore argv
         argv = buff_argv
 
-        assert params.target_fasta_fpath == cmd_all_ok_short_options[2]
-        assert params.bam_fpath == cmd_all_ok_short_options[4]
-        assert params.outfpath == cmd_all_ok_short_options[6]
-        assert params.suppress_zero_cov_output == True
-        assert params.topology == 'linear'
-        assert params.organism == '.'
+        assert test_args.target_fasta_fpath == cmd_all_ok_short_options[2]
+        assert test_args.bam_fpath == cmd_all_ok_short_options[4]
+        assert test_args.outfpath == cmd_all_ok_short_options[6]
+        assert test_args.disable_zero_cov_output == True
+        assert test_args.topology == 'linear'
+        assert test_args.organism == '.'
 
         obtained_threshold_repr: str = ','.join(
-            map(str, params.lower_coverage_thresholds)
+            map(str, test_args.lower_coverage_thresholds)
         )
         expected_threshold_repr: str = cmd_all_ok_short_options[8]
         assert obtained_threshold_repr == expected_threshold_repr
 
         obtained_coef_repr: str = ','.join(
-            map(str, params.upper_coverage_coefficients)
+            map(str, test_args.upper_coverage_coefficients)
         )
         expected_coef_repr: str = cmd_all_ok_short_options[10]
         assert obtained_coef_repr == expected_coef_repr
@@ -463,26 +464,26 @@ class TestParseArguments:
         sys.argv = cmd_all_ok_long_options
 
         # Parse arguments
-        params: args.HighlighterParams = args.parse_arguments()
+        test_args: args.HighlighterArgs = args.parse_arguments()
 
         # Restore argv
         argv = buff_argv
 
-        assert params.target_fasta_fpath == cmd_all_ok_long_options[2]
-        assert params.bam_fpath == cmd_all_ok_long_options[4]
-        assert params.outfpath == cmd_all_ok_long_options[6]
-        assert params.suppress_zero_cov_output == True
-        assert params.topology == 'circular'
-        assert params.organism == cmd_all_ok_long_options[14]
+        assert test_args.target_fasta_fpath == cmd_all_ok_long_options[2]
+        assert test_args.bam_fpath == cmd_all_ok_long_options[4]
+        assert test_args.outfpath == cmd_all_ok_long_options[6]
+        assert test_args.disable_zero_cov_output == True
+        assert test_args.topology == 'circular'
+        assert test_args.organism == cmd_all_ok_long_options[14]
 
         obtained_threshold_repr: str = ','.join(
-            map(str, params.lower_coverage_thresholds)
+            map(str, test_args.lower_coverage_thresholds)
         )
         expected_threshold_repr: str = cmd_all_ok_long_options[8]
         assert obtained_threshold_repr == expected_threshold_repr
 
         obtained_coef_repr: str = ','.join(
-            map(str, params.upper_coverage_coefficients)
+            map(str, test_args.upper_coverage_coefficients)
         )
         expected_coef_repr: str = cmd_all_ok_long_options[10]
         assert obtained_coef_repr == expected_coef_repr
@@ -499,7 +500,7 @@ class TestParseArguments:
 
         # Parse arguments
         with pytest.raises(SystemExit):
-            params: args.HighlighterParams = args.parse_arguments()
+            test_args: args.HighlighterArgs = args.parse_arguments()
         # end with
 
         # Restore argv
@@ -517,7 +518,7 @@ class TestParseArguments:
 
         # Parse arguments
         with pytest.raises(SystemExit):
-            params: args.HighlighterParams = args.parse_arguments()
+            test_args: args.HighlighterArgs = args.parse_arguments()
         # end with
 
         # Restore argv
@@ -535,7 +536,7 @@ class TestParseArguments:
 
         # Parse arguments
         with pytest.raises(SystemExit):
-            params: args.HighlighterParams = args.parse_arguments()
+            test_args: args.HighlighterArgs = args.parse_arguments()
         # end with
 
         # Restore argv

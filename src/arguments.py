@@ -9,7 +9,7 @@ from src.printing import print_err
 from src.platform import platf_depend_exit
 
 
-class HighlighterParams:
+class HighlighterArgs:
     # Class-container for storing run parameters
 
     def __init__(
@@ -19,16 +19,17 @@ class HighlighterParams:
         outfpath: str,
         lower_coverage_thresholds: Sequence[int],
         upper_coverage_coefficients: Sequence[float],
-        suppress_zero_cov_output: bool,
+        disable_zero_cov_output: bool,
         min_feature_len: int,
         topology: str,
-        organism: str) -> None:
+        organism: str,
+        keep_tmp_cov_file: bool) -> None:
 
         self.target_fasta_fpath: str = target_fasta_fpath
         self.bam_fpath: str = bam_fpath
         self.outfpath: str = outfpath
 
-        self.suppress_zero_cov_output = suppress_zero_cov_output
+        self.disable_zero_cov_output = disable_zero_cov_output
         self.min_feature_len = min_feature_len
 
         self.lower_coverage_thresholds = lower_coverage_thresholds
@@ -36,26 +37,28 @@ class HighlighterParams:
 
         self.topology = topology
         self.organism: str = organism
+        self.keep_tmp_cov_file = keep_tmp_cov_file
     # end def
 
 
     def __repr__(self) -> str:
-        return f"""HighlighterParams(
+        return f"""HighlighterArgs(
   target_fasta_fpath: `{self.target_fasta_fpath}`
   bam_fpath: `{self.bam_fpath}`
   outfpath: `{self.outfpath}`
   lower_coverage_thresholds: {self.lower_coverage_thresholds}
   upper_coverage_coefficients: {self.upper_coverage_coefficients}
-  suppress_zero_cov_output: {self.suppress_zero_cov_output}
+  disable_zero_cov_output: {self.disable_zero_cov_output}
   topology: {self.topology}
   organism: `{self.organism}`
+  keep_tmp_cov_file: {self.keep_tmp_cov_file}
 )"""
     # end def
 
 # end class
 
 
-def parse_arguments() -> HighlighterParams:
+def parse_arguments() -> HighlighterArgs:
     # Function parses command line arguments and produces
     #   container with program parameters in it.
 
@@ -65,7 +68,7 @@ def parse_arguments() -> HighlighterParams:
     try:
         opts, args = getopt.gnu_getopt(
             sys.argv[1:],
-            'hvf:b:o:c:C:l:n',
+            'hvf:b:o:c:C:l:nk',
             [
                 'help',
                 'version',
@@ -77,7 +80,8 @@ def parse_arguments() -> HighlighterParams:
                 'min-feature-len=',
                 'no-zero-output',
                 'circular',
-                'organism='
+                'organism=',
+                'keep-temp-cov-file'
             ]
         )
     except getopt.GetoptError as err:
@@ -97,37 +101,38 @@ def parse_arguments() -> HighlighterParams:
     # end if
 
     # Parse options
-    params: HighlighterParams = _parse_options(opts)
+    args: HighlighterArgs = _parse_options(opts)
 
     # Check mandatory options
-    if params.target_fasta_fpath is None:
+    if args.target_fasta_fpath is None:
         print_err('Error: option `-f` (`--target-fasta`) is mandatory.')
         platf_depend_exit(2)
     # end if
 
-    if params.bam_fpath is None:
+    if args.bam_fpath is None:
         print_err('Error: option `-b` (`--bam`) is mandatory.')
         platf_depend_exit(2)
     # end if
 
-    return params
+    return args
 # end def
 
 
-def _parse_options(opts: List[List[str]]) -> HighlighterParams:
+def _parse_options(opts: List[List[str]]) -> HighlighterArgs:
     # Function parses program options
 
     # Initialize run parameters with default values
-    params: HighlighterParams = HighlighterParams(
+    args: HighlighterArgs = HighlighterArgs(
         target_fasta_fpath=None,
         bam_fpath=None,
         outfpath=os.path.join(os.getcwd(), 'highlighted_sequence.gbk'),
         lower_coverage_thresholds=(10,),
         upper_coverage_coefficients=(2.0,),
-        suppress_zero_cov_output=False,
+        disable_zero_cov_output=False,
         min_feature_len=5,
         topology='linear',
-        organism='.'
+        organism='.',
+        keep_tmp_cov_file = False
     )
 
     # Parse command line options
@@ -150,7 +155,7 @@ def _parse_options(opts: List[List[str]]) -> HighlighterParams:
                 platf_depend_exit(2)
             # end if
 
-            params.target_fasta_fpath = arg
+            args.target_fasta_fpath = arg
 
         # BAM file
         elif opt in ('-b', '--bam'):
@@ -166,16 +171,16 @@ def _parse_options(opts: List[List[str]]) -> HighlighterParams:
                 platf_depend_exit(2)
             # end if
 
-            params.bam_fpath = arg
+            args.bam_fpath = arg
 
         # Output directory
         elif opt in ('-o', '--outfile'):
-            params.outfpath = os.path.abspath(arg)
+            args.outfpath = os.path.abspath(arg)
 
         # List of lower coverage thesholds
         elif opt in ('-c', '--lower-coverage-thresholds'):
             if arg == 'off':
-                params.lower_coverage_thresholds = list()
+                args.lower_coverage_thresholds = list()
                 continue
             # end if
 
@@ -196,12 +201,12 @@ def _parse_options(opts: List[List[str]]) -> HighlighterParams:
                 (int(cov_str) for cov_str in sorted(cov_strings, key=int))
             )
 
-            params.lower_coverage_thresholds = coverage_thresholds
+            args.lower_coverage_thresholds = coverage_thresholds
 
         # List of upper coverage coefficients
         elif opt in ('-C', '--upper-coverage-coefficients'):
             if arg == 'off':
-                params.upper_coverage_coefficients = list()
+                args.upper_coverage_coefficients = list()
                 continue
             # end if
 
@@ -222,11 +227,11 @@ def _parse_options(opts: List[List[str]]) -> HighlighterParams:
                 (float(coef_str) for coef_str in sorted(coef_strings, key=float))
             )
 
-            params.upper_coverage_coefficients = coverage_coefficients
+            args.upper_coverage_coefficients = coverage_coefficients
 
         # Repress zero output
         elif opt in ('-n', '--no-zero-output'):
-            params.suppress_zero_cov_output = True
+            args.disable_zero_cov_output = True
 
         # Minimum output feature length
         elif opt in ('-l', '--min-feature-len'):
@@ -240,23 +245,26 @@ def _parse_options(opts: List[List[str]]) -> HighlighterParams:
                 print_err('It must be non-negative negative number.')
                 platf_depend_exit(2)
             # end try
-            params.min_feature_len = min_feature_len
+            args.min_feature_len = min_feature_len
 
         # Molecule topology for annotation
         elif opt == '--circular':
-            params.topology = 'circular'
+            args.topology = 'circular'
 
         # Organism name for annotation
         elif opt == '--organism':
-            params.organism = arg
+            args.organism = arg
+
+        elif opt in ('-k', '--keep-temp-cov-file'):
+            args.keep_tmp_cov_file = True
     # end for
 
-    # Add zero coverage threshold, if no suppression is specified
-    if not params.suppress_zero_cov_output and len(params.lower_coverage_thresholds) != 0:
-        _add_zero_theshold(params)
+    # Add zero coverage threshold, if no disabling is specified
+    if not args.disable_zero_cov_output and len(args.lower_coverage_thresholds) != 0:
+        _add_zero_theshold(args)
     # end if
 
-    return params
+    return args
 # end def
 
 
@@ -272,13 +280,13 @@ def _is_bam(fpath: str) -> bool:
 # end def
 
 
-def _add_zero_theshold(params: HighlighterParams) -> None:
+def _add_zero_theshold(args: HighlighterArgs) -> None:
     # Function adds zero threshold to lost of coverage thresholds
-    # :param params: program parameters;
+    # :param args: program parameters;
 
-    coverage_thresholds_with_zero: Sequence[int] = (0,) + params.lower_coverage_thresholds
+    coverage_thresholds_with_zero: Sequence[int] = (0,) + args.lower_coverage_thresholds
 
-    params.lower_coverage_thresholds = coverage_thresholds_with_zero
+    args.lower_coverage_thresholds = coverage_thresholds_with_zero
 # end def
 
 

@@ -67,7 +67,7 @@ You can specify custom coverage theshold(s) by passing comma-separated list of t
     To disable it, specify "-c off", and low-coverage regions won't be annotated.
 
 -n or --no-zero-output:
-    Suppress annotation of zero-coverage regions.
+    Disable annotation of zero-coverage regions.
     Disabled by default.
 
 -C or --upper-coverage-coefficients:
@@ -89,6 +89,11 @@ You can specify custom coverage theshold(s) by passing comma-separated list of t
     Organism name. Affects only corresponding GenBank field.
     If it contains spaces, surround it with quotes (see Example 4).
     Empty by default.
+
+-k or --keep-temp-cov-file:
+    Don't delete temporary TSV file "coverages.tsv" after work of the program.
+    The program creates this file in the same directory where the "-o" file is located.
+    Default behaviour is to delete this file afterwards.
 ```
 \* - mandatory option
 
@@ -113,7 +118,7 @@ Annotate file `my_sequence.fasta` according to mapping from file `my_mapping.sor
 
 ### Example 3
 
-Annotate file `my_sequence.fasta` according to mapping from file `my_mapping.sorted.bam`. Annotate regions with coverage below 25, fragments with coverages below 50. Suppress annotation of zerocoverage regions:
+Annotate file `my_sequence.fasta` according to mapping from file `my_mapping.sorted.bam`. Annotate regions with coverage below 25, fragments with coverages below 50. Disable annotation of zerocoverage regions:
 
 ```
 ./consensus-highlighter.py -f my_sequence.fasta -b my_mapping.sorted.bam -c 25,50 -n
