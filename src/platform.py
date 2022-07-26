@@ -9,4 +9,4 @@ def platf_depend_exit(exit_code: int = 0):
         input('Press ENTER to exit:')
     # end if
     sys.exit(exit_code)
-# end def platf_depend_exit
+# end def

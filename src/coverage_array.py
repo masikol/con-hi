@@ -9,7 +9,12 @@ class CoverageArray:
 
     def __init__(self, initializer: Sequence[int]) -> None:
         self.coverages = array.array('I', initializer)
-    # end def __init__
+        self.min_coverage = self._calc_min_coverage()
+        self.max_coverage = self._calc_max_coverage()
+        self.avg_coverage = self._calc_avg_coverage()
+        self.median_coverage = self._calc_median_coverage()
+        self.zero_coverage_bases = self._count(0)
+    # end def
 
     def __getitem__(self, key: int) -> int:
         # Returns coverage at given position `key`
@@ -20,29 +25,29 @@ class CoverageArray:
         else:
             return self.coverages[key]
         # end if
-    # end def __getitem__
+    # end def
 
     def __len__(self) -> int:
         return len(self.coverages)
-    # end def __len__
+    # end def
 
-    def count(self, cov_value: int) -> int:
+    def _count(self, cov_value: int) -> int:
         return self.coverages.count(cov_value)
     # end def
 
-    def calc_min_coverage(self):
+    def _calc_min_coverage(self):
         return round(min(self.coverages), 2)
     # end def
 
-    def calc_max_coverage(self):
+    def _calc_max_coverage(self):
         return round(max(self.coverages), 2)
     # end def
 
-    def calc_avg_coverage(self):
+    def _calc_avg_coverage(self):
         return round(sts.mean(self.coverages), 2)
     # end def
 
-    def calc_median_coverage(self):
+    def _calc_median_coverage(self):
         return round(sts.median(self.coverages), 2)
     # end def
-# end class CoverageArray
+# end class

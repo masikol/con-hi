@@ -1,20 +1,20 @@
 # consensus-highlighter
 
-Latest version is `2.3.a` (2022-04-26 edition).
+Latest version is `3.0.a` (2022-07-26 edition).
 
 ## Description
 
-This program annotates low-coverage regions of sequences in fasta format.
+This program annotates low-coverage and high-coverage regions of sequences in fasta format using read mapping in BAM format.
 
 ### Input
 
-1. The target sequence(s) in fasta format.
-2. The mapping in **sorted** BAM file.
-3. Coverage threshold(s) for searching low-coverage regions.
+1. Target sequence(s) in fasta format.
+2. Read mapping in a **sorted** BAM file.
+3. Coverage threshold(s) for searching low-coverage and high-coverage regions.
 
 ### Output
 
-- A GenBank file with annotated low-coverage regions.
+- A GenBank file with annotated low-coverage and high-coverage regions.
 
 ## Dependencies
 
@@ -22,7 +22,7 @@ This program annotates low-coverage regions of sequences in fasta format.
 - [Biopython](https://biopython.org/) package.
 - [samtools](https://github.com/samtools/samtools) 1.13 or later is recommended. Versions from 1.11 to 1.12 are acceptable, but might calculate coverage inaccurately.
 
-You can install Biopython wi following command:
+You can install Biopython with following command:
 ```
 pip3 install biopython
 ```
@@ -36,10 +36,16 @@ Basic usage is:
 ./consensus-highlighter.py -f <TARGET_FASTA> -b <MAPPING_BAM>
 ```
 
-You can specify custom coverage theshold(s) by passing comma-separated list of thresholds with option `-c`. For example, following command will annotate all regions with coverage below 25 and all regions below 55 (and also with zero coverage):
+You can specify custom coverage theshold(s) by passing comma-separated list of thresholds with options `-c` and `-C`. For example, following command will annotate:
+
+- regions with coverage below 25 and all regions below 55 (and also with zero coverage);
+
+- regions with coverage greater than 1.5×*M* and greater than 2.0×*M*, where *M* is median coverage.
 
 ```
-./consensus-highlighter.py -f my_sequence.fasta -b my_mapping.sorted.bam -c 25,55
+./consensus-highlighter.py \
+    -f my_sequence.fasta -b my_mapping.sorted.bam \
+    -c 25,55 -C 1.5,2.0
 ```
 
 ### Options
@@ -52,9 +58,14 @@ You can specify custom coverage theshold(s) by passing comma-separated list of t
 -o or --outfile:
     Output file.
     Deault value: 'highlighted_sequence.gbk'.
--c or --coverage-thresholds:
-    Comma-separated list of coverage threshold(s).
+-c or --lower-coverage-thresholds:
+    Comma-separated list of lower coverage threshold(s).
     Default: 10.
+-C or --upper-coverage-coefficients:
+    Comma-separated list of coverage coefficient(s).
+    To annotate regions with coverage > 1.7×M,
+      where M is median coverage, specify "-C 1.7".
+    Default: 2.0.
 -n or --no-zero-output:
     Suppress annotation of zero-coverage regions.
     Disabled by default.
@@ -76,7 +87,7 @@ You can specify custom coverage theshold(s) by passing comma-separated list of t
 
 ### Example 1
 
-Annotate low-coverage regions in sequence `my_sequence.fasta` with default parameters according to mapping from file `my_mapping.sorted.bam`:
+Annotate file `my_sequence.fasta` with default parameters according to mapping from file `my_mapping.sorted.bam`:
 
 ```
 ./consensus-highlighter.py -f my_sequence.fasta -b my_mapping.sorted.bam
@@ -84,7 +95,7 @@ Annotate low-coverage regions in sequence `my_sequence.fasta` with default param
 
 ### Example 2
 
-Annotate low-coverage regions in sequence `my_sequence.fasta` according to mapping from file `my_mapping.sorted.bam`. Annotate regions with coverage below 25, fragments with coverages below 50 and regions with zero coverages:
+Annotate file `my_sequence.fasta` according to mapping from file `my_mapping.sorted.bam`. Annotate regions with coverage below 25, fragments with coverages below 50 and regions with zero coverages:
 
 ```
 ./consensus-highlighter.py -f my_sequence.fasta -b my_mapping.sorted.bam -c 25,50
@@ -92,7 +103,7 @@ Annotate low-coverage regions in sequence `my_sequence.fasta` according to mappi
 
 ### Example 3
 
-Annotate low-coverage regions in sequence `my_sequence.fasta` according to mapping from file `my_mapping.sorted.bam`. Annotate regions with coverage below 25, fragments with coverages below 50. Suppress annotation of zerocoverage regions:
+Annotate file `my_sequence.fasta` according to mapping from file `my_mapping.sorted.bam`. Annotate regions with coverage below 25, fragments with coverages below 50. Suppress annotation of zerocoverage regions:
 
 ```
 ./consensus-highlighter.py -f my_sequence.fasta -b my_mapping.sorted.bam -c 25,50 -n
@@ -100,7 +111,7 @@ Annotate low-coverage regions in sequence `my_sequence.fasta` according to mappi
 
 ### Example 4
 
-Annotate low-coverage regions in sequence `my_sequence.fasta` with default parameters according to mapping from file `my_mapping.sorted.bam`. Specify the name of the organism for output file. The sequence is circular:
+Annotate file `my_sequence.fasta` with default parameters according to mapping from file `my_mapping.sorted.bam`. Specify the name of the organism for output file. The sequence is circular:
 
 ```
 ./consensus-highlighter.py -f my_sequence.fasta -b my_mapping.sorted.bam \

@@ -45,7 +45,7 @@ def check_depencencies() -> None:
     # end if
 
     print('All dependencies are satisfied.\n')
-# end def check_depencencies
+# end def
 
 
 def _check_biopython() -> Tuple[str, str]:
@@ -66,7 +66,7 @@ def _check_biopython() -> Tuple[str, str]:
     # end try
 
     return version, err_msg
-# end def _check_biopython
+# end def
 
 
 def _check_samtools() -> Tuple[str, str]:
@@ -127,7 +127,7 @@ def _check_samtools() -> Tuple[str, str]:
     # end if
 
     return version, err_msg
-# end def _check_samtools
+# end def
 
 
 def _check_recommended_samtools_version(full_version, numeric_version_str):

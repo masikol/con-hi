@@ -16,8 +16,9 @@ import src.parse_fasta_reference as pfr
 from src.platform import platf_depend_exit
 from src.coverage_array import CoverageArray
 from src.filter_features import filter_features
-from src.coverage_threshold import CoverageThreshold
 from src.arguments import parse_arguments, HighlighterParams
+from src.coverage_thresholds.lower_coverage_threshold import LowerCoverageThreshold
+from src.coverage_thresholds.upper_coverage_threshold import UpperCoverageThreshold
 
 
 def main(version: str, last_update_date: str) -> None:
@@ -85,11 +86,13 @@ def main(version: str, last_update_date: str) -> None:
         # end if
 
         cov_threshold: CoverageThreshold
+        cov_thresholds: Sequence[cov_threshold: CoverageThreshold]
         coverage_features: MutableSequence[SeqFeature]
 
-        # Detect all necessary coverage features
-        for cov_threshold in params.coverage_thresholds:
+        cov_thresholds = _make_coverage_thresholds(params, cov_array)
 
+        # Detect all necessary coverage features
+        for cov_threshold in cov_thresholds:
             sys.stdout.write(f'Screening the sequence for regions with {cov_threshold.get_label()}...')
             sys.stdout.flush()
 
@@ -105,7 +108,7 @@ def main(version: str, last_update_date: str) -> None:
 
             # Append features to list
             rec.features.extend(coverage_features)
-            print('done')
+            print(' done')
         # end for
 
         sys.stdout.write(f'Writing annotated sequence to `{params.outfpath}`...')
@@ -126,7 +129,7 @@ def main(version: str, last_update_date: str) -> None:
 
     _try_rm_temp_file(coverage_fpath)
     print(f'Completed{with_warnings}!')
-# end def main
+# end def
 
 
 def _create_outdir_from_outfile(outfpath: str) -> None:
@@ -145,7 +148,7 @@ def _create_outdir_from_outfile(outfpath: str) -> None:
             platf_depend_exit(1)
         # end try
     # end if
-# end def _create_outdir_from_outfile
+# end def
 
 
 def _try_rm_temp_file(file_path):
@@ -155,4 +158,21 @@ def _try_rm_temp_file(file_path):
         print_err('Warning: cannot remove temporary file `{}`'.format(file_path))
         print_err(str(err))
     # end try
+# end def
+
+
+def _make_coverage_thresholds(params, cov_array):
+    lower_coverage_thresholds = [
+        LowerCoverageThreshold(thr_int)
+            for thr_int in params.lower_coverage_thresholds
+    ]
+
+    median_coverage = cov_array.median_coverage
+
+    upper_coverage_thresholds = [
+        UpperCoverageThreshold(coef_float, median_coverage)
+            for coef_float in params.upper_coverage_coefficients
+    ]
+
+    return lower_coverage_thresholds + upper_coverage_thresholds
 # end def

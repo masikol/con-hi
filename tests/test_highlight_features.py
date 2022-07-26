@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-# Version 2.2.a
 
 from typing import List
 
@@ -9,7 +7,7 @@ from Bio.SeqFeature import SeqFeature
 import src.obtain_coverage as oc
 import src.highlight_features as hlft
 from src.coverage_array import CoverageArray
-from src.coverage_threshold import CoverageThreshold
+from src.coverage_thresholds.lower_coverage_threshold import LowerCoverageThreshold
 
 from tests.fixtures import test_bam_fpath, test_outfpath, \
                            test_outdir_path, test_coverage_fpath, \
@@ -19,9 +17,9 @@ from tests.fixtures import test_bam_fpath, test_outfpath, \
 
 
 @pytest.fixture
-def zero_cov_threshold() -> CoverageThreshold:
-    return CoverageThreshold(0)
-# end def zero_cov_threshold
+def zero_cov_threshold() -> LowerCoverageThreshold:
+    return LowerCoverageThreshold(0)
+# end def
 
 
 class TestHighlightCoverageFeatures:
@@ -62,7 +60,7 @@ class TestHighlightCoverageFeatures:
         # Test feature note
         expected_note: str = note
         assert ftr.qualifiers['note'] == expected_note
-    # end def test_highlight_inner_region
+    # end def
 
 
     def test_highlight_inner_zerocov_region(self, coverage_array_inner, zero_cov_threshold) -> None:
@@ -100,7 +98,7 @@ class TestHighlightCoverageFeatures:
         # Test feature note
         expected_note: str = note
         assert ftr.qualifiers['note'] == expected_note
-    # end def test_highlight_inner_zerocov_region
+    # end def
 
 
     def test_highlight_edge_region(self, coverage_array_edge, nonzero_cov_threshold) -> None:
@@ -138,5 +136,5 @@ class TestHighlightCoverageFeatures:
         # Test feature note
         expected_note: str = note
         assert ftr.qualifiers['note'] == expected_note
-    # end def test_highlight_edge_region
-# end class TestHighlightCoverageFeatures
+    # end def
+# end class

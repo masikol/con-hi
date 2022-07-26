@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-# Version 2.2.a
 
 import os
 from typing import Sequence
@@ -10,7 +8,7 @@ from Bio.SeqRecord import SeqRecord
 import src.obtain_coverage as oc
 import src.parse_fasta_reference as pfr
 from src.coverage_array import CoverageArray
-from src.coverage_threshold import CoverageThreshold
+from src.coverage_thresholds.lower_coverage_threshold import LowerCoverageThreshold
 
 
 @pytest.fixture(scope='session')
@@ -77,8 +75,8 @@ def test_coverage_fpath(test_outdir_path) -> str:
 
 
 @pytest.fixture(scope='session')
-def nonzero_cov_threshold() -> CoverageThreshold:
-    return CoverageThreshold(2)
+def nonzero_cov_threshold() -> LowerCoverageThreshold:
+    return LowerCoverageThreshold(2)
 # end def
 
 

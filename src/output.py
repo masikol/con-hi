@@ -21,7 +21,7 @@ def create_or_emply_file(file_path):
         print_err(str(err))
         platf_depend_exit(1)
     # end try
-# end def create_or_emply_file
+# end def
 
 
 def write_genbank_output(seq_record: SeqRecord,
@@ -53,16 +53,13 @@ def write_genbank_output(seq_record: SeqRecord,
     with open(outfpath, 'a') as outfile:
         SeqIO.write(seq_record, outfile, 'genbank')
     # end with
-# end def write_genbank_output
+# end def
 
 
 def _create_annotations(seq_record: SeqRecord,
                         organism: str,
                         topology: str,
                         cov_array: CoverageArray) -> dict:
-
-    zero_coverage_bases = cov_array.count(0)
-
     annotations = {
         'molecule_type': 'DNA',
         'organism': organism,
@@ -70,11 +67,11 @@ def _create_annotations(seq_record: SeqRecord,
         'topology': topology,
         'structured_comment': {
             'Coverage-Data': {
-                'Minimum Coverage': cov_array.calc_min_coverage(),
-                'Average Coverage': cov_array.calc_avg_coverage(),
-                'Median Coverage' : cov_array.calc_median_coverage(),
-                'Maximum Coverage': cov_array.calc_max_coverage(),
-                'Zero-coverage bases': '{} bp'.format(zero_coverage_bases),
+                'Minimum Coverage': cov_array.min_coverage,
+                'Average Coverage': cov_array.avg_coverage,
+                'Median Coverage' : cov_array.median_coverage,
+                'Maximum Coverage': cov_array.max_coverage,
+                'Zero-coverage bases': '{} bp'.format(cov_array.zero_coverage_bases),
             }
         }
     }
@@ -87,7 +84,7 @@ def _get_date() -> str:
     # Function returns formatted current date.
     now: datetime.datetime = datetime.datetime.now()
     return now.strftime('%d-%b-%Y').upper()
-# end def _get_date
+# end def
 
 
 def conf_path_to_depth_file(outfpath: str) -> str:
@@ -97,4 +94,4 @@ def conf_path_to_depth_file(outfpath: str) -> str:
         os.path.dirname(outfpath),
         'coverages.tsv'
     )
-# end def conf_path_to_depth_file
+# end def

@@ -7,7 +7,6 @@ from typing import List, Sequence, Iterable
 
 from src.printing import print_err
 from src.platform import platf_depend_exit
-from src.coverage_threshold import CoverageThreshold
 
 
 class HighlighterParams:
@@ -18,7 +17,8 @@ class HighlighterParams:
         target_fasta_fpath: str,
         bam_fpath: str,
         outfpath: str,
-        coverage_thresholds: Sequence[CoverageThreshold],
+        lower_coverage_thresholds: Sequence[int],
+        upper_coverage_coefficients: Sequence[float],
         suppress_zero_cov_output: bool,
         min_feature_len: int,
         topology: str,
@@ -31,24 +31,12 @@ class HighlighterParams:
         self.suppress_zero_cov_output = suppress_zero_cov_output
         self.min_feature_len = min_feature_len
 
-        self.set_coverage_thresholds(coverage_thresholds)
+        self.lower_coverage_thresholds = lower_coverage_thresholds
+        self.upper_coverage_coefficients = upper_coverage_coefficients
 
         self.topology = topology
         self.organism: str = organism
-    # end def __init__
-
-
-    def set_coverage_thresholds(self, coverage_thresholds: Sequence[int]) -> None:
-        # Function sets coverage thresholds for the instance.
-        # :param coverage_thresholds: collection of coverage thresholds;
-
-        self.coverage_thresholds: Sequence[CoverageThreshold]
-
-        # Set the thresholds
-        self.coverage_thresholds = tuple(
-            (CoverageThreshold(cov) for cov in coverage_thresholds)
-        )
-    # end def set_coverage_thresholds
+    # end def
 
 
     def __repr__(self) -> str:
@@ -56,14 +44,15 @@ class HighlighterParams:
   target_fasta_fpath: `{self.target_fasta_fpath}`
   bam_fpath: `{self.bam_fpath}`
   outfpath: `{self.outfpath}`
-  coverage_thresholds: {self.coverage_thresholds}
+  lower_coverage_thresholds: {self.lower_coverage_thresholds}
+  upper_coverage_coefficients: {self.upper_coverage_coefficients}
   suppress_zero_cov_output: {self.suppress_zero_cov_output}
   topology: {self.topology}
   organism: `{self.organism}`
 )"""
-    # end def __repr__
+    # end def
 
-# end class HighlighterParams
+# end class
 
 
 def parse_arguments() -> HighlighterParams:
@@ -76,14 +65,15 @@ def parse_arguments() -> HighlighterParams:
     try:
         opts, args = getopt.gnu_getopt(
             sys.argv[1:],
-            'hvf:b:o:c:l:n',
+            'hvf:b:o:c:C:l:n',
             [
                 'help',
                 'version',
                 'target-fasta=',
                 'bam=',
                 'outfile=',
-                'coverage-thresholds=',
+                'lower-coverage-thresholds=',
+                'upper-coverage-coefficients=',
                 'min-feature-len=',
                 'no-zero-output',
                 'circular',
@@ -121,7 +111,7 @@ def parse_arguments() -> HighlighterParams:
     # end if
 
     return params
-# end def parse_arguments
+# end def
 
 
 def _parse_options(opts: List[List[str]]) -> HighlighterParams:
@@ -132,7 +122,8 @@ def _parse_options(opts: List[List[str]]) -> HighlighterParams:
         target_fasta_fpath=None,
         bam_fpath=None,
         outfpath=os.path.join(os.getcwd(), 'highlighted_sequence.gbk'),
-        coverage_thresholds=(10,),
+        lower_coverage_thresholds=(10,),
+        upper_coverage_coefficients=(2.0,),
         suppress_zero_cov_output=False,
         min_feature_len=5,
         topology='linear',
@@ -181,8 +172,8 @@ def _parse_options(opts: List[List[str]]) -> HighlighterParams:
         elif opt in ('-o', '--outfile'):
             params.outfpath = os.path.abspath(arg)
 
-        # List of coverage thesholds
-        elif opt in ('-c', '--coverage-thresholds'):
+        # List of lower coverage thesholds
+        elif opt in ('-c', '--lower-coverage-thresholds'):
 
             cov_strings: Sequence[str] = arg.split(',')
 
@@ -203,12 +194,37 @@ def _parse_options(opts: List[List[str]]) -> HighlighterParams:
                 (int(cov_str) for cov_str in sorted(cov_strings, key=int))
             )
 
-            params.set_coverage_thresholds(coverage_thresholds)
+            params.lower_coverage_thresholds = coverage_thresholds
+
+        # List of upper coverage coefficients
+        elif opt in ('-C', '--upper-coverage-coefficients'):
+
+            coef_strings: Sequence[str] = arg.split(',')
+
+            if any(map(_coefficient_not_parsable, coef_strings)):
+
+                invalid_strings: Iterable[str] = filter(_coefficient_not_parsable, coef_strings)
+
+                print_err(f'\aError: invalid coverage coefficient in `{arg}`:')
+                for s in invalid_strings:
+                    print_err(f'  `{s}`')
+                # end for
+                print_err('Coverage coefficients must be positive numbers.')
+                platf_depend_exit(2)
+            # end if
+
+            # Now cast coverages to int and sort them in ascending order
+            coverage_coefficients: Sequence[float] = tuple(
+                (float(coef_str) for coef_str in sorted(coef_strings, key=float))
+            )
+
+            params.upper_coverage_coefficients = coverage_coefficients
 
         # Repress zero output
         elif opt in ('-n', '--no-zero-output'):
             params.suppress_zero_cov_output = True
 
+        # Minimum output feature length
         elif opt in ('-l', '--min-feature-len'):
             try:
                 min_feature_len = int(arg)
@@ -237,40 +253,33 @@ def _parse_options(opts: List[List[str]]) -> HighlighterParams:
     # end if
 
     return params
-# end def _parse_options
+# end def
 
 
 def _is_fasta(fpath: str) -> bool:
     fasta_pattern: str = r'.+\.f(ast)?a(\.gz)?'
     return not re.match(fasta_pattern, fpath) is None
-# end def _is_fasta
+# end def
 
 
 def _is_bam(fpath: str) -> bool:
     bam_pattern: str = r'.+\.bam'
     return not re.match(bam_pattern, fpath) is None
-# end def _is_bam
+# end def
 
 
 def _add_zero_theshold(params: HighlighterParams) -> None:
     # Function adds zero threshold to lost of coverage thresholds
     # :param params: program parameters;
 
-    curr_coverage_thresholds: Sequence[int] = tuple(
-        map(
-            lambda x: x.get_coverage(),
-            params.coverage_thresholds
-        )
-    )
+    coverage_thresholds_with_zero: Sequence[int] = (0,) + params.lower_coverage_thresholds
 
-    coverage_thresholds_with_zero: Sequence[int] = (0,) + curr_coverage_thresholds
-
-    params.set_coverage_thresholds(coverage_thresholds_with_zero)
-# end def _add_zero_theshold
+    params.lower_coverage_thresholds = coverage_thresholds_with_zero
+# end def
 
 
 def _coverage_not_parsable(string: str) -> bool:
-    # Function checks validity of coverage threshold strign representation
+    # Function checks validity of coverage threshold string representation
     # :param string: string to validate;
 
     cov_is_not_parsable: bool = True
@@ -287,4 +296,25 @@ def _coverage_not_parsable(string: str) -> bool:
     # end try
 
     return cov_is_not_parsable
-# end def _coverage_not_parsable
+# end def
+
+
+def _coefficient_not_parsable(string: str) -> bool:
+    # Function checks validity of coverage coefficient string representation
+    # :param string: string to validate;
+
+    coef_is_not_parsable: bool = True
+
+    try:
+        ceof: float = float(string)
+        if ceof < 1:
+            raise ValueError
+        # end if
+    except ValueError:
+        coef_is_not_parsable = True
+    else:
+        coef_is_not_parsable = False
+    # end try
+
+    return coef_is_not_parsable
+# end def

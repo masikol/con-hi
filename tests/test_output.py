@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-# Version 2.2.a
 
 import os
 from typing import List, Tuple
@@ -13,7 +11,7 @@ from Bio.SeqFeature import SeqFeature, FeatureLocation
 import src.output as out
 import src.highlight_features as hlft
 from src.coverage_array import CoverageArray
-from src.coverage_threshold import CoverageThreshold
+from src.coverage_thresholds.lower_coverage_threshold import LowerCoverageThreshold
 
 from tests.fixtures import test_fasta_records, test_bam_fpath
 from tests.fixtures import nonzero_cov_threshold, test_coverage_fpath
@@ -26,7 +24,7 @@ from tests.fixtures import coverage_array_inner, coverage_array_edge
 def annotated_seq_records(test_fasta_records: SeqRecord,
                           coverage_array_inner: CoverageArray,
                           coverage_array_edge: CoverageArray,
-                          nonzero_cov_threshold: CoverageThreshold) -> Tuple:
+                          nonzero_cov_threshold: LowerCoverageThreshold) -> Tuple:
 
     seq_records = list(test_fasta_records)
 

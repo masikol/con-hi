@@ -1,12 +1,16 @@
 
-class CoverageThreshold:
+from src.coverage_thresholds.coverage_threshold import CoverageThreshold
+
+
+class LowerCoverageThreshold(CoverageThreshold):
     # Class represents coverage thresholds for annotating low-coverage regions.
 
     def __init__(self, cov_threshold_value: int) -> None:
-
         if cov_threshold_value < 0:
-            raise ValueError(f'Negative value passed to constructor of class\
- CoverageThreshold: `{cov_threshold_value}`')
+            raise ValueError(
+                'Negative value passed to constructor of class '
+                f'`{self.__class__}`: `{cov_threshold_value}`'
+            )
         # end if
 
         self._value: int = cov_threshold_value
@@ -18,8 +22,7 @@ class CoverageThreshold:
         else:
             self._label = f'coverage < {self._value}'
         # end if
-    # end def __init__
-
+    # end def
 
     def test_coverage(self, cov: int) -> bool:
         # Function checks if current coverage `cov` is below our threshold
@@ -30,22 +33,9 @@ class CoverageThreshold:
         else:
             return cov == 0
         # end if
-    # end def test_coverage
-
-
-    def get_label(self) -> str:
-        # Getter for label
-        return self._label
-    # end def get_label
-
-
-    def get_coverage(self) -> int:
-        # Getter for coverage threshold
-        return self._value
-    # end def get_coverage
-
+    # end def
 
     def __repr__(self):
-        return f'<CoverageThreshold: {self._value}, label:`{self._label}`>'
-    # end def __repr__
-# end class CoverageThreshold
+        return f'<LowerCoverageThreshold: {self._value}, label:`{self._label}`>'
+    # end def
+# end class

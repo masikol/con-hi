@@ -2,9 +2,13 @@
 
 ## 2022-07-26 edition
 
-Version `2.4.a`
+Version `3.0.a`
 
 1. Add option `-l/min-feature-len`. It sets minimum length of an output feature.
+
+2. Add option `-C/upper-coverage-coefficients`. It sets threshold(s) for annotating **high-coverage** regions. For example, to annotate regions with coverage > 1.7×*M*, where *M* is median coverage, you should specify `-C 1.7`. You can specify multiple coefficients: `-C 1.5,1.7`, in the same way as for option `-c`.
+
+3. Change long option name: `-c/coverage-thresholds` -> `-c/lower-coverage-thresholds`.
 
 ## 2022-04-26 edition
 

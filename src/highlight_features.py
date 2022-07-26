@@ -4,13 +4,12 @@ from typing import List, MutableSequence
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 
 from src.coverage_array import CoverageArray
-from src.coverage_threshold import CoverageThreshold
+from src.coverage_thresholds.lower_coverage_threshold import LowerCoverageThreshold
 
 
-def highlight_coverage_features(
-        cov_array: CoverageArray,
-        coverage_threshold: CoverageThreshold,
-        base_feature_note: str) -> MutableSequence[SeqFeature]:
+def highlight_coverage_features(cov_array: CoverageArray,
+                                coverage_threshold: LowerCoverageThreshold,
+                                base_feature_note: str) -> MutableSequence[SeqFeature]:
     # Function annotates low-coverage regions according to `coverage_threshold`
     # :param cov_array: array of coverage values;
     # :param coverage_threshold: coverage thresold to search low-coverage regions;
@@ -71,4 +70,4 @@ def highlight_coverage_features(
     # end for
 
     return feature_list
-# end def highlight_coverage_features
+# end def

@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-# Version 2.2.a
 
 from typing import Sequence
 
@@ -12,7 +10,7 @@ from src.coverage_array import CoverageArray
 def some_array() -> Sequence[int]:
     init_list = [1, 2, 3, 4, 5, 6, 7, 8]
     return CoverageArray(init_list)
-# end def some_array
+# end def
 
 
 class TestCoverageArray:
@@ -23,7 +21,7 @@ class TestCoverageArray:
 
         expected: int = len(some_array)
         assert expected == len(some_array)
-    # end def test_lengths_equality
+    # end def
 
     def test_getitem(self, some_array) -> None:
         # Test method __getitem__
@@ -39,29 +37,29 @@ class TestCoverageArray:
         assert expected == some_array[len(some_array)-1]
         expected = float('inf')
         assert expected == some_array[len(some_array)]
-    # end def test_lengths_equality
+    # end def
 
     def test_min(self, some_array) -> None:
         expected = 1
-        obtained = some_array.calc_min_coverage()
+        obtained = some_array._calc_min_coverage()
         assert expected == obtained
     # end def
 
     def test_avg(self, some_array) -> None:
         expected = 4.5
-        obtained = some_array.calc_avg_coverage()
+        obtained = some_array._calc_avg_coverage()
         assert abs(expected - obtained) < 1e-6
     # end def
 
     def test_median(self, some_array) -> None:
         expected = 4.5
-        obtained = some_array.calc_median_coverage()
+        obtained = some_array._calc_median_coverage()
         assert abs(expected - obtained) < 1e-6
     # end def
 
     def test_max(self, some_array) -> None:
         expected = 8
-        obtained = some_array.calc_max_coverage()
+        obtained = some_array._calc_max_coverage()
         assert expected == obtained
     # end def
-# end class TestCoverageArray
+# end class

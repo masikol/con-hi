@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-# Version 1.1.a
 
 import copy
 from typing import MutableSequence, NewType
@@ -16,7 +14,7 @@ FeatureList = NewType('FeatureList', MutableSequence[SeqFeature])
 @pytest.fixture
 def empty_feature_list() -> FeatureList:
     return []
-# end def empty_feature_list
+# end def
 
 
 @pytest.fixture
@@ -25,7 +23,7 @@ def extant_feature_list_1() -> FeatureList:
         SeqFeature(FeatureLocation(5, 10)),
         SeqFeature(FeatureLocation(25, 60))
     ]
-# end def extant_feature_list_1
+# end def
 
 
 @pytest.fixture
@@ -34,7 +32,7 @@ def new_feature_list_1() -> FeatureList:
         SeqFeature(FeatureLocation(6, 11)),
         SeqFeature(FeatureLocation(38, 90))
     ]
-# end def new_feature_list_1
+# end def
 
 
 @pytest.fixture
@@ -43,7 +41,7 @@ def new_feature_list_2() -> FeatureList:
         SeqFeature(FeatureLocation(6, 10)),
         SeqFeature(FeatureLocation(38, 90))
     ]
-# end def new_feature_list_2
+# end def
 
 
 @pytest.fixture
@@ -52,7 +50,7 @@ def new_feature_list_3() -> FeatureList:
         SeqFeature(FeatureLocation(5, 10)),
         SeqFeature(FeatureLocation(38, 90))
     ]
-# end def new_feature_list_3
+# end def
 
 
 @pytest.fixture
@@ -61,7 +59,7 @@ def new_feature_list_4() -> FeatureList:
         SeqFeature(FeatureLocation(5, 10)),
         SeqFeature(FeatureLocation(25, 60))
     ]
-# end def new_feature_list_4
+# end def
 
 
 class TestDeduplFeatures:
@@ -78,7 +76,7 @@ class TestDeduplFeatures:
         )
 
         assert len(deduplicated_features) == 0
-    # end def test_both_empty
+    # end def
 
     def test_new_empty(self, empty_feature_list, extant_feature_list_1) -> None:
         # Test how the function hadles case when `new_features` is empty
@@ -91,7 +89,7 @@ class TestDeduplFeatures:
         )
 
         assert len(deduplicated_features) == 0
-    # end def test_new_empty
+    # end def
 
     def test_extant_empty(self, new_feature_list_1, empty_feature_list) -> None:
         # Test how the function hadles case when `extant_features` is empty
@@ -105,7 +103,7 @@ class TestDeduplFeatures:
         )
 
         assert len(deduplicated_features) == int_len_new
-    # end def test_extant_empty
+    # end def
 
     def test_all_new_unique(self, new_feature_list_1, extant_feature_list_1) -> None:
         # Test how the function hadles case when all `new_features` are unique
@@ -119,7 +117,7 @@ class TestDeduplFeatures:
         )
 
         assert len(deduplicated_features) == int_len_new
-    # end def test_all_new_unique
+    # end def
 
     def test_one_new_half_unique(self, new_feature_list_2, extant_feature_list_1) -> None:
         # Test how the function hadles case when one of `new_features` has only start
@@ -134,7 +132,7 @@ class TestDeduplFeatures:
         )
 
         assert len(deduplicated_features) == int_len_new
-    # end def test_one_new_half_unique
+    # end def
 
     def test_one_new_dupl(self, new_feature_list_3, extant_feature_list_1) -> None:
         # Test how the function hadles case when one of `new_features` is duplicated
@@ -148,7 +146,7 @@ class TestDeduplFeatures:
         )
 
         assert len(deduplicated_features) == int_len_new - 1
-    # end def test_one_new_dupl
+    # end def
 
     def test_both_new_dupl(self, new_feature_list_4, extant_feature_list_1) -> None:
         # Test how the function hadles case when two of `new_features` are duplicated
@@ -162,5 +160,5 @@ class TestDeduplFeatures:
         )
 
         assert len(deduplicated_features) == int_len_new - 2
-    # end def test_both_new_dupl
-# end class TestDeduplFeatures
+    # end def
+# end class

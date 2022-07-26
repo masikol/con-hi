@@ -43,7 +43,7 @@ def parse_fasta_reference(ref_fasta_fpath: str) -> Sequence[SeqRecord]:
     _validate_fasta_records(fasta_records)
 
     return fasta_records
-# end def parse_fasta_reference
+# end def
 
 
 def _is_gzipped(fpath: str) -> bool:
@@ -64,7 +64,7 @@ def _is_gzipped(fpath: str) -> bool:
     else:
         return True
     # end try
-# end def _is_gzipped
+# end def
 
 
 def _is_plain_text(fpath: str) -> bool:
@@ -82,7 +82,7 @@ def _is_plain_text(fpath: str) -> bool:
     else:
         return True
     # end try
-# end def _is_plain_text
+# end def
 
 
 def _validate_fasta_records(fasta_records: Sequence[SeqRecord]) -> None:
@@ -112,10 +112,10 @@ def _validate_fasta_records(fasta_records: Sequence[SeqRecord]) -> None:
   `{'`, `'.join(invalid_records)}`.
   Invalid characters are not {iupac_codes}.""")
     # end if
-# end def _validate_fasta_records
+# end def
 
 
 class _InvalidFileError(OSError):
     # Custom exception for indicating that file compression type is not supported.
     pass
-# end class _InvalidFileError
+# end class

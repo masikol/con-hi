@@ -42,4 +42,4 @@ def print_help(version: str, last_update_date: str) -> None:
     print('    If it contains spaces, surround it with quotes.')
     print('    Empty by default.')
     print()
-# end def print_help
+# end def

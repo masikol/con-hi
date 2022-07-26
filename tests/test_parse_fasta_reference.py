@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-# Version 1.0.a
 
 import os
 from typing import Sequence
@@ -20,12 +18,12 @@ from tests.fixtures import first_test_seq_len, second_test_seq_len
 @pytest.fixture
 def plain_fasta() -> str:
     return os.path.join(os.getcwd(), 'tests', 'data', 'test_reference.fasta')
-# end def plain_fasta
+# end def
 
 @pytest.fixture
 def gzipped_fasta() -> str:
     return os.path.join(os.getcwd(), 'tests', 'data', 'test_reference.fasta.gz')
-# end def gzipped_fasta
+# end def
 
 
 # == Fixtures for testing fucntion `src.parse_fasta_reference._validate_fasta_records` ==
@@ -33,7 +31,7 @@ def gzipped_fasta() -> str:
 @pytest.fixture
 def empty_seq_list() -> Sequence[SeqRecord]:
     return []
-# end def empty_seq_list
+# end def
 
 @pytest.fixture
 def unambig_dna_seq_records() -> Sequence[SeqRecord]:
@@ -42,7 +40,7 @@ def unambig_dna_seq_records() -> Sequence[SeqRecord]:
         SeqRecord(Seq('CTTGTAGATCTGTTCTCTAAA')),
         SeqRecord(Seq('CATTGTTGAGATCACATAATAATTGATCGAGTTAATCTGGAGGATCTGTTTACTTTGGTC')),
     ]
-# end def unambig_dna_seq_records
+# end def
 
 @pytest.fixture
 def ambig_dna_seq_records() -> Sequence[SeqRecord]:
@@ -54,7 +52,7 @@ def ambig_dna_seq_records() -> Sequence[SeqRecord]:
         SeqRecord(Seq('CATTGTTGAGATCACATAATAATTGATCGAGTTBDHVNGGAGGATCTGTTTACTTTGGTC')),
         #                                           ~~~~~
     ]
-# end def ambig_dna_seq_records
+# end def
 
 @pytest.fixture
 def invalid_dna_seq_records() -> Sequence[SeqRecord]:
@@ -66,7 +64,7 @@ def invalid_dna_seq_records() -> Sequence[SeqRecord]:
         SeqRecord(Seq('CATTGTTGAGATCACAT888GAGTTBDHVNGXXGGATCTGTTTACTTTGGTC')),
         #                           ~~~           ~~
     ]
-# end def invalid_dna_seq_records
+# end def
 
 
 class TestIsPlainText:
@@ -75,15 +73,15 @@ class TestIsPlainText:
     def test_true_plain_fasta(self, plain_fasta) -> None:
         # Function testes how `_is_plain_text` recognizes plain files
         assert pfr._is_plain_text(plain_fasta) == True
-    # end def test_true_plain_fasta
+    # end def
 
     def test_gzipped_fasta(self, gzipped_fasta) -> None:
         # Function testes how `_is_plain_text` recognizes gzipped files
         with pytest.raises(pfr._InvalidFileError):
             pfr._is_plain_text(gzipped_fasta)
         # end with
-    # end def test_gzipped_fasta
-# end class TestIsPlainText
+    # end def
+# end class
 
 
 class TestIsGzipped:
@@ -92,13 +90,13 @@ class TestIsGzipped:
     def test_gzipped_fasta(self, gzipped_fasta) -> None:
         # Function testes how `_is_gzipped` recognizes gzipped files
         assert pfr._is_gzipped(gzipped_fasta) == True
-    # end def test_gzipped_fasta
+    # end def
 
     def test_true_plain_fasta(self, plain_fasta) -> None:
         # Function testes how `_is_gzipped` recognizes plain files
         assert pfr._is_gzipped(plain_fasta) == False
-    # end def test_true_plain_fasta
-# end class TestIsGzipped
+    # end def
+# end class
 
 
 class TestValidateFastaRecords:
@@ -111,7 +109,7 @@ class TestValidateFastaRecords:
         with pytest.raises(ValueError):
             pfr._validate_fasta_records(empty_seq_list)
         # end with
-    # end def test_empty_seq_set
+    # end def
 
     def test_unambig_seq_records(self, unambig_dna_seq_records) -> None:
         # Function tests how `_validate_fasta_records` handles set
@@ -119,7 +117,7 @@ class TestValidateFastaRecords:
 
         # Should not raise any exception
         assert pfr._validate_fasta_records(unambig_dna_seq_records) == None
-    # end def test_unambig_seq_records
+    # end def
 
     def test_ambig_seq_records(self, ambig_dna_seq_records) -> None:
         # Function tests how `_validate_fasta_records` handles set
@@ -127,7 +125,7 @@ class TestValidateFastaRecords:
 
         # Should not raise any exception
         assert pfr._validate_fasta_records(ambig_dna_seq_records) == None
-    # end def test_ambig_seq_records
+    # end def
 
     def test_invalid_dna_records(self, invalid_dna_seq_records) -> None:
         # Function tests how `_validate_fasta_records` handles set
@@ -137,8 +135,8 @@ class TestValidateFastaRecords:
         with pytest.raises(ValueError):
             pfr._validate_fasta_records(invalid_dna_seq_records)
         # end with
-    # end def test_invalid_dna_records
-# end class TestValidateFastaRecords
+    # end def
+# end class
 
 
 class TestParseFastaReference:
@@ -163,7 +161,7 @@ class TestParseFastaReference:
 
         expected_seq_len = second_test_seq_len
         assert len(fasta_records[1]) == expected_seq_len
-    # end def test_parse_plain_text_fasta
+    # end def
 
     def test_parse_gzipped_fasta(
         self,
@@ -184,5 +182,5 @@ class TestParseFastaReference:
 
         expected_seq_len = second_test_seq_len
         assert len(fasta_records[1]) == expected_seq_len
-    # end def test_parse_gzipped_fasta
-# end class TestParseFastaReference
+    # end def
+# end class

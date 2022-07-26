@@ -30,7 +30,7 @@ def count_cov_for_all_refs(bam_fpath: str, coverage_fpath: str) -> str:
     # end if
 
     return coverage_fpath
-# end def count_cov_for_all_refs
+# end def
 
 
 def get_coverage_for_reference(sequence_id: str, coverage_fpath: str) -> CoverageArray:
@@ -62,7 +62,7 @@ def get_coverage_for_reference(sequence_id: str, coverage_fpath: str) -> Coverag
     cov_array: CoverageArray = CoverageArray(coverages)
 
     return cov_array
-# end def get_coverage_for_reference
+# end def
 
 
 def _conf_samtools_depth_cmd(bam_fpath: str, coverage_fpath: str) -> str:
@@ -71,5 +71,5 @@ def _conf_samtools_depth_cmd(bam_fpath: str, coverage_fpath: str) -> str:
     # :param coverage_fpath: path to coverage file;
     return 'samtools depth -aa -J -o {} {}'\
         .format(coverage_fpath, bam_fpath)
-# end def _conf_samtools_depth_cmd
+# end def
 
