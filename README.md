@@ -118,7 +118,7 @@ Annotate file `my_sequence.fasta` according to mapping from file `my_mapping.sor
 
 ### Example 3
 
-Annotate file `my_sequence.fasta` according to mapping from file `my_mapping.sorted.bam`. Annotate regions with coverage below 25, fragments with coverages below 50. Disable annotation of zerocoverage regions:
+Annotate file `my_sequence.fasta` according to mapping from file `my_mapping.sorted.bam`. Annotate regions with coverage below 25, fragments with coverages below 50. Disable annotation of zero coverage regions:
 
 ```
 ./consensus-highlighter.py -f my_sequence.fasta -b my_mapping.sorted.bam -c 25,50 -n
