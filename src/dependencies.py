@@ -103,15 +103,16 @@ def _check_samtools() -> Tuple[str, str]:
     stdout_stderr: Tuple[bytes, bytes] = pipe.communicate()
 
     if pipe.returncode != 0:
-        # Error in running `samtools vresion`
+        # Error in running `samtools version`
         err_msg = f'Cannot check samtools version: {stdout_stderr[1].decode("utf-8")}'
     else:
-        # Error in parsing version from `samtools vresion` output
+        stdout_prefix_len: int = 20
         version_reojb: re.Match = re.search(
             r'samtools (([0-9]+\.[0-9]+)(\.[0-9]+)?)',
-            stdout_stderr[0].decode('utf-8')
+            stdout_stderr[0][:stdout_prefix_len].decode('utf-8')
         )
         if version_reojb is None:
+            # Error in parsing version from `samtools vresion` output
             err_msg = f'Cannot check samtools version: {stdout_stderr[1].decode("utf-8")}'
         else:
             full_version    = version_reojb.group(1)

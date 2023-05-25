@@ -2,9 +2,9 @@
 
 import sys
 
-__version__: str  = '3.0.a'
+__version__: str  = '3.0.b'
 # Year, month, day
-__last_update_date__: str = '2022-07-26'
+__last_update_date__: str = '2023-05-25'
 __min_python_version__: float = 3.6
 # __author__ = 'Maxim Sikolenko'
 

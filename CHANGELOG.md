@@ -1,5 +1,11 @@
 # consensus-highlighter changelog
 
+## 2023-05-25 edition
+
+Version `3.0.b`
+
+Fix a bug preventing `consensus-highlighter` from parsing `samtools version` output correctly if `samtools` is compiled with a flag `-ffile-prefix-map`. In that case, the `samtools version` output contains some non-utf8 characters.
+
 ## 2022-07-26 edition
 
 Version `3.0.a`
