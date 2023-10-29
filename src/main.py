@@ -61,7 +61,12 @@ def main(version: str, last_update_date: str) -> None:
         print(f'Processing sequence `{rec.description}`')
 
         # Obtain coverages for current sequence
-        cov_array: CoverageArray = oc.get_coverage_for_reference(rec.id, cov_fpath)
+        try:
+            cov_array: CoverageArray = oc.get_coverage_for_reference(rec.id, cov_fpath)
+        except oc.MissingCoveragesError:
+            print_err('Warning: coverage values for this sequence are not found\n')
+            continue
+        # end try
 
         # Check length of the coverage array
         if len(cov_array) == 0:

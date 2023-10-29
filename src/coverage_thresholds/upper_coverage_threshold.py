@@ -26,6 +26,10 @@ class UpperCoverageThreshold(CoverageThreshold):
 
     def test_coverage(self, cov: int) -> bool:
         # Function checks if current coverage `cov` is above our threshold
+        if cov is None:
+            return False
+        # end if
+
         return cov > self._value
     # end def
 

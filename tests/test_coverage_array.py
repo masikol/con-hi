@@ -27,7 +27,7 @@ class TestCoverageArray:
         # Test method __getitem__
         expected: int
 
-        expected = float('inf')
+        expected = None
         assert expected == some_array[-1]
         expected = 1
         assert expected == some_array[0]
@@ -35,7 +35,7 @@ class TestCoverageArray:
         assert expected == some_array[4]
         expected = 8
         assert expected == some_array[len(some_array)-1]
-        expected = float('inf')
+        expected = None
         assert expected == some_array[len(some_array)]
     # end def
 

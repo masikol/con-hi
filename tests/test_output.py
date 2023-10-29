@@ -59,11 +59,11 @@ class TestWriteGenbankOutput:
                            coverage_array_edge,
                            test_outfpath) -> None:
         # Function tests how `write_genbank_output` writes correct GenBank file
-        first_annotated_seq_record, second_annotated_seq_record = \
+        first_annotated_seq_record, second_annotated_seq_record, third_annotated_seq_record = \
             annotated_seq_records
 
         testing_zip = zip(
-            (first_annotated_seq_record, second_annotated_seq_record),
+            (first_annotated_seq_record, second_annotated_seq_record, third_annotated_seq_record),
             (coverage_array_inner, coverage_array_edge)
         )
 

@@ -2,8 +2,10 @@
 import os
 import sys
 import datetime
+import warnings
 
 from Bio import SeqIO
+from Bio import BiopythonWarning
 from Bio.SeqRecord import SeqRecord
 
 from src.printing import print_err
@@ -49,10 +51,33 @@ def write_genbank_output(seq_record: SeqRecord,
         key = lambda feature: feature.location.start
     )
 
-    # Write output file
-    with open(outfpath, 'a') as outfile:
-        SeqIO.write(seq_record, outfile, 'genbank')
-    # end with
+    # As written in Biopython
+    #   (file `InsdcIO.py`, class `GenBankWriter`, method `_write_the_first_line`),
+    # *quote* Locus name and record length to[o] long to squeeze in.
+    # *quote* Per updated GenBank standard (Dec 15, 2018) 229.0
+    # *quote* the Locus identifier can be any length, and a space
+    # *quote* is added after the identifier to keep the identifier
+    # *quote* and length fields separated
+    locus_str_len: int = len(seq_record.name)
+    seq_len_str_len: int = len(str(len(seq_record)))
+    if locus_str_len + 1 + seq_len_str_len > 28:
+        print_err('\n! Warning: Locus name and record length to long to squeeze in,\n')
+        print_err('   and thus GenBank representation will not be "pretty".\n')
+        print_err('The GenBank file is still valid, though.\n')
+    # end if
+
+    # Catch and ignore BiopythonWarning, for we have a better one printed already
+    warnings.filterwarnings('error')
+    try:
+        # Write output file
+        with open(outfpath, 'a') as outfile:
+            SeqIO.write(seq_record, outfile, 'genbank')
+        # end with
+    except BiopythonWarning:
+        pass
+    finally:
+        warnings.resetwarnings()
+    # end try
 # end def
 
 

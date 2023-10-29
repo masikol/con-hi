@@ -26,6 +26,9 @@ class LowerCoverageThreshold(CoverageThreshold):
 
     def test_coverage(self, cov: int) -> bool:
         # Function checks if current coverage `cov` is below our threshold
+        if cov is None:
+            return False
+        # end if
 
         # Zero coverage requires different behaviour
         if self._value != 0:

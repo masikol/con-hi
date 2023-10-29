@@ -21,7 +21,7 @@ class CoverageArray:
 
         # We will return infinity if inde is out of bounds
         if key < 0 or key > len(self.coverages) - 1:
-            return float('inf')
+            return None
         else:
             return self.coverages[key]
         # end if

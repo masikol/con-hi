@@ -10,7 +10,9 @@ from src.coverage_array import CoverageArray
 
 from tests.fixtures import test_outdir_path
 from tests.fixtures import test_fasta_fpath, test_bam_fpath, test_coverage_fpath, test_outfpath
-from tests.fixtures import first_test_seq_id, first_test_seq_len, second_test_seq_id, second_test_seq_len
+from tests.fixtures import first_test_seq_id, first_test_seq_len, \
+                           second_test_seq_id, second_test_seq_len, \
+                           third_test_seq_id, third_test_seq_len
 
 
 class TestConfSamtoolsDepthCmd:
@@ -39,7 +41,9 @@ class TestCountCovForAllRefs:
         first_test_seq_id,
         first_test_seq_len,
         second_test_seq_id,
-        second_test_seq_len) -> None:
+        second_test_seq_len,
+        third_test_seq_id,
+        third_test_seq_len) -> None:
 
         # Function tests that `count_cov_for_all_refs` counts coverage in a plausable way
         cov_fpath: str = oc.count_cov_for_all_refs(
@@ -56,7 +60,9 @@ class TestCountCovForAllRefs:
             cov_lines = tuple(map(str.strip, cov_file.readlines()))
         # end with
 
-        expected_num_lines: int = sum([first_test_seq_len, second_test_seq_len])
+        expected_num_lines: int = sum(
+            [first_test_seq_len, second_test_seq_len, third_test_seq_len]
+        )
         assert len(cov_lines) == expected_num_lines
 
         # Check format of all lines

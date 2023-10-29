@@ -1,5 +1,13 @@
 # consensus-highlighter changelog
 
+# 2023-10-29 edition
+
+Version `3.1.a`
+
+1. Fix a bug that would cause the program to terminate if `-C` threshold is enabled and a high-coverage region starts at position 0 or ends at position (LENGTH-1) of the reference sequence.
+
+2. Now, the program prints its own warning if length of an output sequence name is too long for "pretty" GenBank representation, according to GenBank standard (Dec 15, 2018) 229.0. In previous versions of the program, BioPython warning used to be emitted, which is not very informative: "Increasing length of locus line to allow long name. This will result in fields that are not in usual positions.".
+
 ## 2023-05-25 edition
 
 Version `3.0.b`

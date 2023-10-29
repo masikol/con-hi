@@ -46,11 +46,17 @@ def get_coverage_for_reference(sequence_id: str, coverage_fpath: str) -> Coverag
         lines_of_curr_ref: Iterator[str]
 
         # Read lines and filter them: we need coverage only for current reference sequence
-        lines_of_curr_ref = filter(
-            lambda x: x.split('\t')[0] == sequence_id,
-            cov_file.readlines()
+        lines_of_curr_ref = tuple(
+            filter(
+                lambda x: x.split('\t')[0] == sequence_id,
+                cov_file.readlines()
+            )
         )
     # end with
+
+    if len(lines_of_curr_ref) == 0:
+        raise MissingCoveragesError()
+    # end if
 
     # Parse coverage
     coverages = map(
@@ -73,3 +79,7 @@ def _conf_samtools_depth_cmd(bam_fpath: str, coverage_fpath: str) -> str:
         .format(coverage_fpath, bam_fpath)
 # end def
 
+
+class MissingCoveragesError(Exception):
+    pass
+# end class

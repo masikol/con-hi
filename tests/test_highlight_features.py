@@ -11,9 +11,11 @@ from src.coverage_thresholds.lower_coverage_threshold import LowerCoverageThresh
 
 from tests.fixtures import test_bam_fpath, test_outfpath, \
                            test_outdir_path, test_coverage_fpath, \
-                           first_test_seq_id, second_test_seq_id, \
-                           coverage_array_inner,coverage_array_edge, \
-                           nonzero_cov_threshold
+                           first_test_seq_id, second_test_seq_id, third_test_seq_id, \
+                           coverage_array_inner, coverage_array_edge, \
+                           coverage_array_inner_upper, \
+                           nonzero_cov_threshold, \
+                           upper_cov_threshold
 
 
 @pytest.fixture
@@ -131,6 +133,91 @@ class TestHighlightCoverageFeatures:
 
         # Test feature label
         expected_label: str = nonzero_cov_threshold.get_label()
+        assert ftr.qualifiers['label'] == expected_label
+
+        # Test feature note
+        expected_note: str = note
+        assert ftr.qualifiers['note'] == expected_note
+    # end def
+
+
+    def test_highlight_upper_inner_region(self, coverage_array_inner_upper, upper_cov_threshold) -> None:
+        # Function tests how `highlight_coverage_features` deals
+        #   with single inner high-coverage region
+
+        note: str = 'some note whatever'
+
+        feature_list: List[SeqFeature] = hlft.highlight_coverage_features(
+            coverage_array_inner_upper,
+            upper_cov_threshold,
+            note
+        )
+
+        # Test number of features
+        expected_feature_num: int = 1
+        assert len(feature_list) == expected_feature_num
+
+        ftr: SeqFeature = feature_list[0]
+        # Test feature location(s)
+        expected_start_pos: int = 13 - 1 # to 0-based position
+        assert ftr.location.start == expected_start_pos
+        expected_end_pos: int = 52
+        assert ftr.location.end   == expected_end_pos
+
+
+        # Test feature type
+        expected_feature_type: str = 'misc_feature'
+        assert ftr.type == expected_feature_type
+
+        # Test feature label
+        expected_label: str = upper_cov_threshold.get_label()
+        assert ftr.qualifiers['label'] == expected_label
+
+        # Test feature note
+        expected_note: str = note
+        assert ftr.qualifiers['note'] == expected_note
+    # end def
+
+
+    def test_highlight_upper_edge_region(self, coverage_array_inner, upper_cov_threshold) -> None:
+        # Function tests how `highlight_coverage_features` deals
+        #   with single edge high-coverage region
+
+        note: str = 'some note whatever'
+
+        feature_list: List[SeqFeature] = hlft.highlight_coverage_features(
+            coverage_array_inner,
+            upper_cov_threshold,
+            note
+        )
+
+        # Test number of features
+        expected_feature_num: int = 2
+        assert len(feature_list) == expected_feature_num
+
+        # Test feature location(s)
+        # Feature #1
+        ftr: SeqFeature = feature_list[0]
+
+        expected_start_pos: int = 1 - 1 # to 0-based position
+        assert ftr.location.start == expected_start_pos
+        expected_end_pos: int = 22
+        assert ftr.location.end   == expected_end_pos
+
+        # Feature #2
+        ftr: SeqFeature = feature_list[1]
+
+        expected_start_pos: int = 50 - 1 # to 0-based position
+        assert ftr.location.start == expected_start_pos
+        expected_end_pos: int = 70
+        assert ftr.location.end   == expected_end_pos
+
+        # Test feature type
+        expected_feature_type: str = 'misc_feature'
+        assert ftr.type == expected_feature_type
+
+        # Test feature label
+        expected_label: str = upper_cov_threshold.get_label()
         assert ftr.qualifiers['label'] == expected_label
 
         # Test feature note

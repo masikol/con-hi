@@ -9,6 +9,8 @@ import src.obtain_coverage as oc
 import src.parse_fasta_reference as pfr
 from src.coverage_array import CoverageArray
 from src.coverage_thresholds.lower_coverage_threshold import LowerCoverageThreshold
+from src.coverage_thresholds.upper_coverage_threshold import UpperCoverageThreshold
+
 
 
 @pytest.fixture(scope='session')
@@ -31,6 +33,17 @@ def second_test_seq_id() -> str:
 
 @pytest.fixture(scope='session')
 def second_test_seq_len() -> int:
+    return 70
+# end def
+
+
+@pytest.fixture(scope='session')
+def third_test_seq_id() -> str:
+    return 'test_seq_3'
+# end def
+
+@pytest.fixture(scope='session')
+def third_test_seq_len() -> int:
     return 70
 # end def
 
@@ -81,6 +94,12 @@ def nonzero_cov_threshold() -> LowerCoverageThreshold:
 
 
 @pytest.fixture(scope='session')
+def upper_cov_threshold() -> UpperCoverageThreshold:
+    return UpperCoverageThreshold(1, 1)
+# end def
+
+
+@pytest.fixture(scope='session')
 def coverage_array_inner(test_bam_fpath: str,
                          test_coverage_fpath: str,
                          first_test_seq_id: str) -> CoverageArray:
@@ -95,4 +114,13 @@ def coverage_array_edge(test_bam_fpath: str,
                         second_test_seq_id: str) -> CoverageArray:
     cov_fpath: str = oc.count_cov_for_all_refs(test_bam_fpath, test_coverage_fpath)
     return oc.get_coverage_for_reference(second_test_seq_id, cov_fpath)
+# end def
+
+
+@pytest.fixture(scope='session')
+def coverage_array_inner_upper(test_bam_fpath: str,
+                               test_coverage_fpath: str,
+                               third_test_seq_id: str) -> CoverageArray:
+    cov_fpath: str = oc.count_cov_for_all_refs(test_bam_fpath, test_coverage_fpath)
+    return oc.get_coverage_for_reference(third_test_seq_id, cov_fpath)
 # end def

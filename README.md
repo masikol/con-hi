@@ -1,6 +1,6 @@
 # consensus-highlighter
 
-Latest version is `3.0.b` (2023-05-25 edition).
+Latest version is `3.1.a` (2023-10-29 edition).
 
 ## Description
 

@@ -8,7 +8,9 @@ from Bio.SeqRecord import SeqRecord
 
 import src.parse_fasta_reference as pfr
 
-from tests.fixtures import first_test_seq_len, second_test_seq_len
+from tests.fixtures import first_test_seq_len, \
+                           second_test_seq_len, \
+                           third_test_seq_len
 
 
 # == Fixtures for testing fucntions `src.parse_fasta_reference._is_plain_text`
@@ -146,12 +148,13 @@ class TestParseFastaReference:
         self,
         plain_fasta: str,
         first_test_seq_len: int,
-        second_test_seq_len: int) -> None:
+        second_test_seq_len: int,
+        third_test_seq_len: int) -> None:
 
         # Function tests how `parse_fasta_reference` parses plain text fasta file
         fasta_records: Sequence[SeqRecord] = pfr.parse_fasta_reference(plain_fasta)
 
-        expected_num_seqs: int = 2
+        expected_num_seqs: int = 3
         assert len(fasta_records) == expected_num_seqs
 
         expected_seq_len: int
@@ -161,18 +164,22 @@ class TestParseFastaReference:
 
         expected_seq_len = second_test_seq_len
         assert len(fasta_records[1]) == expected_seq_len
+
+        expected_seq_len = third_test_seq_len
+        assert len(fasta_records[2]) == expected_seq_len
     # end def
 
     def test_parse_gzipped_fasta(
         self,
         gzipped_fasta: str,
         first_test_seq_len: int,
-        second_test_seq_len: int) -> None:
+        second_test_seq_len: int,
+        third_test_seq_len: int) -> None:
 
         # Function tests how `parse_fasta_reference` parses gzipped fasta file
         fasta_records: Sequence[SeqRecord] = pfr.parse_fasta_reference(gzipped_fasta)
 
-        expected_num_seqs: int = 2
+        expected_num_seqs: int = 3
         assert len(fasta_records) == expected_num_seqs
 
         expected_seq_len: int
@@ -182,5 +189,8 @@ class TestParseFastaReference:
 
         expected_seq_len = second_test_seq_len
         assert len(fasta_records[1]) == expected_seq_len
+
+        expected_seq_len = third_test_seq_len
+        assert len(fasta_records[2]) == expected_seq_len
     # end def
 # end class
