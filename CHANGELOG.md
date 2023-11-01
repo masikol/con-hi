@@ -1,5 +1,26 @@
 # consensus-highlighter changelog
 
+# 2023-11-01 edition
+
+Version `3.1.b`
+
+Now, when outputting sequence records, the program will just print emerging generic Biopython warning in a human-friendly way, without extra technical lines.
+
+In other words, instead of this:
+
+```
+BiopythonWarning: Increasing length of locus line to allow long name. This will result in fields that are not in usual positions.
+  warnings.warn(
+```
+
+the program will print this warning message:
+
+```
+! Warning: Increasing length of locus line to allow long name. This will result in fields that are not in usual positions.
+```
+
+What is more important, sole catching Biopython warnings will not now cause empty output files.
+
 # 2023-10-29 edition
 
 Version `3.1.a`

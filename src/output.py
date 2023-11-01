@@ -51,33 +51,41 @@ def write_genbank_output(seq_record: SeqRecord,
         key = lambda feature: feature.location.start
     )
 
-    # As written in Biopython
-    #   (file `InsdcIO.py`, class `GenBankWriter`, method `_write_the_first_line`),
-    # *quote* Locus name and record length to[o] long to squeeze in.
-    # *quote* Per updated GenBank standard (Dec 15, 2018) 229.0
-    # *quote* the Locus identifier can be any length, and a space
-    # *quote* is added after the identifier to keep the identifier
-    # *quote* and length fields separated
-    locus_str_len: int = len(seq_record.name)
-    seq_len_str_len: int = len(str(len(seq_record)))
-    if locus_str_len + 1 + seq_len_str_len > 28:
-        print_err('\n! Warning: Locus name and record length to long to squeeze in,\n')
-        print_err('   and thus GenBank representation will not be "pretty".\n')
-        print_err('The GenBank file is still valid, though.\n')
-    # end if
+    _write_gb_warning_safe(seq_record, outfpath, mode='a')
+# end def
 
-    # Catch and ignore BiopythonWarning, for we have a better one printed already
+
+def _write_gb_warning_safe(seq_record: SeqRecord, outfpath: str, mode: str = 'a'):
+    # Generic Python warnings get printed with one extra line, e.g. "warnings.warn("
+    # So, we will catch the warning, print its message by ourselves,
+    #   and write the record ignoring warnings ignore warnings
+
+    records_written: int = 0
+
+    # Write output file
+    # Catch and ignore BiopythonWarning
     warnings.filterwarnings('error')
     try:
-        # Write output file
-        with open(outfpath, 'a') as outfile:
-            SeqIO.write(seq_record, outfile, 'genbank')
-        # end with
-    except BiopythonWarning:
-        pass
+        records_written = _write_gb(seq_record, outfpath, mode='a')
+    except BiopythonWarning as w:
+        print_err('\n! Warning: {}\n'.format(str(w)))
+        # We will write the record (again) only if it hasn't been already written
+        if records_written == 0:
+            warnings.filterwarnings('ignore')
+            _write_gb(seq_record, outfpath, mode='a')
+        # end if
     finally:
         warnings.resetwarnings()
     # end try
+# end def
+
+
+def _write_gb(seq_record: SeqRecord, outfpath: str, mode: str = 'a') -> int:
+    records_written: int = 0
+    with open(outfpath, mode) as outfile:
+        records_written = SeqIO.write(seq_record, outfile, 'genbank')
+    # end with
+    return records_written
 # end def
 
 
