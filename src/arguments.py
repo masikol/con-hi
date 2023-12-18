@@ -91,7 +91,7 @@ def parse_arguments() -> HighlighterArgs:
 
     # Check positional arguments: their existance is an error signal
     if len(args) != 0:
-        print_err('Error: consensus-highlighter.py does not take any positional arguments.')
+        print_err('Error: con-hi.py does not take any positional arguments.')
         print_err('You passed following positional argument(s):')
         arg: str
         for arg in args:

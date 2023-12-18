@@ -1,4 +1,10 @@
-# consensus-highlighter changelog
+# con-hi changelog
+
+# 2023-12-18 edition
+
+Version `3.2.a`
+
+Rename “consensus-highlighter” to “con-hi” for the sake of simplicity.
 
 # 2023-11-01 edition
 
@@ -33,7 +39,7 @@ Version `3.1.a`
 
 Version `3.0.b`
 
-Fix a bug preventing `consensus-highlighter` from parsing `samtools version` output correctly if `samtools` is compiled with a flag `-ffile-prefix-map`. In that case, the `samtools version` output contains some non-utf8 characters.
+Fix a bug preventing `con-hi` from parsing `samtools version` output correctly if `samtools` is compiled with a flag `-ffile-prefix-map`. In that case, the `samtools version` output contains some non-utf8 characters.
 
 ## 2022-07-26 edition
 
@@ -55,21 +61,21 @@ Version `2.3.a`
 
 1. Add recommendation "samtools `1.13` or later is recommended". This is the version, in which `samtools depth` [had beed](https://github.com/samtools/samtools/releases/tag/1.13) completely rewritten. Since 1.13, `samtools depth` calculates coverage more accurately.
 
-2. Now consensus-highlighter does not crash if samtools version is of the following format: `1.15.1` (three dot-separated numbers). Previously, only two dot-separated numbers were permitted.
+2. Now con-hi does not crash if samtools version is of the following format: `1.15.1` (three dot-separated numbers). Previously, only two dot-separated numbers were permitted.
 
 ## 2022-02-23 edition
 
 Version `2.2.b`
 
 Changes:
-1. Now consensus-highlighter removes its temporary file `coverages.tsv`, where coverage value of each base is stored.
+1. Now con-hi removes its temporary file `coverages.tsv`, where coverage value of each base is stored.
 2. A bug was fixed that would cause the program to write error message about an unmet dependency to stout instead of stderr.
 
 ## 2022-02-10 edition
 
 Version `2.2.a`
 
-Now consensus-highlighter adds a comment to output GenBank files. Here is the example of such a comment:
+Now con-hi adds a comment to output GenBank files. Here is the example of such a comment:
 
 ```
 COMMENT     ##Coverage-Data-START##
@@ -85,13 +91,13 @@ COMMENT     ##Coverage-Data-START##
 
 Version `2.1.a`
 
-Now consensus-highlighter is compatible with samtools 1.13+.
+Now con-hi is compatible with samtools 1.13+.
 
 ## 2021-12-23 edition
 
 Version `2.0.b`
 
-Now consensus-highlighter calculates and prints average coverage.
+Now con-hi calculates and prints average coverage.
 
 ## 2021-12-09 edition
 
@@ -99,13 +105,13 @@ Version `2.0.a`
 
 Removed options `-o/--outdir` and `--prefix`.
 
-Added option `-o/--outfile`. And now consensus-highlighter.py writes all GenBank output records to this single output GenBank file.
+Added option `-o/--outfile`. And now con-hi.py writes all GenBank output records to this single output GenBank file.
 
 ## 2021-06-15 edition
 
 Version `1.1.a`
 
-`consensus-highlighter` no more piles up coverage features with identical locations. It means that you will not see both "zero coverage" and "coverage < 10" features starting at the same positions and ending at the same positions.
+`con-hi` no more piles up coverage features with identical locations. It means that you will not see both "zero coverage" and "coverage < 10" features starting at the same positions and ending at the same positions.
 
 ## 2021-06-11 edition
 

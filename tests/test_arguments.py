@@ -162,7 +162,7 @@ def opts_coefficients_off(test_fasta_fpath, test_bam_fpath) -> List[List[str]]:
 @pytest.fixture
 def cmd_all_ok_short_options(test_fasta_fpath, test_bam_fpath, test_outfpath) -> Sequence[str]:
     return [
-        'consensus-highlighter',
+        'con-hi',
         '-f', test_fasta_fpath,
         '-b', test_bam_fpath,
         '-o', test_outfpath,
@@ -175,7 +175,7 @@ def cmd_all_ok_short_options(test_fasta_fpath, test_bam_fpath, test_outfpath) ->
 @pytest.fixture
 def cmd_all_ok_long_options(test_fasta_fpath, test_bam_fpath, test_outfpath) -> Sequence[str]:
     return [
-        'consensus-highlighter',
+        'con-hi',
         '--target-fasta', test_fasta_fpath,
         '--bam', test_bam_fpath,
         '--outfile', test_outfpath,
@@ -190,7 +190,7 @@ def cmd_all_ok_long_options(test_fasta_fpath, test_bam_fpath, test_outfpath) -> 
 @pytest.fixture
 def cmd_positional_args(test_fasta_fpath, test_bam_fpath) -> Sequence[str]:
     return [
-        'consensus-highlighter',
+        'con-hi',
         '-f', test_fasta_fpath,
         '-b', test_bam_fpath,
         '-c', '10,', '20',
@@ -202,7 +202,7 @@ def cmd_positional_args(test_fasta_fpath, test_bam_fpath) -> Sequence[str]:
 @pytest.fixture
 def cmd_fasta_missing(test_bam_fpath) -> Sequence[str]:
     return [
-        'consensus-highlighter',
+        'con-hi',
         '-b', test_bam_fpath,
     ]
 # end def
@@ -210,7 +210,7 @@ def cmd_fasta_missing(test_bam_fpath) -> Sequence[str]:
 @pytest.fixture
 def cmd_bam_missing(test_fasta_fpath) -> Sequence[str]:
     return [
-        'consensus-highlighter',
+        'con-hi',
         '-f', test_fasta_fpath,
     ]
 # end def

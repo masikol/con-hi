@@ -1,6 +1,6 @@
 
 def print_help(version: str, last_update_date: str) -> None:
-    print('=== consensus-highlighter ===')
+    print('=== con-hi ===')
     print(f'Version {version}; {last_update_date} edition.')
     print('\n## Description')
     print('  This program annotates low-coverage regions of sequences in fasta format.')
@@ -12,11 +12,11 @@ def print_help(version: str, last_update_date: str) -> None:
     print('  - GenBank file with annotated low-coverage regions.')
     print('\n## Usage')
     print('Basic usage is:')
-    print('    `./consensus-highlighter.py -f <TARGET_FASTA> -b <MAPPING_BAM>`')
+    print('    `./con-hi.py -f <TARGET_FASTA> -b <MAPPING_BAM>`')
     print('You can specify custom coverage theshold(s) by passing comma-separated list of thresholds')
     print('  with option `-c`. For example, following command will annotate all regions')
     print('  with coverage below 25 and all regions below 55 (and also with zero coverage):')
-    print('    `./consensus-highlighter.py -f my_sequence.fasta -b my_mapping.sorted.bam -c 25,55`')
+    print('    `./con-hi.py -f my_sequence.fasta -b my_mapping.sorted.bam -c 25,55`')
     print('\n### Options (* - mandatory option)')
     print('-f or --target-fasta: *')
     print('    File of target sequence(s) in fasta format.')

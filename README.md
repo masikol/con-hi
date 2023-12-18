@@ -1,6 +1,8 @@
-# consensus-highlighter
+# con-hi
 
-Latest version is `3.1.b` (2023-11-01 edition).
+“Con-hi” means “**con**sensus-**hi**ghlighter”.
+
+Latest version is `3.2.a` (2023-12-18 edition).
 
 ## Description
 
@@ -33,7 +35,7 @@ You can install samtools by downloading latest release from [samtools page](http
 
 Basic usage is:
 ```
-./consensus-highlighter.py -f <TARGET_FASTA> -b <MAPPING_BAM>
+./con-hi.py -f <TARGET_FASTA> -b <MAPPING_BAM>
 ```
 
 You can specify custom coverage theshold(s) by passing comma-separated list of thresholds with options `-c` and `-C`. For example, following command will annotate:
@@ -43,7 +45,7 @@ You can specify custom coverage theshold(s) by passing comma-separated list of t
 - regions with coverage greater than 1.5×*M* and greater than 2.0×*M*, where *M* is median coverage.
 
 ```
-./consensus-highlighter.py \
+./con-hi.py \
     -f my_sequence.fasta -b my_mapping.sorted.bam \
     -c 25,55 -C 1.5,2.0
 ```
@@ -105,7 +107,7 @@ You can specify custom coverage theshold(s) by passing comma-separated list of t
 Annotate file `my_sequence.fasta` with default parameters according to mapping from file `my_mapping.sorted.bam`:
 
 ```
-./consensus-highlighter.py -f my_sequence.fasta -b my_mapping.sorted.bam
+./con-hi.py -f my_sequence.fasta -b my_mapping.sorted.bam
 ```
 
 ### Example 2
@@ -113,7 +115,7 @@ Annotate file `my_sequence.fasta` with default parameters according to mapping f
 Annotate file `my_sequence.fasta` according to mapping from file `my_mapping.sorted.bam`. Annotate regions with coverage below 25, fragments with coverages below 50 and regions with zero coverages:
 
 ```
-./consensus-highlighter.py -f my_sequence.fasta -b my_mapping.sorted.bam -c 25,50
+./con-hi.py -f my_sequence.fasta -b my_mapping.sorted.bam -c 25,50
 ```
 
 ### Example 3
@@ -121,7 +123,7 @@ Annotate file `my_sequence.fasta` according to mapping from file `my_mapping.sor
 Annotate file `my_sequence.fasta` according to mapping from file `my_mapping.sorted.bam`. Annotate regions with coverage below 25, fragments with coverages below 50. Disable annotation of zero coverage regions:
 
 ```
-./consensus-highlighter.py -f my_sequence.fasta -b my_mapping.sorted.bam -c 25,50 -n
+./con-hi.py -f my_sequence.fasta -b my_mapping.sorted.bam -c 25,50 -n
 ```
 
 ### Example 4
@@ -129,7 +131,7 @@ Annotate file `my_sequence.fasta` according to mapping from file `my_mapping.sor
 Annotate file `my_sequence.fasta` with default parameters according to mapping from file `my_mapping.sorted.bam`. Specify the name of the organism for output file. The sequence is circular:
 
 ```
-./consensus-highlighter.py -f my_sequence.fasta -b my_mapping.sorted.bam \
+./con-hi.py -f my_sequence.fasta -b my_mapping.sorted.bam \
     --circular --organism "Serratia marcescens"
 ```
 
@@ -138,6 +140,6 @@ Annotate file `my_sequence.fasta` with default parameters according to mapping f
 Annotate file `my_sequence.fasta` according to mapping from file `my_mapping.sorted.bam`. Disable annotation of low-coverage regions (`-c off`). Annotate high-coverage regions with coverage above 1.7×*M* and above 2.4×*M*, where *M* is median coverage:
 
 ```
-./consensus-highlighter.py -f my_sequence.fasta -b my_mapping.sorted.bam \
+./con-hi.py -f my_sequence.fasta -b my_mapping.sorted.bam \
     -c off -C 1.7,2.4
 ```

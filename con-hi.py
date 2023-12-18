@@ -2,9 +2,9 @@
 
 import sys
 
-__version__: str  = '3.1.b'
+__version__: str  = '3.2.a'
 # Year, month, day
-__last_update_date__: str = '2023-11-01'
+__last_update_date__: str = '2023-12-18'
 __min_python_version__: float = 3.6
 # __author__ = 'Maxim Sikolenko'
 
@@ -51,7 +51,7 @@ if '-v' in sys.argv[1:] or '--version' in sys.argv[1:]:
 
 # === Print name of the program and version ===
 
-print('\nconsensus-highlighter - Version {}'.format(__version__))
+print('\ncon-hi - Version {}'.format(__version__))
 
 
 # === Check dependencies ===
