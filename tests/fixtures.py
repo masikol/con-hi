@@ -103,8 +103,8 @@ def upper_cov_threshold() -> UpperCoverageThreshold:
 def coverage_array_inner(test_bam_fpath: str,
                          test_coverage_fpath: str,
                          first_test_seq_id: str) -> CoverageArray:
-    cov_fpath: str = oc.count_cov_for_all_refs(test_bam_fpath, test_coverage_fpath)
-    return oc.get_coverage_for_reference(first_test_seq_id, cov_fpath)
+    cov_fpath: str = oc.count_coverage(test_bam_fpath, first_test_seq_id, test_coverage_fpath)
+    return oc.get_coverage_for_reference(cov_fpath)
 # end def
 
 
@@ -112,8 +112,8 @@ def coverage_array_inner(test_bam_fpath: str,
 def coverage_array_edge(test_bam_fpath: str,
                         test_coverage_fpath: str,
                         second_test_seq_id: str) -> CoverageArray:
-    cov_fpath: str = oc.count_cov_for_all_refs(test_bam_fpath, test_coverage_fpath)
-    return oc.get_coverage_for_reference(second_test_seq_id, cov_fpath)
+    cov_fpath: str = oc.count_coverage(test_bam_fpath, second_test_seq_id, test_coverage_fpath)
+    return oc.get_coverage_for_reference(cov_fpath)
 # end def
 
 
@@ -121,6 +121,6 @@ def coverage_array_edge(test_bam_fpath: str,
 def coverage_array_inner_upper(test_bam_fpath: str,
                                test_coverage_fpath: str,
                                third_test_seq_id: str) -> CoverageArray:
-    cov_fpath: str = oc.count_cov_for_all_refs(test_bam_fpath, test_coverage_fpath)
-    return oc.get_coverage_for_reference(third_test_seq_id, cov_fpath)
+    cov_fpath: str = oc.count_coverage(test_bam_fpath, third_test_seq_id, test_coverage_fpath)
+    return oc.get_coverage_for_reference(cov_fpath)
 # end def

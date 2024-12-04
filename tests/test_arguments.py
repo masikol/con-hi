@@ -15,6 +15,7 @@ from tests.fixtures import test_fasta_fpath, test_bam_fpath, test_coverage_fpath
 def some_args() -> args.HighlighterArgs:
     return args.HighlighterArgs(
         target_fasta_fpath=None,
+        target_seq_ids=set(),
         bam_fpath=None,
         outfpath=os.path.join(os.getcwd(), 'highlighted_sequence.gbk'),
         lower_coverage_thresholds=(10, 15, 20),

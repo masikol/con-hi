@@ -2,13 +2,17 @@
 import re
 import gzip
 import functools
-from typing import Sequence, Callable, TextIO, List
+from typing import Sequence, Callable, TextIO, List, Set
 
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 
+from src.arguments import HighlighterArgs
 
-def parse_fasta_reference(ref_fasta_fpath: str) -> Sequence[SeqRecord]:
+
+def parse_fasta_reference(ref_fasta_fpath: str,
+                          ref_seq_ids: Set[str] = set()) -> Sequence[SeqRecord]:
+    # TODO: doc comment
     # Function parses fasta file and returns collection of fasta records stored in this file.
     # :param ref_fasta_fpath: path to target fasta file;
 
@@ -29,7 +33,7 @@ def parse_fasta_reference(ref_fasta_fpath: str) -> Sequence[SeqRecord]:
     fasta_records: Sequence[SeqRecord]
     with open_func(ref_fasta_fpath) as infile:
         fasta_records = tuple(
-                SeqIO.parse(infile, 'fasta')
+            SeqIO.parse(infile, 'fasta')
         )
     # end with
 
@@ -38,6 +42,18 @@ def parse_fasta_reference(ref_fasta_fpath: str) -> Sequence[SeqRecord]:
     for record in fasta_records:
         record.seq = record.seq.upper()
     # end for
+
+    # If no ref_seq_ids are provided, use all present in the target fasta
+    # Otherwise, subset only sequences having provided target ids
+    if len(ref_seq_ids) != 0:
+        _validate_user_target_seq_ids(ref_seq_ids, fasta_records)
+        fasta_records = tuple(
+            filter(
+                lambda sr: sr.id in ref_seq_ids,
+                fasta_records
+            )
+        )
+    # end if
 
     # Validate parsed fasta data
     _validate_fasta_records(fasta_records)
@@ -86,6 +102,7 @@ def _is_plain_text(fpath: str) -> bool:
 
 
 def _validate_fasta_records(fasta_records: Sequence[SeqRecord]) -> None:
+    # TODO: doc string
     # Function validates input fasta file.
     # :param fasta_records: list of fasta records to validate;
 
@@ -111,6 +128,22 @@ def _validate_fasta_records(fasta_records: Sequence[SeqRecord]) -> None:
   Here are are ids of these sequences:
   `{'`, `'.join(invalid_records)}`.
   Invalid characters are not {iupac_codes}.""")
+    # end if
+# end def
+
+def _validate_user_target_seq_ids(ref_seq_ids: Set[str],
+                                  fasta_records: Sequence[SeqRecord]):
+    # TODO: doc string
+    # Check if all ref_seq_ids are in fasta_records
+    seq_ids_in_fasta = set(
+        map(lambda sr: sr.id, fasta_records)
+    )
+    missing_target_seq_ids = set(ref_seq_ids) - seq_ids_in_fasta
+    if len(missing_target_seq_ids) != 0:
+        missing_target_seq_ids = ','.join(missing_target_seq_ids)
+        raise ValueError(f"""
+  Error: these target seq IDs are not in the target fasta file:
+  {missing_target_seq_ids}""")
     # end if
 # end def
 

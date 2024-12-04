@@ -120,11 +120,12 @@ def _get_date() -> str:
 # end def
 
 
-def conf_path_to_depth_file(outfpath: str) -> str:
+def conf_path_to_depth_file(outfpath: str, target_seq_id: str) -> str:
+    # TODO: doc string
     # Function configures path to coverage file.
     # :param outdir: path to output directory;
     return os.path.join(
         os.path.dirname(outfpath),
-        'coverages.tsv'
+        f'coverage_{target_seq_id}.tsv'
     )
 # end def

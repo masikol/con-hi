@@ -18,20 +18,28 @@ from tests.fixtures import first_test_seq_id, first_test_seq_len, \
 class TestConfSamtoolsDepthCmd:
     # Class for testing function `src.obtain_coverage._conf_samtools_depth_cmd`
 
-    def test_samtools_depth_cmd(self, test_coverage_fpath) -> None:
+    def test_samtools_depth_cmd(
+            self,
+            test_coverage_fpath,
+            first_test_seq_id) -> None:
         # Function tests that function `_conf_samtools_depth_cmd` returns correct command
         ref_fasta_fpath: str = 'some_file.fasta'
         bam_fpath: str = 'mapping.sorted.bam'
 
-        expected: str = f'samtools depth -aa -J -o {test_coverage_fpath} {bam_fpath}'
+        expected: str = f'samtools depth -r {first_test_seq_id} -a -J -o {test_coverage_fpath} {bam_fpath}'
+        observed: str = oc._conf_samtools_depth_cmd(
+            bam_fpath,
+            first_test_seq_id,
+            test_coverage_fpath
+        )
 
-        assert oc._conf_samtools_depth_cmd(bam_fpath, test_coverage_fpath) == expected
+        assert observed == expected
     # end def
 # end class
 
 
 class TestCountCovForAllRefs:
-    # Class for testing function `src.obtain_coverage.count_cov_for_all_refs`
+    # Class for testing function `src.obtain_coverage.count_coverage`
 
     def test_coverage_counting(
         self,
@@ -45,50 +53,35 @@ class TestCountCovForAllRefs:
         third_test_seq_id,
         third_test_seq_len) -> None:
 
-        # Function tests that `count_cov_for_all_refs` counts coverage in a plausable way
-        cov_fpath: str = oc.count_cov_for_all_refs(
-            test_bam_fpath,
-            test_coverage_fpath
+        fixture_zip = zip(
+            (first_test_seq_id,  second_test_seq_id,  third_test_seq_id),
+            (first_test_seq_len, second_test_seq_len, third_test_seq_len)
         )
+        for seq_id, seq_len in fixture_zip:
+            # Function tests that `count_coverage` counts coverage in a plausable way
+            cov_fpath: str = oc.count_coverage(
+                test_bam_fpath,
+                seq_id,
+                test_coverage_fpath
+            )
 
-        # Check if file exists
-        assert os.path.exists(cov_fpath) == True
+            # Check if file exists
+            assert os.path.exists(cov_fpath) == True
 
-        # Check size (in lines) of file's contents
-        cov_lines: Sequence[str]
-        with open(cov_fpath, 'r') as cov_file:
-            cov_lines = tuple(map(str.strip, cov_file.readlines()))
-        # end with
+            # Check size (in lines) of file's contents
+            cov_lines: Sequence[str]
+            with open(cov_fpath, 'r') as cov_file:
+                cov_lines = tuple(map(str.strip, cov_file.readlines()))
+            # end with
+            assert len(cov_lines) == seq_len
 
-        expected_num_lines: int = sum(
-            [first_test_seq_len, second_test_seq_len, third_test_seq_len]
-        )
-        assert len(cov_lines) == expected_num_lines
-
-        # Check format of all lines
-        cov_line_pattern: str = '.+\t[0-9]+\t[0-9]+'
-        def conforms_cov_line_pattern(string: str) -> bool:
-            return not re.match(cov_line_pattern, string) is None
-        # end def
-
-        assert all(map(conforms_cov_line_pattern, cov_lines))
-
-        # Check if all positions of the first test sequence are present in the coverage file
-        def contains_first_id(string: str) -> bool:
-            return string.split('\t')[0] == first_test_seq_id
-        # end def
-
-        expected_len_first_seq: int = first_test_seq_len
-        assert len(tuple(filter(contains_first_id, cov_lines))) == expected_len_first_seq
-
-        # Check if all positions of the second test sequence are present in the coverage file
-        def contains_second_id(string: str) -> bool:
-            return string.split('\t')[0] == second_test_seq_id
-        # end def
-
-        expected_len_second_seq: int = second_test_seq_len
-        assert len(tuple(filter(contains_second_id, cov_lines))) == expected_len_second_seq
-
+            # Check format of all lines
+            cov_line_pattern: str = '.+\t[0-9]+\t[0-9]+'
+            def conforms_cov_line_pattern(string: str) -> bool:
+                return not re.match(cov_line_pattern, string) is None
+            # end def
+            assert all(map(conforms_cov_line_pattern, cov_lines))
+        # end if
     # end def
 # end class
 
@@ -99,14 +92,20 @@ class TestGetCoverageForReference:
     def test_get_covs_seq_1(
         self,
         first_test_seq_id,
+        test_bam_fpath,
         test_coverage_fpath,
         first_test_seq_len) -> None:
 
         # Funciton tests that `get_coverage_for_reference` retrieves coverage correctly
         #   for the first test sequence
 
-        cov_array: CoverageArray = oc.get_coverage_for_reference(
+        cov_fpath: str = oc.count_coverage(
+            test_bam_fpath,
             first_test_seq_id,
+            test_coverage_fpath
+        )
+
+        cov_array: CoverageArray = oc.get_coverage_for_reference(
             test_coverage_fpath
         )
 
@@ -116,14 +115,20 @@ class TestGetCoverageForReference:
     def test_get_covs_seq_2(
         self,
         second_test_seq_id,
+        test_bam_fpath,
         test_coverage_fpath,
         second_test_seq_len) -> None:
 
         # Funciton tests that `get_coverage_for_reference` retrieves coverage correctly
         #   for the second test sequence
 
-        cov_array: CoverageArray = oc.get_coverage_for_reference(
+        cov_fpath: str = oc.count_coverage(
+            test_bam_fpath,
             second_test_seq_id,
+            test_coverage_fpath
+        )
+
+        cov_array: CoverageArray = oc.get_coverage_for_reference(
             test_coverage_fpath
         )
 

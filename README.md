@@ -2,7 +2,7 @@
 
 “Con-hi” means “**con**sensus-**hi**ghlighter”.
 
-Latest version is `3.2.a` (2023-12-18 edition).
+Latest version is `3.3.a` (2024-12-04 edition).
 
 ## Description
 
@@ -25,7 +25,7 @@ This program annotates low-coverage and high-coverage regions of sequences in fa
 - [samtools](https://github.com/samtools/samtools) 1.13 or later is recommended. Versions from 1.11 to 1.12 are acceptable, but might calculate coverage inaccurately.
 
 You can install Biopython with following command:
-```
+```bash
 pip3 install biopython
 ```
 
@@ -34,7 +34,7 @@ You can install samtools by downloading latest release from [samtools page](http
 ## Usage
 
 Basic usage is:
-```
+```bash
 ./con-hi.py -f <TARGET_FASTA> -b <MAPPING_BAM>
 ```
 
@@ -62,6 +62,12 @@ You can specify custom coverage theshold(s) by passing comma-separated list of t
 -o or --outfile:
     Output file.
     Deault value: 'highlighted_sequence.gbk'.
+
+-r or --target-seq-ids:
+    Comma-separated list of target sequence IDs to process.
+    Examples: "seq_1" or "seq_1,seq_9,seq_12".
+    Dasta sequence id is the part of its header before the first space.
+    Default: process all target sequences.
 
 -c or --lower-coverage-thresholds:
     Comma-separated list of lower coverage threshold(s).
@@ -102,7 +108,7 @@ You can specify custom coverage theshold(s) by passing comma-separated list of t
 
 ## Examples
 
-### Example 1
+### Example 1. Basic usage
 
 Annotate file `my_sequence.fasta` with default parameters according to mapping from file `my_mapping.sorted.bam`:
 
@@ -110,36 +116,62 @@ Annotate file `my_sequence.fasta` with default parameters according to mapping f
 ./con-hi.py -f my_sequence.fasta -b my_mapping.sorted.bam
 ```
 
-### Example 2
+### Example 2. How to use `-c` option
 
-Annotate file `my_sequence.fasta` according to mapping from file `my_mapping.sorted.bam`. Annotate regions with coverage below 25, fragments with coverages below 50 and regions with zero coverages:
+Annotate regions with coverage below 25, fragments with coverages below 50 and regions with zero coverages:
 
-```
+```bash
 ./con-hi.py -f my_sequence.fasta -b my_mapping.sorted.bam -c 25,50
 ```
 
-### Example 3
+### Example 3. How to use options `-C`, `-n`
 
-Annotate file `my_sequence.fasta` according to mapping from file `my_mapping.sorted.bam`. Annotate regions with coverage below 25, fragments with coverages below 50. Disable annotation of zero coverage regions:
+Annotate regions with coverage below 25, fragments with coverages below 50. Disable annotation of zero coverage regions:
 
 ```
 ./con-hi.py -f my_sequence.fasta -b my_mapping.sorted.bam -c 25,50 -n
 ```
 
-### Example 4
+### Example 4. How to use options `--circular`, `--organism`
 
-Annotate file `my_sequence.fasta` with default parameters according to mapping from file `my_mapping.sorted.bam`. Specify the name of the organism for output file. The sequence is circular:
+Specify the name of the organism for output file. The sequence is circular:
 
-```
+```bash
 ./con-hi.py -f my_sequence.fasta -b my_mapping.sorted.bam \
     --circular --organism "Serratia marcescens"
 ```
 
-### Example 5
+### Example 5. How to turn off annotation of low-coverage regions (`-c off`)
 
-Annotate file `my_sequence.fasta` according to mapping from file `my_mapping.sorted.bam`. Disable annotation of low-coverage regions (`-c off`). Annotate high-coverage regions with coverage above 1.7×*M* and above 2.4×*M*, where *M* is median coverage:
+Disable annotation of low-coverage regions (`-c off`). Annotate high-coverage regions with coverage above 1.7×*M* and above 2.4×*M*, where *M* is median coverage:
 
-```
+```bash
 ./con-hi.py -f my_sequence.fasta -b my_mapping.sorted.bam \
     -c off -C 1.7,2.4
+```
+
+### Example 6. How to use `-r` option
+
+Target file `my_sequences.fasta` contains the following sequences:
+
+1) a prokaryotic chromosome (sequence id `chr`);
+
+2) one high-copy plasmid (sequence id `plasmid_H1`);
+
+3) two low-copy plasmids (sequence ids `plasmid_L1` and `plasmid_L2`).
+
+One might expect that the more copies a replicon has the higher is its read coverage. Use coverage threshold of 20 for the chromosome, 50 for the high-copy plasmid, and 5 for low-copy plasmids:
+
+```bash
+./con-hi.py -f my_sequences.fasta -b my_mapping.sorted.bam \
+    -r chr \
+    -c 20
+
+./con-hi.py -f my_sequences.fasta -b my_mapping.sorted.bam \
+    -r plasmid_H1 \
+    -c 50
+
+./con-hi.py -f my_sequences.fasta -b my_mapping.sorted.bam \
+    -r plasmid_L1,plasmid_L2 \
+    -c 5
 ```

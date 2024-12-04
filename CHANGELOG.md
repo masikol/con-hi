@@ -1,5 +1,15 @@
 # con-hi changelog
 
+# 2024-12-04 edition
+
+Version `3.3.a`
+
+1. Added option `-r / --target-seq-ids`. One can use it to avoid wasting time annotating all sequences in a target fasta file if some of them are unwanted. Or to annotate sequences in a multi-fasta file separately (e.g. with different thresholds) without splitting the fasta file.
+
+2. Now, `con-hi.py` runs `samtools depth` for each target sequence separately thus avoiding creation of large TSV files of coverage values.
+
+3. Now, `con-hi.py` runs `samtools depth` with option `-a` instead of `-aa`. Indeed, this option means “Output absolutely all positions, including unused ref seqs”, which isn’t helpful.
+
 # 2023-12-18 edition
 
 Version `3.2.a`

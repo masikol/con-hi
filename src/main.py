@@ -35,24 +35,15 @@ def main(version: str, last_update_date: str) -> None:
     # Read fasta records from input file
     print('Importing fasta from `{}`...'.format(args.target_fasta_fpath), end=' ')
     sys.stdout.flush()
-    fasta_records: Sequence[SeqRecord] = pfr.parse_fasta_reference(args.target_fasta_fpath)
+    fasta_records: Sequence[SeqRecord] = pfr.parse_fasta_reference(
+        args.target_fasta_fpath,
+        args.target_seq_ids
+    )
     print('done')
 
     # Create ouput directory
     _create_outdir_from_outfile(args.outfpath)
     out.create_or_emply_file(args.outfpath)
-
-    # Obtain path to coverage file
-    coverage_fpath: str = out.conf_path_to_depth_file(args.outfpath)
-
-    # Count coverages with samtools depth
-    print('Silently counting coverages with `samtools depth`...', end=' ')
-    sys.stdout.flush()
-    cov_fpath: str = oc.count_cov_for_all_refs(
-        args.bam_fpath,
-        coverage_fpath
-    )
-    print('done\n')
 
     # Proceed with annotation
     rec: SeqRecord
@@ -60,9 +51,22 @@ def main(version: str, last_update_date: str) -> None:
 
         print(f'Processing sequence `{rec.description}`')
 
+        # Obtain path to coverage file
+        coverage_fpath: str = out.conf_path_to_depth_file(args.outfpath, rec.id)
+
+        # Count coverages with samtools depth
+        print('Silently counting coverages with `samtools depth`...', end=' ')
+        sys.stdout.flush()
+        cov_fpath: str = oc.count_coverage(
+            args.bam_fpath,
+            rec.id,
+            coverage_fpath
+        )
+        print('done\n')
+
         # Obtain coverages for current sequence
         try:
-            cov_array: CoverageArray = oc.get_coverage_for_reference(rec.id, cov_fpath)
+            cov_array: CoverageArray = oc.get_coverage_for_reference(cov_fpath)
         except oc.MissingCoveragesError:
             print_err('Warning: coverage values for this sequence are not found\n')
             continue
@@ -116,6 +120,10 @@ def main(version: str, last_update_date: str) -> None:
             print(' done')
         # end for
 
+        if not args.keep_tmp_cov_file:
+            _try_rm_temp_file(coverage_fpath)
+        # end if
+
         sys.stdout.write(f'Writing annotated sequence to `{args.outfpath}`...')
         sys.stdout.flush()
 
@@ -132,9 +140,6 @@ def main(version: str, last_update_date: str) -> None:
         print('=' * 10)
     # end for
 
-    if not args.keep_tmp_cov_file:
-        _try_rm_temp_file(coverage_fpath)
-    # end if
     print(f'Completed{with_warnings}!')
 # end def
 

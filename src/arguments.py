@@ -3,10 +3,13 @@ import os
 import re
 import sys
 import getopt
-from typing import List, Sequence, Iterable
+from typing import List, Sequence, Iterable, Set
 
 from src.printing import print_err
 from src.platform import platf_depend_exit
+
+
+_ARG_SEP = ','
 
 
 class HighlighterArgs:
@@ -15,6 +18,7 @@ class HighlighterArgs:
     def __init__(
         self,
         target_fasta_fpath: str,
+        target_seq_ids: Set[str],
         bam_fpath: str,
         outfpath: str,
         lower_coverage_thresholds: Sequence[int],
@@ -26,6 +30,7 @@ class HighlighterArgs:
         keep_tmp_cov_file: bool) -> None:
 
         self.target_fasta_fpath: str = target_fasta_fpath
+        self.target_seq_ids: str = target_seq_ids
         self.bam_fpath: str = bam_fpath
         self.outfpath: str = outfpath
 
@@ -44,6 +49,7 @@ class HighlighterArgs:
     def __repr__(self) -> str:
         return f"""HighlighterArgs(
   target_fasta_fpath: `{self.target_fasta_fpath}`
+  target_seq_ids: `{self.target_seq_ids}`
   bam_fpath: `{self.bam_fpath}`
   outfpath: `{self.outfpath}`
   lower_coverage_thresholds: {self.lower_coverage_thresholds}
@@ -68,11 +74,12 @@ def parse_arguments() -> HighlighterArgs:
     try:
         opts, args = getopt.gnu_getopt(
             sys.argv[1:],
-            'hvf:b:o:c:C:l:nk',
+            'hvf:r:b:o:c:C:l:nk',
             [
                 'help',
                 'version',
                 'target-fasta=',
+                'target-seq-ids=',
                 'bam=',
                 'outfile=',
                 'lower-coverage-thresholds=',
@@ -81,7 +88,7 @@ def parse_arguments() -> HighlighterArgs:
                 'no-zero-output',
                 'circular',
                 'organism=',
-                'keep-temp-cov-file'
+                'keep-temp-cov-file',
             ]
         )
     except getopt.GetoptError as err:
@@ -124,6 +131,7 @@ def _parse_options(opts: List[List[str]]) -> HighlighterArgs:
     # Initialize run parameters with default values
     args: HighlighterArgs = HighlighterArgs(
         target_fasta_fpath=None,
+        target_seq_ids=set(),
         bam_fpath=None,
         outfpath=os.path.join(os.getcwd(), 'highlighted_sequence.gbk'),
         lower_coverage_thresholds=(10,),
@@ -157,6 +165,11 @@ def _parse_options(opts: List[List[str]]) -> HighlighterArgs:
 
             args.target_fasta_fpath = arg
 
+        # Target reference sequence IDs
+        elif opt in ('-r', '--target-seq-ids'):
+            # TODO: check if all seqids are in target fasta
+            args.target_seq_ids = set(arg.split(_ARG_SEP))
+
         # BAM file
         elif opt in ('-b', '--bam'):
 
@@ -184,7 +197,7 @@ def _parse_options(opts: List[List[str]]) -> HighlighterArgs:
                 continue
             # end if
 
-            cov_strings: Sequence[str] = arg.split(',')
+            cov_strings: Sequence[str] = arg.split(_ARG_SEP)
 
             if any(map(_coverage_not_parsable, cov_strings)):
                 invalid_strings: Iterable[str] = filter(_coverage_not_parsable, cov_strings)
@@ -210,7 +223,7 @@ def _parse_options(opts: List[List[str]]) -> HighlighterArgs:
                 continue
             # end if
 
-            coef_strings: Sequence[str] = arg.split(',')
+            coef_strings: Sequence[str] = arg.split(_ARG_SEP)
 
             if any(map(_coefficient_not_parsable, coef_strings)):
                 invalid_strings: Iterable[str] = filter(_coefficient_not_parsable, coef_strings)

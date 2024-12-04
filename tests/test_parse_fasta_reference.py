@@ -1,6 +1,6 @@
 
 import os
-from typing import Sequence
+from typing import Sequence, Set
 
 import pytest
 from Bio.Seq import Seq
@@ -25,6 +25,14 @@ def plain_fasta() -> str:
 @pytest.fixture
 def gzipped_fasta() -> str:
     return os.path.join(os.getcwd(), 'tests', 'data', 'test_reference.fasta.gz')
+# end def
+
+@pytest.fixture
+def target_seq_ids() -> Set[str]:
+    return {
+        'test_seq_1',
+        'test_seq_3',
+    }
 # end def
 
 
@@ -192,5 +200,22 @@ class TestParseFastaReference:
 
         expected_seq_len = third_test_seq_len
         assert len(fasta_records[2]) == expected_seq_len
+    # end def
+
+    def test_subset_target_seq_ids(self,
+                                   plain_fasta: str,
+                                   target_seq_ids: Set[str]) -> None:
+        # Function tests how `parse_fasta_reference` subsets fasta records
+        #   using its `ref_seq_ids` parameter
+        fasta_records: Sequence[SeqRecord] = pfr.parse_fasta_reference(
+            plain_fasta,
+            target_seq_ids
+        )
+
+        expected: Set[str] = set(target_seq_ids)
+        observed: Set[str] = set(
+            map(lambda sr: sr.id, fasta_records)
+        )
+        assert observed == expected
     # end def
 # end class
