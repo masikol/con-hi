@@ -2,20 +2,28 @@
 
 import sys
 
-__version__: str  = '3.3.a'
+__version__  = '3.3.b'
 # Year, month, day
-__last_update_date__: str = '2024-12-04'
-__min_python_version__: float = 3.6
+__last_update_date__ = '2024-12-04'
+__min_python_version__ = 3.6
 # __author__ = 'Maksim Sikolenko'
+
+
+import logging
+logging.basicConfig(
+    format='%(asctime)s: %(levelname)s -- %(message)s',
+    # datefmt='%Y-%m-%d %I:%M:%S %p',
+    level=logging.INFO
+)
 
 
 # === Check python interpreter version ===
 if sys.version_info.major + sys.version_info.minor*0.1 < __min_python_version__:
-    print(
+    logging.critical(
         'Your python interpreter version is ' + '%d.%d' %
         (sys.version_info.major, sys.version_info.minor)
     )
-    print('  Please, use Python %.1f+.\a' % __min_python_version__)
+    logging.critical('  Please, use Python %.1f+.\a' % __min_python_version__)
     # In python 2 'raw_input' does the same thing as 'input' in python 3.
     # Neither does 'input' in python2.
     if sys.platform.startswith('win'):
@@ -51,7 +59,7 @@ if '-v' in sys.argv[1:] or '--version' in sys.argv[1:]:
 
 # === Print name of the program and version ===
 
-print('\ncon-hi - Version {}'.format(__version__))
+print('\n== con-hi - Version {} ==\n'.format(__version__))
 
 
 # === Check dependencies ===

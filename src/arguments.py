@@ -3,9 +3,9 @@ import os
 import re
 import sys
 import getopt
+import logging
 from typing import List, Sequence, Iterable, Set
 
-from src.printing import print_err
 from src.platform import platf_depend_exit
 
 
@@ -92,17 +92,17 @@ def parse_arguments() -> HighlighterArgs:
             ]
         )
     except getopt.GetoptError as err:
-        print_err(str(err))
+        logging.error(str(err))
         platf_depend_exit(2)
     # end try
 
     # Check positional arguments: their existance is an error signal
     if len(args) != 0:
-        print_err('Error: con-hi.py does not take any positional arguments.')
-        print_err('You passed following positional argument(s):')
+        logging.error('Error: con-hi.py does not take any positional arguments.')
+        logging.error('You passed following positional argument(s):')
         arg: str
         for arg in args:
-            print_err(f'  `{arg}`')
+            logging.error(f'`{arg}`')
         # end for
         platf_depend_exit(2)
     # end if
@@ -112,12 +112,12 @@ def parse_arguments() -> HighlighterArgs:
 
     # Check mandatory options
     if args.target_fasta_fpath is None:
-        print_err('Error: option `-f` (`--target-fasta`) is mandatory.')
+        logging.error('Error: option `-f` (`--target-fasta`) is mandatory.')
         platf_depend_exit(2)
     # end if
 
     if args.bam_fpath is None:
-        print_err('Error: option `-b` (`--bam`) is mandatory.')
+        logging.error('Error: option `-b` (`--bam`) is mandatory.')
         platf_depend_exit(2)
     # end if
 
@@ -152,14 +152,14 @@ def _parse_options(opts: List[List[str]]) -> HighlighterArgs:
         if opt in ('-f', '--target-fasta'):
 
             if not os.path.isfile(arg):
-                print_err(f'\aError: file {arg}` does not exist.')
+                logging.error(f'\aError: file {arg}` does not exist.')
                 platf_depend_exit(2)
             # end if
 
             if not _is_fasta(arg):
-                print_err('\aError: only plain fasta or gzipped fasta are supported.')
-                print_err(f'Erroneous file: `{arg}`.')
-                print_err('Allowed extentions: `.fasta`, `.fa`, `.fasta.gz`, `.fa.gz`.')
+                logging.error('\aError: only plain fasta or gzipped fasta are supported.')
+                logging.error(f'Erroneous file: `{arg}`.')
+                logging.error('Allowed extentions: `.fasta`, `.fa`, `.fasta.gz`, `.fa.gz`.')
                 platf_depend_exit(2)
             # end if
 
@@ -167,20 +167,19 @@ def _parse_options(opts: List[List[str]]) -> HighlighterArgs:
 
         # Target reference sequence IDs
         elif opt in ('-r', '--target-seq-ids'):
-            # TODO: check if all seqids are in target fasta
             args.target_seq_ids = set(arg.split(_ARG_SEP))
 
         # BAM file
         elif opt in ('-b', '--bam'):
 
             if not os.path.isfile(arg):
-                print_err(f'\aError: file {arg}` does not exist.')
+                logging.error(f'\aError: file {arg}` does not exist.')
                 platf_depend_exit(2)
             # end if
 
             if not _is_bam(arg):
-                print_err(f'\aError: file `{arg}` does not seem like a BAM file.')
-                print_err('The program only accepts BAM files having `.bam` extentions')
+                logging.error(f'\aError: file `{arg}` does not seem like a BAM file.')
+                logging.error('The program only accepts BAM files having `.bam` extentions')
                 platf_depend_exit(2)
             # end if
 
@@ -201,11 +200,11 @@ def _parse_options(opts: List[List[str]]) -> HighlighterArgs:
 
             if any(map(_coverage_not_parsable, cov_strings)):
                 invalid_strings: Iterable[str] = filter(_coverage_not_parsable, cov_strings)
-                print_err(f'\aError: invalid coverage thresholds in `{arg}`:')
+                logging.error(f'\aError: invalid coverage thresholds in `{arg}`:')
                 for s in invalid_strings:
-                    print_err(f'  `{s}`')
+                    logging.error(f'  `{s}`')
                 # end for
-                print_err('Coverage thesholds must be positive integer numbers.')
+                logging.error('Coverage thesholds must be positive integer numbers.')
                 platf_depend_exit(2)
             # end if
 
@@ -227,11 +226,11 @@ def _parse_options(opts: List[List[str]]) -> HighlighterArgs:
 
             if any(map(_coefficient_not_parsable, coef_strings)):
                 invalid_strings: Iterable[str] = filter(_coefficient_not_parsable, coef_strings)
-                print_err(f'\aError: invalid coverage coefficient in `{arg}`:\n')
+                logging.error(f'\aError: invalid coverage coefficient in `{arg}`:')
                 for s in invalid_strings:
-                    print_err(f'  `{s}`\n')
+                    logging.error(f'`{s}`')
                 # end for
-                print_err('Coverage coefficients must be positive numbers.\n')
+                logging.error('Coverage coefficients must be positive numbers.')
                 platf_depend_exit(2)
             # end if
 
@@ -254,8 +253,8 @@ def _parse_options(opts: List[List[str]]) -> HighlighterArgs:
                     raise ValueError
                 # end if
             except ValueError:
-                print_err(f'\aError: invalid minimum feature length: `{arg}`')
-                print_err('It must be non-negative negative number.')
+                logging.error(f'\aError: invalid minimum feature length: `{arg}`')
+                logging.error('It must be non-negative negative number.')
                 platf_depend_exit(2)
             # end try
             args.min_feature_len = min_feature_len

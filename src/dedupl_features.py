@@ -14,7 +14,7 @@ def dedupl_features(
     # :param new_features: list of recently discovered features;
     # :param extant_features: list of features that existed before `new_features`
     #   was discovered;
-    
+
     # Create the tuple of coordinates in order not to extract these locations each time
     extant_coords: MutableSequence[Tuple[int, int]] = tuple(
         (

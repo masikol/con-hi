@@ -7,14 +7,12 @@ from typing import Sequence, Callable, TextIO, List, Set
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 
-from src.arguments import HighlighterArgs
-
 
 def parse_fasta_reference(ref_fasta_fpath: str,
                           ref_seq_ids: Set[str] = set()) -> Sequence[SeqRecord]:
-    # TODO: doc comment
     # Function parses fasta file and returns collection of fasta records stored in this file.
     # :param ref_fasta_fpath: path to target fasta file;
+    # :param ref_seq_ids: ids of target sequences to parse;
 
     # Choose open function for the file
     open_func: Callable[[str], TextIO]
@@ -102,7 +100,6 @@ def _is_plain_text(fpath: str) -> bool:
 
 
 def _validate_fasta_records(fasta_records: Sequence[SeqRecord]) -> None:
-    # TODO: doc string
     # Function validates input fasta file.
     # :param fasta_records: list of fasta records to validate;
 
@@ -133,8 +130,9 @@ def _validate_fasta_records(fasta_records: Sequence[SeqRecord]) -> None:
 
 def _validate_user_target_seq_ids(ref_seq_ids: Set[str],
                                   fasta_records: Sequence[SeqRecord]):
-    # TODO: doc string
-    # Check if all ref_seq_ids are in fasta_records
+    # The function checks if all ref_seq_ids are in fasta_records
+    # :param ref_seq_ids: target sequence ids;
+    # :param fasta_records: parsed fasta records;
     seq_ids_in_fasta = set(
         map(lambda sr: sr.id, fasta_records)
     )

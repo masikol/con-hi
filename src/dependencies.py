@@ -1,12 +1,11 @@
 
 import re
 import os
-import sys
+import logging
 import subprocess as sp
 from typing import List, Tuple, Sequence, Callable
 
 from src.platform import platf_depend_exit
-from src.printing import print_err
 
 
 def check_depencencies() -> None:
@@ -20,11 +19,11 @@ def check_depencencies() -> None:
     dependencies: Sequence[str] = ('Biopython', 'samtools')
     check_funcitons: Sequence[Callable[[], Tuple[str, str]]] = (_check_biopython, _check_samtools)
 
-    print('\nDependencies:')
+    logging.info('Dependencies:')
 
     for dep_name, chech_func in zip(dependencies, check_funcitons):
 
-        print(f'{dep_name}:', end='')
+        logging.info(f'{dep_name}:')
 
         version, err_msg = chech_func() # check the dependence
         # Append error message, if it exists
@@ -32,19 +31,20 @@ def check_depencencies() -> None:
             err_msg_list.append(err_msg)
         # end if
 
-        print(f' version {version}')
+        logging.info(f'version {version}')
     # end for
 
     # Print errors, if they occured
     if len(err_msg_list) != 0:
-        print_err('Dependencies errors:')
+        logging.error('Dependencies errors:')
         for err_msg in err_msg_list:
-            print_err(f'  - {err_msg}')
+            logging.error(f'  - {err_msg}')
         # end for
         platf_depend_exit(1)
     # end if
 
-    print('All dependencies are satisfied.\n')
+    logging.info('All dependencies are satisfied.')
+    print('=' * 10)
 # end def
 
 
@@ -134,16 +134,15 @@ def _check_samtools() -> Tuple[str, str]:
 def _check_recommended_samtools_version(full_version, numeric_version_str):
     recommended_version = 1.13
     if float(numeric_version_str)    < recommended_version:
-        print_err(
-            '\n - WARNING: your samtools version is {}, '
-            'although version {} is recommended.\n'.format(
+        logging.warning(
+            'your samtools version is {}, '
+            'although version {} is recommended.'.format(
                 full_version, recommended_version
             )
         )
-        print_err(
-            '   Versions older than {} may calculate coverage inaccurately.\n\n' \
+        logging.warning(
+            '   Versions older than {} may calculate coverage inaccurately.' \
                 .format(recommended_version)
         )
-        sys.stdout.flush()
     # end if
 # end def

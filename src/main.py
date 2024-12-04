@@ -1,13 +1,11 @@
 
 import os
-import sys
-import glob
-from typing import Sequence, MutableSequence, List
+import logging
+from typing import Sequence, MutableSequence
 
 from Bio.SeqRecord import SeqRecord
 from Bio.SeqFeature import SeqFeature
 
-from src.printing import print_err
 import src.output as out
 import src.obtain_coverage as oc
 import src.dedupl_features as ddf
@@ -33,13 +31,12 @@ def main(version: str, last_update_date: str) -> None:
     with_warnings: str = ''
 
     # Read fasta records from input file
-    print('Importing fasta from `{}`...'.format(args.target_fasta_fpath), end=' ')
-    sys.stdout.flush()
+    logging.info('Parsing fasta from `{}`...'.format(args.target_fasta_fpath))
     fasta_records: Sequence[SeqRecord] = pfr.parse_fasta_reference(
         args.target_fasta_fpath,
         args.target_seq_ids
     )
-    print('done')
+    logging.info('Fasta parsing completed')
 
     # Create ouput directory
     _create_outdir_from_outfile(args.outfpath)
@@ -49,47 +46,46 @@ def main(version: str, last_update_date: str) -> None:
     rec: SeqRecord
     for rec in fasta_records:
 
-        print(f'Processing sequence `{rec.description}`')
+        logging.info(f'Annotatiion started: `{rec.description}`')
 
         # Obtain path to coverage file
         coverage_fpath: str = out.conf_path_to_depth_file(args.outfpath, rec.id)
 
         # Count coverages with samtools depth
-        print('Silently counting coverages with `samtools depth`...', end=' ')
-        sys.stdout.flush()
+        logging.info('Silently counting coverages with `samtools depth`...')
         cov_fpath: str = oc.count_coverage(
             args.bam_fpath,
             rec.id,
             coverage_fpath
         )
-        print('done\n')
+        logging.info('Coverage counting competed')
 
         # Obtain coverages for current sequence
         try:
             cov_array: CoverageArray = oc.get_coverage_for_reference(cov_fpath)
         except oc.MissingCoveragesError:
-            print_err('Warning: coverage values for this sequence are not found\n')
+            logging.warning('Coverage values for this sequence are not found')
             continue
         # end try
 
         # Check length of the coverage array
         if len(cov_array) == 0:
-            print_err(f'!  Warning: no coverage information found for sequence `{rec.id}`.')
-            print_err(f"""!  Please, make sure that field `RNAME` (3-rd column) in your BAM file contains
-!    id of this sequence specified in fasta header (i.e. `{rec.id}`).""")
-            print_err('! Omitting this sequence.')
-            print_err('=' * 10)
+            warning_str: str = f'No coverage information found for sequence `{rec.id}`. ' \
+                'Please, make sure that field `RNAME` (3-rd column) in your BAM file contains ' \
+                f'id of this sequence specified in fasta header (i.e. `{rec.id}`).' \
+                'Omitting this sequence.'
+            logging.warning(warning_str)
             with_warnings = ' with warnings'
             continue
         # end if
 
         if len(cov_array) != len(rec.seq):
-            print_err(f"""!  Warning: length of sequence `{rec.id}` ({len(rec.seq)} bp)
-!    is not equal to number of coverage positions ({len(cov_array)}) reported by `samtools depth`
-!    and stored in coverage file `{cov_fpath}`.""")
-            print_err('!  Re-creating the bam file might be the solution of this issue.')
-            print_err('!  Omitting this sequence.')
-            print_err('=' * 10)
+            warning_str: str = f'Length of sequence `{rec.id}` ({len(rec.seq)} bp) ' \
+                f'is not equal to number of coverage positions ({len(cov_array)}) reported by `samtools depth` ' \
+                f'and stored in coverage file `{cov_fpath}`. ' \
+                'Re-creating the bam file might be the solution of this issue. ' \
+                'Omitting this sequence.'
+            logging.warning(warning_str)
             with_warnings = ' with warnings'
             continue
         # end if
@@ -102,8 +98,7 @@ def main(version: str, last_update_date: str) -> None:
 
         # Detect all necessary coverage features
         for cov_threshold in cov_thresholds:
-            sys.stdout.write(f'Screening the sequence for regions with {cov_threshold.get_label()}...')
-            sys.stdout.flush()
+            logging.info(f'Screening the sequence for regions with {cov_threshold.get_label()}...')
 
             # Get coverage features
             coverage_features = hlft.highlight_coverage_features(
@@ -117,15 +112,14 @@ def main(version: str, last_update_date: str) -> None:
 
             # Append features to list
             rec.features.extend(coverage_features)
-            print(' done')
+            logging.info(f'{cov_threshold.get_label()} regions annotated')
         # end for
 
         if not args.keep_tmp_cov_file:
             _try_rm_temp_file(coverage_fpath)
         # end if
 
-        sys.stdout.write(f'Writing annotated sequence to `{args.outfpath}`...')
-        sys.stdout.flush()
+        logging.info('Saving annotated sequence...')
 
         # Write result GanBank record
         out.write_genbank_output(
@@ -135,12 +129,12 @@ def main(version: str, last_update_date: str) -> None:
             cov_array,
             args.outfpath
         )
-        print('done')
+        logging.info(f'Annotated sequence saved to `{args.outfpath}`')
 
         print('=' * 10)
     # end for
 
-    print(f'Completed{with_warnings}!')
+    logging.info(f'Completed{with_warnings}!')
 # end def
 
 
@@ -155,8 +149,8 @@ def _create_outdir_from_outfile(outfpath: str) -> None:
         try:
             os.makedirs(outdpath)
         except OSError as err:
-            print_err(f'Error! Cannot create output directory `{outdpath}`.')
-            print_err(str(err))
+            logging.error(f'Cannot create output directory `{outdpath}`.')
+            logging.error(str(err))
             platf_depend_exit(1)
         # end try
     # end if
@@ -167,8 +161,8 @@ def _try_rm_temp_file(file_path):
     try:
         os.unlink(file_path)
     except OSError as err:
-        print_err('Warning: cannot remove temporary file `{}`'.format(file_path))
-        print_err(str(err))
+        logging.warning('Cannot remove temporary file `{}`'.format(file_path))
+        logging.warning(str(err))
     # end try
 # end def
 

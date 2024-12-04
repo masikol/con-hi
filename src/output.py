@@ -1,6 +1,6 @@
 
 import os
-import sys
+import logging
 import datetime
 import warnings
 
@@ -8,7 +8,6 @@ from Bio import SeqIO
 from Bio import BiopythonWarning
 from Bio.SeqRecord import SeqRecord
 
-from src.printing import print_err
 from src.platform import platf_depend_exit
 from src.coverage_array import CoverageArray
 
@@ -19,8 +18,8 @@ def create_or_emply_file(file_path):
             pass
         # end with
     except OSError as err:
-        print_err(f'\nError: cannot create file {file_path}')
-        print_err(str(err))
+        logging.error(f'Error: cannot create file {file_path}')
+        logging.error(str(err))
         platf_depend_exit(1)
     # end try
 # end def
@@ -38,7 +37,6 @@ def write_genbank_output(seq_record: SeqRecord,
     # :param outfpath: path to output file;
 
     annotations = _create_annotations(
-        seq_record,
         organism,
         topology,
         cov_array
@@ -66,13 +64,13 @@ def _write_gb_warning_safe(seq_record: SeqRecord, outfpath: str, mode: str = 'a'
     # Catch and ignore BiopythonWarning
     warnings.filterwarnings('error')
     try:
-        records_written = _write_gb(seq_record, outfpath, mode='a')
+        records_written = _write_gb(seq_record, outfpath, mode=mode)
     except BiopythonWarning as w:
-        print_err('\n! Warning: {}\n'.format(str(w)))
+        logging.warning(str(w))
         # We will write the record (again) only if it hasn't been already written
         if records_written == 0:
             warnings.filterwarnings('ignore')
-            _write_gb(seq_record, outfpath, mode='a')
+            _write_gb(seq_record, outfpath, mode=mode)
         # end if
     finally:
         warnings.resetwarnings()
@@ -89,8 +87,7 @@ def _write_gb(seq_record: SeqRecord, outfpath: str, mode: str = 'a') -> int:
 # end def
 
 
-def _create_annotations(seq_record: SeqRecord,
-                        organism: str,
+def _create_annotations(organism: str,
                         topology: str,
                         cov_array: CoverageArray) -> dict:
     annotations = {
@@ -121,9 +118,9 @@ def _get_date() -> str:
 
 
 def conf_path_to_depth_file(outfpath: str, target_seq_id: str) -> str:
-    # TODO: doc string
     # Function configures path to coverage file.
-    # :param outdir: path to output directory;
+    # :param outfpath: path to output file;
+    # :param target_seq_id: target sequence id;
     return os.path.join(
         os.path.dirname(outfpath),
         f'coverage_{target_seq_id}.tsv'

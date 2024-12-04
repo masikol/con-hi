@@ -1,9 +1,8 @@
 
-import os
+import logging
 import subprocess as sp
 from typing import Tuple, Iterator
 
-from src.printing import print_err
 from src.platform import platf_depend_exit
 from src.coverage_array import CoverageArray
 
@@ -11,9 +10,9 @@ from src.coverage_array import CoverageArray
 def count_coverage(bam_fpath: str,
                    target_seq_id: str,
                    coverage_fpath: str) -> str:
-    # TODO: doc string
     # Function counts coverages for all sequences from input fasta file.
     # :param bam_fpath: path to bam file;
+    # :param target_seq_id: target sequence id to count coverage for;
     # :param coverage_fpath: path to coverage file;
     # Returns path to file that contains coverage:
     #   first column -- sequence id, second column -- position, third column -- coverage.
@@ -31,8 +30,8 @@ def count_coverage(bam_fpath: str,
 
     # Print error if it occures
     if pipe.returncode != 0:
-        print_err('\nError occured while running `samtools depth`')
-        print_err(stdout_stderr[1].decode('utf-8'))
+        logging.error('An error occured while running `samtools depth`')
+        logging.error(stdout_stderr[1].decode('utf-8'))
         platf_depend_exit(pipe.returncode)
     # end if
 
@@ -76,9 +75,9 @@ def get_coverage_for_reference(coverage_fpath: str) -> CoverageArray:
 def _conf_samtools_depth_cmd(bam_fpath: str,
                              target_seq_id: str,
                              coverage_fpath: str) -> str:
-    # TODO: doc string
     # Function configures command to count coverages.
     # :param bam_fpath: path to bam file;
+    # :param target_seq_id: target sequence id to count coverage for;
     # :param coverage_fpath: path to coverage file;
 
     return ' '.join(
