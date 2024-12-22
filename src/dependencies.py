@@ -1,6 +1,7 @@
 
 import re
 import os
+import sys
 import logging
 import subprocess as sp
 from typing import List, Tuple, Sequence, Callable
@@ -31,7 +32,7 @@ def check_depencencies() -> None:
             err_msg_list.append(err_msg)
         # end if
 
-        logging.info(f'version {version}')
+        logging.info(f' version {version}')
     # end for
 
     # Print errors, if they occured
@@ -44,7 +45,7 @@ def check_depencencies() -> None:
     # end if
 
     logging.info('All dependencies are satisfied.')
-    print('=' * 10)
+    sys.stderr.write('=' * 20 + '\n')
 # end def
 
 

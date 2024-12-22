@@ -1,5 +1,6 @@
 
 import os
+import sys
 import logging
 from typing import Sequence, MutableSequence
 
@@ -36,7 +37,8 @@ def main(version: str, last_update_date: str) -> None:
         args.target_fasta_fpath,
         args.target_seq_ids
     )
-    logging.info('Fasta parsing completed')
+    logging.info('Fasta parsing completed.')
+    sys.stderr.write('=' * 20 + '\n')
 
     # Create ouput directory
     _create_outdir_from_outfile(args.outfpath)
@@ -46,7 +48,7 @@ def main(version: str, last_update_date: str) -> None:
     rec: SeqRecord
     for rec in fasta_records:
 
-        logging.info(f'Annotatiion started: `{rec.description}`')
+        logging.info(f'Annotatiion started: `{rec.description}`.')
 
         # Obtain path to coverage file
         coverage_fpath: str = out.conf_path_to_depth_file(args.outfpath, rec.id)
@@ -58,7 +60,7 @@ def main(version: str, last_update_date: str) -> None:
             rec.id,
             coverage_fpath
         )
-        logging.info('Coverage counting competed')
+        logging.info('Coverage counting completed.')
 
         # Obtain coverages for current sequence
         try:
@@ -98,7 +100,7 @@ def main(version: str, last_update_date: str) -> None:
 
         # Detect all necessary coverage features
         for cov_threshold in cov_thresholds:
-            logging.info(f'Screening the sequence for regions with {cov_threshold.get_label()}...')
+            logging.info(f'Screening the sequence for regions of {cov_threshold.get_label()}...')
 
             # Get coverage features
             coverage_features = hlft.highlight_coverage_features(
@@ -112,7 +114,15 @@ def main(version: str, last_update_date: str) -> None:
 
             # Append features to list
             rec.features.extend(coverage_features)
-            logging.info(f'{cov_threshold.get_label()} regions annotated')
+            sum_feature_lengths: int = sum(
+                map(len, coverage_features)
+            )
+            logging.info(
+                'Regions of {} annotated. Totally, {:,} bp long.'.format(
+                    cov_threshold.get_label(),
+                    sum_feature_lengths
+                )
+            )
         # end for
 
         if not args.keep_tmp_cov_file:
@@ -129,12 +139,12 @@ def main(version: str, last_update_date: str) -> None:
             cov_array,
             args.outfpath
         )
-        logging.info(f'Annotated sequence saved to `{args.outfpath}`')
+        logging.info(f'Annotated sequence saved to `{args.outfpath}`.')
 
-        print('=' * 10)
+        sys.stderr.write('=' * 20 + '\n')
     # end for
 
-    logging.info(f'Completed{with_warnings}!')
+    logging.info(f'Completed{with_warnings}! Fare you well!')
 # end def
 
 

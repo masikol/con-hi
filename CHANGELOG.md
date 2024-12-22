@@ -1,5 +1,11 @@
 # con-hi changelog
 
+# 2024-12-22 edition
+
+## Version `3.3.c`
+
+Improved logging messages.
+
 # 2024-12-04 edition
 
 ## Version `3.3.b`
