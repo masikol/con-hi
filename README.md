@@ -2,7 +2,7 @@
 
 “Con-hi” means “**con**sensus-**hi**ghlighter”.
 
-Latest version is `3.3.c` (2024-12-22 edition).
+Latest version is `3.3.d` (2025-10-31 edition).
 
 ## Description
 

@@ -87,6 +87,7 @@ def _conf_samtools_depth_cmd(bam_fpath: str,
             f'-r {target_seq_id}',
             '-a',
             '-J',
+            '-g 256',
             f'-o {coverage_fpath}',
             bam_fpath,
         ]

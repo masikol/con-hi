@@ -26,7 +26,7 @@ class TestConfSamtoolsDepthCmd:
         ref_fasta_fpath: str = 'some_file.fasta'
         bam_fpath: str = 'mapping.sorted.bam'
 
-        expected: str = f'samtools depth -r {first_test_seq_id} -a -J -o {test_coverage_fpath} {bam_fpath}'
+        expected: str = f'samtools depth -r {first_test_seq_id} -a -J -g 256 -o {test_coverage_fpath} {bam_fpath}'
         observed: str = oc._conf_samtools_depth_cmd(
             bam_fpath,
             first_test_seq_id,

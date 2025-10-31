@@ -1,5 +1,11 @@
 # con-hi changelog
 
+# 2025-10-31 edition
+
+## Version `3.3.d`
+
+Add option `-g 256` to `samtools depth` call. Now, samtools account secondary alignments too.
+
 # 2024-12-22 edition
 
 ## Version `3.3.c`
