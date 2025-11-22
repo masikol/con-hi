@@ -1,5 +1,15 @@
 # con-hi changelog
 
+# 2025-11-22 edition
+
+## Version `4.0.a`
+
+**Important interface change!**
+
+1. Now, to annotate regions with coverage > x`*`*M*, where *M* is median coverage, use `-X` option instead on `-C`.
+
+2. Now, to annotate regions with coverage > x, use `-C` option.
+
 # 2025-10-31 edition
 
 ## Version `3.3.d`

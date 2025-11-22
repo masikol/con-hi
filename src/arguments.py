@@ -22,6 +22,7 @@ class HighlighterArgs:
         bam_fpath: str,
         outfpath: str,
         lower_coverage_thresholds: Sequence[int],
+        upper_coverage_thresholds: Sequence[int],
         upper_coverage_coefficients: Sequence[float],
         disable_zero_cov_output: bool,
         min_feature_len: int,
@@ -38,6 +39,7 @@ class HighlighterArgs:
         self.min_feature_len = min_feature_len
 
         self.lower_coverage_thresholds = lower_coverage_thresholds
+        self.upper_coverage_thresholds = upper_coverage_thresholds
         self.upper_coverage_coefficients = upper_coverage_coefficients
 
         self.topology = topology
@@ -53,6 +55,7 @@ class HighlighterArgs:
   bam_fpath: `{self.bam_fpath}`
   outfpath: `{self.outfpath}`
   lower_coverage_thresholds: {self.lower_coverage_thresholds}
+  upper_coverage_thresholds: {self.upper_coverage_thresholds}
   upper_coverage_coefficients: {self.upper_coverage_coefficients}
   disable_zero_cov_output: {self.disable_zero_cov_output}
   topology: {self.topology}
@@ -74,7 +77,7 @@ def parse_arguments() -> HighlighterArgs:
     try:
         opts, args = getopt.gnu_getopt(
             sys.argv[1:],
-            'hvf:r:b:o:c:C:l:nk',
+            'hvf:r:b:o:c:C:X:l:nk',
             [
                 'help',
                 'version',
@@ -83,6 +86,7 @@ def parse_arguments() -> HighlighterArgs:
                 'bam=',
                 'outfile=',
                 'lower-coverage-thresholds=',
+                'upper-coverage-thresholds=',
                 'upper-coverage-coefficients=',
                 'min-feature-len=',
                 'no-zero-output',
@@ -135,6 +139,7 @@ def _parse_options(opts: List[List[str]]) -> HighlighterArgs:
         bam_fpath=None,
         outfpath=os.path.join(os.getcwd(), 'highlighted_sequence.gbk'),
         lower_coverage_thresholds=(10,),
+        upper_coverage_thresholds=(500,),
         upper_coverage_coefficients=(2.0,),
         disable_zero_cov_output=False,
         min_feature_len=5,
@@ -215,8 +220,34 @@ def _parse_options(opts: List[List[str]]) -> HighlighterArgs:
 
             args.lower_coverage_thresholds = coverage_thresholds
 
+        # List of upper coverage thesholds
+        elif opt in ('-C', '--upper-coverage-thresholds'):
+            if arg == 'off':
+                args.upper_coverage_thresholds = list()
+                continue
+            # end if
+
+            cov_strings: Sequence[str] = arg.split(_ARG_SEP)
+
+            if any(map(_coverage_not_parsable, cov_strings)):
+                invalid_strings: Iterable[str] = filter(_coverage_not_parsable, cov_strings)
+                logging.error(f'\aError: invalid coverage thresholds in `{arg}`:')
+                for s in invalid_strings:
+                    logging.error(f'  `{s}`')
+                # end for
+                logging.error('Coverage thesholds must be positive integer numbers.')
+                platf_depend_exit(2)
+            # end if
+
+            # Now cast coverages to int and sort them in ascending order
+            coverage_thresholds: Sequence[int] = tuple(
+                (int(cov_str) for cov_str in sorted(cov_strings, key=int))
+            )
+
+            args.upper_coverage_thresholds = coverage_thresholds
+
         # List of upper coverage coefficients
-        elif opt in ('-C', '--upper-coverage-coefficients'):
+        elif opt in ('-X', '--upper-coverage-coefficients'):
             if arg == 'off':
                 args.upper_coverage_coefficients = list()
                 continue

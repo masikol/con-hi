@@ -17,7 +17,8 @@ from src.coverage_array import CoverageArray
 from src.filter_features import filter_features
 from src.arguments import parse_arguments, HighlighterArgs
 from src.coverage_thresholds.lower_coverage_threshold import LowerCoverageThreshold
-from src.coverage_thresholds.upper_coverage_threshold import UpperCoverageThreshold
+from src.coverage_thresholds.upper_coverage_threshold import UpperCoverageThreshold, \
+                                                             UpperMedianCoverageThreshold
 
 
 def main(version: str, last_update_date: str) -> None:
@@ -182,13 +183,18 @@ def _make_coverage_thresholds(args, cov_array):
         LowerCoverageThreshold(thr_int)
             for thr_int in args.lower_coverage_thresholds
     ]
+    upper_coverage_thresholds = [
+        UpperCoverageThreshold(thr_int)
+            for thr_int in args.upper_coverage_thresholds
+    ]
 
     median_coverage = cov_array.median_coverage
-
-    upper_coverage_thresholds = [
-        UpperCoverageThreshold(coef_float, median_coverage)
+    upper_median_coverage_thresholds = [
+        UpperMedianCoverageThreshold(coef_float, median_coverage)
             for coef_float in args.upper_coverage_coefficients
     ]
 
-    return lower_coverage_thresholds + upper_coverage_thresholds
+    return lower_coverage_thresholds \
+           + upper_coverage_thresholds \
+           + upper_median_coverage_thresholds
 # end def

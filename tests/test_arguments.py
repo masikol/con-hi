@@ -8,7 +8,10 @@ import pytest
 import src.arguments as args
 
 from tests.fixtures import test_outdir_path
-from tests.fixtures import test_fasta_fpath, test_bam_fpath, test_coverage_fpath, test_outfpath
+from tests.fixtures import test_fasta_fpath, \
+                           test_bam_fpath, \
+                           test_coverage_fpath, \
+                           test_outfpath
 
 
 @pytest.fixture
@@ -19,6 +22,7 @@ def some_args() -> args.HighlighterArgs:
         bam_fpath=None,
         outfpath=os.path.join(os.getcwd(), 'highlighted_sequence.gbk'),
         lower_coverage_thresholds=(10, 15, 20),
+        upper_coverage_thresholds=(50, 100),
         upper_coverage_coefficients=(1.5, 2.0),
         disable_zero_cov_output=False,
         min_feature_len=5,
@@ -32,13 +36,16 @@ def some_args() -> args.HighlighterArgs:
 # === Fixtures for function `src.arguments._parse_options` ===
 
 @pytest.fixture
-def opts_all_is_ok_short_options(test_fasta_fpath, test_bam_fpath, test_outfpath) -> List[List[str]]:
+def opts_all_is_ok_short_options(test_fasta_fpath,
+                                 test_bam_fpath,
+                                 test_outfpath) -> List[List[str]]:
     return [
         ['-f', test_fasta_fpath],
         ['-b', test_bam_fpath],
         ['-o', test_outfpath],
         ['-c', '10,20'],
-        ['-C', '1.5,2.0'],
+        ['-C', '50,100'],
+        ['-X', '1.5,2.0'],
         ['-n', ''],
     ]
 # end def
@@ -50,6 +57,7 @@ def opts_all_is_ok_long_options(test_fasta_fpath, test_bam_fpath, test_outfpath)
         ['--bam', test_bam_fpath],
         ['--outfile', test_outfpath],
         ['--lower-coverage-thresholds', '10,20'],
+        ['--upper-coverage-thresholds', '50,100'],
         ['--upper-coverage-coefficients', '1.5,2.0'],
         ['--no-zero-output', ''],
         ['--circular', ''],
@@ -153,7 +161,7 @@ def opts_coefficients_off(test_fasta_fpath, test_bam_fpath) -> List[List[str]]:
     return [
         ['-f', test_fasta_fpath],
         ['-b', test_bam_fpath],
-        ['-C', 'off']
+        ['-X', 'off']
     ]
 # end def
 
@@ -168,7 +176,7 @@ def cmd_all_ok_short_options(test_fasta_fpath, test_bam_fpath, test_outfpath) ->
         '-b', test_bam_fpath,
         '-o', test_outfpath,
         '-c', '10,20',
-        '-C', '1.5,2.0',
+        '-X', '1.5,2.0',
         '-n',
     ]
 # end def
@@ -181,6 +189,7 @@ def cmd_all_ok_long_options(test_fasta_fpath, test_bam_fpath, test_outfpath) -> 
         '--bam', test_bam_fpath,
         '--outfile', test_outfpath,
         '--lower-coverage-thresholds', '10,20',
+        '--upper-coverage-thresholds', '50,100',
         '--upper-coverage-coefficients', '1.5,2.0',
         '--no-zero-output',
         '--circular',
@@ -284,10 +293,16 @@ class TestParseOptions:
         expected_threshold_repr: str = opts_all_is_ok_short_options[3][1]
         assert obtained_threshold_repr == expected_threshold_repr
 
+        obtained_threshold_repr: str = ','.join(
+            map(str, test_args.upper_coverage_thresholds)
+        )
+        expected_threshold_repr: str = opts_all_is_ok_short_options[4][1]
+        assert obtained_threshold_repr == expected_threshold_repr
+
         obtained_coef_repr: str = ','.join(
             map(str, test_args.upper_coverage_coefficients)
         )
-        expected_coef_repr: str = opts_all_is_ok_short_options[4][1]
+        expected_coef_repr: str = opts_all_is_ok_short_options[5][1]
         assert obtained_coef_repr == expected_coef_repr
     # end def
 
@@ -302,7 +317,7 @@ class TestParseOptions:
         assert test_args.outfpath == opts_all_is_ok_long_options[2][1]
         assert test_args.disable_zero_cov_output == True
         assert test_args.topology == 'circular'
-        assert test_args.organism == opts_all_is_ok_long_options[7][1]
+        assert test_args.organism == opts_all_is_ok_long_options[8][1]
 
         obtained_threshold_repr: str = ','.join(
             map(str, test_args.lower_coverage_thresholds)
@@ -310,10 +325,16 @@ class TestParseOptions:
         expected_threshold_repr: str = opts_all_is_ok_long_options[3][1]
         assert obtained_threshold_repr == expected_threshold_repr
 
+        obtained_threshold_repr: str = ','.join(
+            map(str, test_args.upper_coverage_thresholds)
+        )
+        expected_threshold_repr: str = opts_all_is_ok_long_options[4][1]
+        assert obtained_threshold_repr == expected_threshold_repr
+
         obtained_coef_repr: str = ','.join(
             map(str, test_args.upper_coverage_coefficients)
         )
-        expected_coef_repr: str = opts_all_is_ok_long_options[4][1]
+        expected_coef_repr: str = opts_all_is_ok_long_options[5][1]
         assert obtained_coef_repr == expected_coef_repr
     # end def
 
@@ -475,7 +496,7 @@ class TestParseArguments:
         assert test_args.outfpath == cmd_all_ok_long_options[6]
         assert test_args.disable_zero_cov_output == True
         assert test_args.topology == 'circular'
-        assert test_args.organism == cmd_all_ok_long_options[14]
+        assert test_args.organism == cmd_all_ok_long_options[16]
 
         obtained_threshold_repr: str = ','.join(
             map(str, test_args.lower_coverage_thresholds)
@@ -483,10 +504,16 @@ class TestParseArguments:
         expected_threshold_repr: str = cmd_all_ok_long_options[8]
         assert obtained_threshold_repr == expected_threshold_repr
 
+        obtained_threshold_repr: str = ','.join(
+            map(str, test_args.upper_coverage_thresholds)
+        )
+        expected_threshold_repr: str = cmd_all_ok_long_options[10]
+        assert obtained_threshold_repr == expected_threshold_repr
+
         obtained_coef_repr: str = ','.join(
             map(str, test_args.upper_coverage_coefficients)
         )
-        expected_coef_repr: str = cmd_all_ok_long_options[10]
+        expected_coef_repr: str = cmd_all_ok_long_options[12]
         assert obtained_coef_repr == expected_coef_repr
     # end def
 

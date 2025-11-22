@@ -9,7 +9,8 @@ import src.obtain_coverage as oc
 import src.parse_fasta_reference as pfr
 from src.coverage_array import CoverageArray
 from src.coverage_thresholds.lower_coverage_threshold import LowerCoverageThreshold
-from src.coverage_thresholds.upper_coverage_threshold import UpperCoverageThreshold
+from src.coverage_thresholds.upper_coverage_threshold import UpperCoverageThreshold, \
+                                                             UpperMedianCoverageThreshold
 
 
 
@@ -95,7 +96,12 @@ def nonzero_cov_threshold() -> LowerCoverageThreshold:
 
 @pytest.fixture(scope='session')
 def upper_cov_threshold() -> UpperCoverageThreshold:
-    return UpperCoverageThreshold(1, 1)
+    return UpperCoverageThreshold(1)
+# end def
+
+@pytest.fixture(scope='session')
+def upper_median_cov_threshold() -> UpperMedianCoverageThreshold:
+    return UpperMedianCoverageThreshold(1, 1)
 # end def
 
 

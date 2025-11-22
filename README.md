@@ -2,7 +2,7 @@
 
 “Con-hi” means “**con**sensus-**hi**ghlighter”.
 
-Latest version is `3.3.d` (2025-10-31 edition).
+Latest version is `4.0.a` (2025-11-22 edition).
 
 ## Description
 
@@ -38,7 +38,7 @@ Basic usage is:
 ./con-hi.py -f <TARGET_FASTA> -b <MAPPING_BAM>
 ```
 
-You can specify custom coverage theshold(s) by passing comma-separated list of thresholds with options `-c` and `-C`. For example, following command will annotate:
+You can specify custom coverage theshold(s) by passing comma-separated list of thresholds with options `-c`, `-C` and `-X`. For example, following command will annotate:
 
 - regions with coverage below 25 and all regions below 55 (and also with zero coverage);
 
@@ -47,7 +47,7 @@ You can specify custom coverage theshold(s) by passing comma-separated list of t
 ```
 ./con-hi.py \
     -f my_sequence.fasta -b my_mapping.sorted.bam \
-    -c 25,55 -C 1.5,2.0
+    -c 25,55 -X 1.5,2.0
 ```
 
 ### Options
@@ -71,19 +71,26 @@ You can specify custom coverage theshold(s) by passing comma-separated list of t
 
 -c or --lower-coverage-thresholds:
     Comma-separated list of lower coverage threshold(s).
+    To annotate regions with coverage < c.
     Default: 10.
     To disable it, specify "-c off", and low-coverage regions won't be annotated.
+
+-C or --upper-coverage-thresholds:
+    Comma-separated list of upper coverage threshold(s).
+    To annotate regions with coverage > C.
+    Default: 500.
+    To disable it, specify "-C off", and high-coverage regions won't be annotated.
 
 -n or --no-zero-output:
     Disable annotation of zero-coverage regions.
     Disabled by default.
 
--C or --upper-coverage-coefficients:
+-X or --upper-coverage-coefficients:
     Comma-separated list of coverage coefficient(s).
     To annotate regions with coverage > 1.7×M,
-      where M is median coverage, specify "-C 1.7".
+      where M is median coverage, specify "-X 1.7".
     Default: 2.0.
-    To disable it, specify "-C off", and high-coverage regions won't be annotated.
+    To disable it, specify "-X off", and high-coverage regions won't be annotated.
 
 -l or --min-feature-len:
     Minimum length of a feature to output. Must be int >= 0.
@@ -116,7 +123,7 @@ Annotate file `my_sequence.fasta` with default parameters according to mapping f
 ./con-hi.py -f my_sequence.fasta -b my_mapping.sorted.bam
 ```
 
-### Example 2. How to use `-c` option
+### Example 2. How to use `-c` and `-C` options
 
 Annotate regions with coverage below 25, fragments with coverages below 50 and regions with zero coverages:
 
@@ -124,7 +131,13 @@ Annotate regions with coverage below 25, fragments with coverages below 50 and r
 ./con-hi.py -f my_sequence.fasta -b my_mapping.sorted.bam -c 25,50
 ```
 
-### Example 3. How to use options `-C`, `-n`
+Annotate regions with coverage above 25 and fragments with coverages below 50:
+
+```bash
+./con-hi.py -f my_sequence.fasta -b my_mapping.sorted.bam -C 25,50
+```
+
+### Example 3. How to use options `-c`, `-n`
 
 Annotate regions with coverage below 25, fragments with coverages below 50. Disable annotation of zero coverage regions:
 
@@ -141,7 +154,7 @@ Specify the name of the organism for output file. The sequence is circular:
     --circular --organism "Serratia marcescens"
 ```
 
-### Example 5. How to turn off annotation of low-coverage regions (`-c off`)
+### Example 5. How to turn off annotation of low-coverage regions (`-c off`) and use `-X` options
 
 Disable annotation of low-coverage regions (`-c off`). Annotate high-coverage regions with coverage above 1.7×*M* and above 2.4×*M*, where *M* is median coverage:
 
