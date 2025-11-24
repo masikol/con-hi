@@ -1,6 +1,6 @@
 # con-hi changelog
 
-# 2025-11-22 edition
+# 2025-11-24 edition
 
 ## Version `4.0.a`
 

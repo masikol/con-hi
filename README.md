@@ -2,7 +2,7 @@
 
 “Con-hi” means “**con**sensus-**hi**ghlighter”.
 
-Latest version is `4.0.a` (2025-11-22 edition).
+Latest version is `4.0.a` (2025-11-24 edition).
 
 ## Description
 
@@ -131,7 +131,7 @@ Annotate regions with coverage below 25, fragments with coverages below 50 and r
 ./con-hi.py -f my_sequence.fasta -b my_mapping.sorted.bam -c 25,50
 ```
 
-Annotate regions with coverage above 25 and fragments with coverages below 50:
+Annotate regions with coverage above 25 and fragments with coverages above 50:
 
 ```bash
 ./con-hi.py -f my_sequence.fasta -b my_mapping.sorted.bam -C 25,50
@@ -156,11 +156,11 @@ Specify the name of the organism for output file. The sequence is circular:
 
 ### Example 5. How to turn off annotation of low-coverage regions (`-c off`) and use `-X` options
 
-Disable annotation of low-coverage regions (`-c off`). Annotate high-coverage regions with coverage above 1.7×*M* and above 2.4×*M*, where *M* is median coverage:
+Disable annotation of low-coverage regions (`-c off`). Annotate high-coverage regions with coverage above 1.7×*M* and above 2.4×*M* (where *M* is median coverage) using `-X` option:
 
 ```bash
 ./con-hi.py -f my_sequence.fasta -b my_mapping.sorted.bam \
-    -c off -C 1.7,2.4
+    -c off -X 1.7,2.4
 ```
 
 ### Example 6. How to use `-r` option
