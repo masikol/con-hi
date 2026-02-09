@@ -4,7 +4,7 @@
 
 ## Version `4.0.b`
 
-Now, con-hi does accept files with `.fna().gz` extenstion.
+Now, con-hi does accept files with `.fna(.gz)` extenstion.
 
 # 2025-11-24 edition
 
