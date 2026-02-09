@@ -3,7 +3,7 @@ def print_help(version: str, last_update_date: str) -> None:
     print('=== con-hi ===')
     print(f'Version {version}; {last_update_date} edition.')
     print('\n## Description')
-    print('  This program annotates low-coverage regions of sequences in fasta format.')
+    print('  This program annotates low-coverage and high-coverage regions of sequences in fasta format.')
     print('### Input')
     print('  1. Target sequence(s) in fasta format.')
     print('  2. Mapping in **sorted** BAM file.')

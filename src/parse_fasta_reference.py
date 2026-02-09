@@ -24,7 +24,7 @@ def parse_fasta_reference(ref_fasta_fpath: str,
     else:
         raise _InvalidFileError(f'Format of file `{ref_fasta_fpath}` is not supported.\
  Only plain fasta or gzipped fasta are supported.\
- Allowed extentions: `.fasta`, `.fa`, `.fasta.gz`, `.fa.gz`.')
+ Allowed extentions: `.fasta(.gz)`, `.fa(.gz)`, `.fna(.gz)`.')
     # end if
 
     # Parse fasta data

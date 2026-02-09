@@ -164,7 +164,7 @@ def _parse_options(opts: List[List[str]]) -> HighlighterArgs:
             if not _is_fasta(arg):
                 logging.error('\aError: only plain fasta or gzipped fasta are supported.')
                 logging.error(f'Erroneous file: `{arg}`.')
-                logging.error('Allowed extentions: `.fasta`, `.fa`, `.fasta.gz`, `.fa.gz`.')
+                logging.error('Allowed extentions: `.fasta(.gz)`, `.fa(.gz)`, `.fna(.gz)`.')
                 platf_depend_exit(2)
             # end if
 
@@ -312,7 +312,7 @@ def _parse_options(opts: List[List[str]]) -> HighlighterArgs:
 
 
 def _is_fasta(fpath: str) -> bool:
-    fasta_pattern: str = r'.+\.f(ast)?a(\.gz)?'
+    fasta_pattern: str = r'.+\.f(ast|n)?a(\.gz)?'
     return not re.match(fasta_pattern, fpath) is None
 # end def
 
