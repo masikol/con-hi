@@ -132,14 +132,21 @@ def main(version: str, last_update_date: str) -> None:
 
         logging.info('Saving annotated sequence...')
 
-        # Write result GanBank record
-        out.write_genbank_output(
-            rec,
-            args.topology,
-            args.organism,
-            cov_array,
-            args.outfpath
-        )
+        if args.output_format == 'genbank':
+            out.write_genbank_output(
+                rec,
+                args.topology,
+                args.organism,
+                cov_array,
+                args.outfpath
+            )
+        else:
+            out.write_bed_output(
+                rec,
+                cov_array,
+                args.outfpath
+            )
+        # end if
         logging.info(f'Annotated sequence saved to `{args.outfpath}`.')
 
         sys.stderr.write('=' * 20 + '\n')

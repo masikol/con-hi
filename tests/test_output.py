@@ -50,6 +50,12 @@ def annotated_seq_records(test_fasta_records: SeqRecord,
 # end def
 
 
+@pytest.fixture
+def test_bed_outfpath(test_outdir_path) -> str:
+    return os.path.join(test_outdir_path, 'test_annotated_seq.bed')
+# end def
+
+
 class TestWriteGenbankOutput:
     # Class for testing function `src.output.write_genbank_output`
 
@@ -115,6 +121,74 @@ class TestWriteGenbankOutput:
         assert 'Average Coverage' in parsed_seq_record.annotations['structured_comment']['Coverage-Data']
         assert 'Median Coverage' in parsed_seq_record.annotations['structured_comment']['Coverage-Data']
         assert 'Maximum Coverage' in parsed_seq_record.annotations['structured_comment']['Coverage-Data']
+
+        empty_file(outfpath)
+    # end def
+# end class
+
+
+class TestWriteBedOutput:
+    # Class for testing function `src.output.write_bed_output`
+
+    def test_write_bed(self,
+                       annotated_seq_records,
+                       coverage_array_inner,
+                       coverage_array_edge,
+                       test_bed_outfpath) -> None:
+        # Function tests how `write_bed_output` writes correct BED file
+        first_annotated_seq_record, second_annotated_seq_record, third_annotated_seq_record = \
+            annotated_seq_records
+
+        testing_zip = zip(
+            (first_annotated_seq_record, second_annotated_seq_record, third_annotated_seq_record),
+            (coverage_array_inner, coverage_array_edge)
+        )
+
+        for seq_record, cov_array in testing_zip:
+            self.check_bed_file(seq_record, cov_array, test_bed_outfpath)
+        # end def
+    # end def
+
+    def check_bed_file(self, seq_record, cov_array, test_bed_outfpath):
+        outfpath: str = test_bed_outfpath
+
+        out.write_bed_output(
+            seq_record,
+            cov_array,
+            outfpath
+        )
+
+        # Check if outfile exists
+        assert os.path.isfile(outfpath)
+
+        # Read and parse BED file
+        with open(outfpath, 'rt') as ifh:
+            data_lines = [
+                line for line in ifh.readlines() if not line.startswith('#')
+            ]
+        # end with
+
+        # Parse header comment lines (if any) and data lines
+        assert len(data_lines) == len(seq_record.features)
+
+        for line in data_lines:
+            fields = line.strip().split('\t')
+            assert len(fields) >= 4
+            chrom = fields[0]
+            start = int(fields[1])
+            end = int(fields[2])
+            name = fields[3]
+
+            # Verify chromosome
+            assert chrom == seq_record.id
+
+            # Verify 0-based coordinates
+            assert start >= 0
+            assert end > start
+
+            # Verify name is not empty
+            assert len(name) > 0
+        # end for
 
         empty_file(outfpath)
     # end def

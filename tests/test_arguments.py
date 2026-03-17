@@ -28,7 +28,8 @@ def some_args() -> args.HighlighterArgs:
         min_feature_len=5,
         topology='linear',
         organism='.',
-        keep_tmp_cov_file=False
+        keep_tmp_cov_file=False,
+        output_format='genbank'
     )
 # end def
 
