@@ -324,12 +324,12 @@ def _parse_options(opts: List[List[str]]) -> HighlighterArgs:
     # end if
 
     # Warn if extension doesn't match format
-    if arg == 'bed' and args.outfpath.endswith(('.gbk', '.gb')):
+    if args.output_format == 'bed' and args.outfpath.endswith(('.gbk', '.gb')):
         logging.warning(
             f'Output format is `{arg}` but file has `.gbk` or `.gb` extension. '
             'Consider using `.bed` extension instead.'
         )
-    elif arg == 'genbank' and args.outfpath.endswith('.bed'):
+    elif args.output_format == 'genbank' and args.outfpath.endswith('.bed'):
         logging.warning(
             f'Output format is `{arg}` but file has `.bed` extension. '
             'Consider using `.gbk` or `.gb` extension instead.'
