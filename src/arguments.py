@@ -28,10 +28,11 @@ class HighlighterArgs:
         min_feature_len: int,
         topology: str,
         organism: str,
-        keep_tmp_cov_file: bool) -> None:
+        keep_tmp_cov_file: bool,
+        output_format: str) -> None:
 
         self.target_fasta_fpath: str = target_fasta_fpath
-        self.target_seq_ids: str = target_seq_ids
+        self.target_seq_ids: Set[str] = target_seq_ids
         self.bam_fpath: str = bam_fpath
         self.outfpath: str = outfpath
 
@@ -45,6 +46,7 @@ class HighlighterArgs:
         self.topology = topology
         self.organism: str = organism
         self.keep_tmp_cov_file = keep_tmp_cov_file
+        self.output_format: str = output_format
     # end def
 
 
@@ -61,7 +63,8 @@ class HighlighterArgs:
   topology: {self.topology}
   organism: `{self.organism}`
   keep_tmp_cov_file: {self.keep_tmp_cov_file}
-)"""
+  output_format: `{self.output_format}`
+ )"""
     # end def
 
 # end class
@@ -77,7 +80,7 @@ def parse_arguments() -> HighlighterArgs:
     try:
         opts, args = getopt.gnu_getopt(
             sys.argv[1:],
-            'hvf:r:b:o:c:C:X:l:nk',
+            'hvf:r:b:o:c:C:X:l:nkO:',
             [
                 'help',
                 'version',
@@ -93,6 +96,7 @@ def parse_arguments() -> HighlighterArgs:
                 'circular',
                 'organism=',
                 'keep-temp-cov-file',
+                'output-format=',
             ]
         )
     except getopt.GetoptError as err:
@@ -145,7 +149,8 @@ def _parse_options(opts: List[List[str]]) -> HighlighterArgs:
         min_feature_len=5,
         topology='linear',
         organism='.',
-        keep_tmp_cov_file = False
+        keep_tmp_cov_file=False,
+        output_format='genbank'
     )
 
     # Parse command line options
@@ -300,11 +305,35 @@ def _parse_options(opts: List[List[str]]) -> HighlighterArgs:
 
         elif opt in ('-k', '--keep-temp-cov-file'):
             args.keep_tmp_cov_file = True
+
+        # Output format
+        elif opt in ('-O', '--output-format'):
+            valid_formats = ('genbank', 'bed')
+            if arg not in valid_formats:
+                logging.error(f'\aError: invalid output format `{arg}`.')
+                logging.error('Allowed values: {}.'.format(', '.join(valid_formats)))
+                platf_depend_exit(2)
+            # end if
+            args.output_format = arg
+        # end if
     # end for
 
     # Add zero coverage threshold, if no disabling is specified
     if not args.disable_zero_cov_output and len(args.lower_coverage_thresholds) != 0:
         _add_zero_theshold(args)
+    # end if
+
+    # Warn if extension doesn't match format
+    if args.output_format == 'bed' and args.outfpath.endswith(('.gbk', '.gb')):
+        logging.warning(
+            f'Output format is `{arg}` but file has `.gbk` or `.gb` extension. '
+            'Consider using `.bed` extension instead.'
+        )
+    elif args.output_format == 'genbank' and args.outfpath.endswith('.bed'):
+        logging.warning(
+            f'Output format is `{arg}` but file has `.bed` extension. '
+            'Consider using `.gbk` or `.gb` extension instead.'
+        )
     # end if
 
     return args

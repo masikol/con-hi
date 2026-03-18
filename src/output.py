@@ -126,3 +126,23 @@ def conf_path_to_depth_file(outfpath: str, target_seq_id: str) -> str:
         f'coverage_{target_seq_id}.tsv'
     )
 # end def
+
+
+def write_bed_output(seq_record: SeqRecord,
+                     cov_array: CoverageArray,
+                     outfpath: str) -> None:
+    # Function writes annotated sequence to output BED file.
+    # :param seq_record: sequence record to output;
+    # :param cov_array: coverage array for the sequence;
+    # :param outfpath: path to output file;
+
+    with open(outfpath, 'a') as outfile:
+        for feature in seq_record.features:
+            chrom = seq_record.id
+            start = feature.location.start
+            end = feature.location.end - 1
+            name = feature.qualifiers.get('label', ['.'])
+            outfile.write(f'{chrom}\t{start}\t{end}\t{name}\n')
+        # end for
+    # end with
+# end def
