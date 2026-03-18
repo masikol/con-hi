@@ -2,9 +2,9 @@
 
 import sys
 
-__version__  = '4.0.a'
+__version__  = '4.1.a'
 # Year, month, day
-__last_update_date__ = '2025-11-24'
+__last_update_date__ = '2025-03-18'
 __min_python_version__ = 3.6
 # __author__ = 'Maksim Sikolenko'
 
@@ -13,7 +13,6 @@ import logging
 logging.basicConfig(
     format='%(asctime)s | %(levelname)s | %(message)s',
     datefmt='%Y-%m-%d %I:%M:%S',
-    # datefmt='%Y-%m-%d %I:%M:%S %p',
     level=logging.INFO
 )
 

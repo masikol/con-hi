@@ -2,7 +2,7 @@
 
 “Con-hi” means “**con**sensus-**hi**ghlighter”.
 
-Latest version is `4.0.b` (2026-02-09 edition).
+Latest version is `4.1.a` (2026-03-18 edition).
 
 ## Description
 
@@ -16,7 +16,7 @@ This program annotates low-coverage and high-coverage regions of sequences in fa
 
 ### Output
 
-- A GenBank file with annotated low-coverage and high-coverage regions.
+- A GenBank or BED file with annotated low-coverage and high-coverage regions.
 
 ## Dependencies
 
@@ -62,6 +62,10 @@ You can specify custom coverage theshold(s) by passing comma-separated list of t
 -o or --outfile:
     Output file.
     Deault value: 'highlighted_sequence.gbk'.
+
+-O or --output-format:
+    Output format: `genbank` or `bed`.
+    Default: `genbank`.
 
 -r or --target-seq-ids:
     Comma-separated list of target sequence IDs to process.
@@ -187,4 +191,12 @@ One might expect that the more copies a replicon has the higher is its read cove
 ./con-hi.py -f my_sequences.fasta -b my_mapping.sorted.bam \
     -r plasmid_L1,plasmid_L2 \
     -c 5
+```
+
+### Example 7. How to use `-O` option
+
+Output results in BED format instead of GenBank:
+
+```bash
+./con-hi.py -f my_sequence.fasta -b my_mapping.sorted.bam -O bed
 ```

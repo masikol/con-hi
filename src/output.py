@@ -136,7 +136,7 @@ def write_bed_output(seq_record: SeqRecord,
     # :param cov_array: coverage array for the sequence;
     # :param outfpath: path to output file;
 
-    with open(outfpath, 'a') as outfile:
+    with open(outfpath, 'at') as outfile:
         for feature in seq_record.features:
             chrom = seq_record.id
             start = feature.location.start

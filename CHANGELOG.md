@@ -1,5 +1,11 @@
 # con-hi changelog
 
+# 2026-03-18 edition
+
+## Version `4.1.a`
+
+New option: `-O / --output-format`. Now con-hi.py can product output file in BED format in addition to GenBank.
+
 # 2026-02-09 edition
 
 ## Version `4.0.b`
